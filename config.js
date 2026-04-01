@@ -1,4 +1,4 @@
-import { createClient } from 'https://jsdelivr.net'
+import { createClient } from 'https://unpkg.com'
 
 // Твой личный адрес базы (НЕ МЕНЯЙ ЕГО!)
 const supabaseUrl = 'https://lscxyfxnbuwxbocwsvfo.supabase.co'
