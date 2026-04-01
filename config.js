@@ -1,4 +1,4 @@
-import { createClient } from 'https://unpkg.com'
+import { createClient } from 'https://esm.sh'
 
 // Твой личный адрес базы (НЕ МЕНЯЙ ЕГО!)
 const supabaseUrl = 'https://lscxyfxnbuwxbocwsvfo.supabase.co'
