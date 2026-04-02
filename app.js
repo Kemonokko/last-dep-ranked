@@ -31,57 +31,40 @@ async function loadRating() {
     }
     // ----------------------------
 }
-
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     container.innerHTML = list.map((p, i) => {
-        // Ранг считаем через logic.js
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
-        
-        // Логика ролей
         const role = p.role || 'Player';
         const secondary = p.secondary_role || 'None';
 
-        // Определяем визуальную роль (рабочая роль главнее VIP)
-        let visualRole = role;
-        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
-
-        // ЦВЕТА (Рамка авы + Ховер ника)
+        // 1. ОПРЕДЕЛЯЕМ ЦВЕТ РОЛИ
         const roleColors = { 
             'Founder': '#b64dff', 
             'Overseer': '#00ff00', 
             'Archivist': '#00ffff', 
             'Bloodline': '#ff4d4d' 
         };
-        
-        // Берем цвет роли, если роли нет — белый (для Player)
-        const currentColor = roleColors[visualRole] || '#ffffff';
-        // Свечение рамки только если это НЕ обычный игрок
-        const hasGlow = visualRole !== 'Player' ? `0 0 10px ${currentColor}66` : 'none';
 
-        // Винрейт из базы
-        const wr = p.winrate !== undefined ? `${p.winrate}% WR` : '0% WR';
+        let visualRole = role;
+        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
+
+        // 2. ЦВЕТ ОБВОДКИ (Цветная у всех ролей, белая только у Player)
+        const currentColor = roleColors[visualRole] || '#ffffff';
+        const hasGlow = visualRole !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
         return `
         <div class="match-card">
-            <!-- Аватарка: рамка КРАСНАЯ у Bloodline, ФИОЛЕТОВАЯ у Founder и т.д. -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
-            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                <!-- Ник с классом роли для цветного свечения при наведении -->
-                <b class="nick-hover role-${visualRole.toLowerCase()}">${p.nickname}</b>
-                
-                <div>
-                    <!-- Только плашка ранга -->
-                    <div class="badge rank-${rank}">${rank}</div>
-                </div>
+            <div style="flex-grow: 1;">
+                <b class="nick-hover role-${visualRole.toLowerCase()}" style="font-size: 1.15em;">${p.nickname}</b><br>
+                <div class="badge rank-${rank}">${rank}</div>
             </div>
 
-            <div style="text-align: right; min-width: 85px;">
-                <!-- Очки Эло -->
+            <div style="text-align: right; min-width: 80px;">
                 <div class="elo-val">${p.elo}</div>
-                <!-- Живой винрейт -->
-                <div class="wr-val">${wr}</div>
+                <div class="wr-val">${p.winrate || 0}% WR</div>
             </div>
         </div>`;
     }).join('');
