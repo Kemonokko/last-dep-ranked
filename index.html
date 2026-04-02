@@ -52,12 +52,22 @@
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
-    /* ХОВЕРЫ НИКОВ ПО РОЛЯМ */
-    .nick-hover { cursor: pointer; transition: 0.2s; color: white; text-decoration: none; font-size: 1.15em; }
-    .role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-    .role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-    .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-    .role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
+.role-founder:hover { color: #b64dff !important; text-shadow: 0 0 15px #b64dff; }
+.role-bloodline:hover { color: #880000 !important; text-shadow: 0 0 15px #880000; }
+.role-overseer:hover { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00; }
+.role-archivist:hover { color: #00ffff !important; text-shadow: 0 0 15px #00ffff; }
+.role-player:hover { color: #fff !important; text-shadow: none; }
+
+/* Карточка и Аватар */
+.match-card { 
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
+    margin-top: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
+    width: 100%; box-sizing: border-box; min-height: 80px;
+}
+.avatar-circle { 
+    width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
+    border: 2.5px solid; flex-shrink: 0; transition: 0.3s; 
+}
 
     #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
     
