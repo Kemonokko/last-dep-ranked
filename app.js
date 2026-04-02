@@ -119,3 +119,26 @@ window.showHistory = () => {
     document.getElementById('search').placeholder = "Поиск по истории...";
     loadHistory();
 };
+// 1. Вход по клику на заголовок "Last Dep Ranked"
+document.querySelector('h1').onclick = async () => {
+    const email = prompt("Введите ваш Email:");
+    if (!email) return;
+
+    const { data: user } = await supabase.from('profiles').select('*').eq('email', email).single();
+
+    if (user) {
+        localStorage.setItem('user_nick', user.nickname);
+        localStorage.setItem('user_role', user.role);
+        alert(`Добро пожаловать, ${user.nickname}!`);
+        location.reload();
+    } else {
+        alert("Доступ запрещен.");
+    }
+};
+
+// 2. Показываем админку только персоналу
+const myRole = localStorage.getItem('user_role');
+if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
+    const btn = document.getElementById('admin-btn');
+    if (btn) btn.style.display = 'block';
+}
