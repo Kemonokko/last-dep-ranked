@@ -61,11 +61,23 @@
     .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
     .role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
     .role-player:hover { color: #fff !important; text-shadow: none; }
+      #search { 
+      width: 100%; 
+      padding: 14px; 
+      border-radius: 14px; 
+      border: 1.5px solid var(--border); 
+      background: var(--card); 
+      color: white; 
+      margin-bottom: 20px; 
+      box-sizing: border-box; /* Чтобы не вылезала за края */
+      outline: none;
+      transition: 0.3s;
+    }
+    #search:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255,0,0,0.3); }
 </style>
 </head>
 <body>
-  <header><h1>🏆 Last Dep Ranked</h1></header>
-  
+  <header><h1>Last Dep Ranked</h1></header>
   <div class="container">
     <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'" 
             style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold;">
