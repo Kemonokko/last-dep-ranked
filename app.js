@@ -1,76 +1,65 @@
 import { supabase } from './config.js';
 import { getRankByPercentile } from './logic.js';
+import { handleAddMatch } from './admin.js';
+import { loadHistory } from './history.js';
 
 let allPlayers = []; 
+window.roleCache = {}; // Шпаргалка ролей для истории
 
+// 1. ЗАГРУЗКА РЕЙТИНГА
 async function loadRating() {
+    const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase
         .from('profiles')
         .select('*')
         .order('elo', { ascending: false });
 
     if (error) {
-        document.getElementById('rating-list').innerHTML = `<div style="color:red">Ошибка: ${error.message}</div>`;
+        container.innerHTML = `<div style="color:red">Ошибка: ${error.message}</div>`;
         return;
     }
 
     allPlayers = players || [];
-        window.roleCache = {};
+    
+    // Создаем карту ролей (чистим пробелы!)
     allPlayers.forEach(p => {
         window.roleCache[p.nickname] = (p.role || 'Player').toString().trim();
     });
+
     renderPlayers(allPlayers);
 
-    // --- ДОБАВЛЕНО ДЛЯ АДМИНКИ ---
-    // 1. Заполняем список подсказок никами
+    // Подсказки для админки
     const dataList = document.getElementById('players-list');
     if (dataList) {
         dataList.innerHTML = allPlayers.map(p => `<option value="${p.nickname}">`).join('');
     }
-
-    // 2. Ставим сегодняшнюю дату в календарь по умолчанию
-    const dateInput = document.getElementById('match-date');
-    if (dateInput && !dateInput.value) {
-        dateInput.value = new Date().toISOString().split('T')[0];
-    }
-    // ----------------------------
 }
 
+// 2. ОТРИСОВКА КАРТОЧЕК
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
     container.innerHTML = list.map((p) => {
-        // 1. Позиция и ранг
         const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
         const rank = getRankByPercentile(globalPos, allPlayers.length);
         
-        // 2. Роль (ОБЯЗАТЕЛЬНО с .trim() для Bloodline)
         const role = (p.role || 'Player').toString().trim();
-
         const roleColors = { 
-            'Founder': '#b64dff', 
-            'Overseer': '#00ff00', 
-            'Archivist': '#00ffff', 
-            'Bloodline': '#880000',
-            'Player': '#ffffff'
+            'Founder': '#b64dff', 'Overseer': '#00ff00', 
+            'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' 
         };
 
         const currentColor = roleColors[role] || '#ffffff';
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
-        // 3. Рисуем карточку (ТУТ МЫ УБРАЛИ ЛИШНИЕ СКОБКИ)
         return `
         <div class="match-card">
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-            
             <div style="flex-grow: 1;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">
-                    ${p.nickname}
-                </b><br>
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
-
             <div style="text-align: right; min-width: 85px;">
                 <div class="elo-val">${p.elo}</div>
                 <div class="wr-val">${p.win_rate || 0}% WR</div>
@@ -78,64 +67,50 @@ function renderPlayers(list) {
         </div>`;
     }).join('');
 }
+
+// 3. ПОИСК (Универсальный)
 document.getElementById('search').addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase();
-    const isHistory = document.getElementById('btn-history').style.background === 'var(--blood)';
+    const isHistory = document.getElementById('btn-history').classList.contains('active');
 
     if (isHistory) {
-        // Если мы в истории — фильтруем карточки по нику победителя или проигравшего
         const cards = document.querySelectorAll('#rating-list .match-card');
-        cards.forEach(card => {
-            const text = card.innerText.toLowerCase();
-            card.style.display = text.includes(val) ? 'flex' : 'none';
-        });
+        cards.forEach(c => c.style.display = c.innerText.toLowerCase().includes(val) ? 'flex' : 'none');
     } else {
-        // Если мы в рейтинге — обычная фильтрация массива
         renderPlayers(allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
     }
 });
 
-loadRating();
-
-import { handleAddMatch } from './admin.js';
-window.handleAddMatch = handleAddMatch;
-import { loadHistory } from './history.js';
-
+// 4. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
 window.showRating = () => {
-    document.getElementById('btn-rating').style.background = 'var(--blood)';
-    document.getElementById('btn-history').style.background = 'var(--card)';
-    // Поиск ТЕПЕРЬ ВСЕГДА ВИДЕН
-    document.getElementById('search').placeholder = "Поиск игрока в рейтинге...";
+    document.getElementById('btn-rating').className = 'nav-btn active';
+    document.getElementById('btn-history').className = 'nav-btn';
     loadRating();
 };
 
 window.showHistory = () => {
-    document.getElementById('btn-history').style.background = 'var(--blood)';
-    document.getElementById('btn-rating').style.background = 'var(--card)';
-    // Поиск ТЕПЕРЬ ВСЕГДА ВИДЕН
-    document.getElementById('search').placeholder = "Поиск по истории...";
+    document.getElementById('btn-history').className = 'nav-btn active';
+    document.getElementById('btn-rating').className = 'nav-btn';
     loadHistory();
 };
-// 1. Вход по клику на заголовок "Last Dep Ranked"
+
+// 5. ВХОД ДЛЯ FOUNDER
 document.querySelector('h1').onclick = async () => {
-    const email = prompt("Введите ваш Email:");
+    const email = prompt("Введите Email администратора:");
     if (!email) return;
-
     const { data: user } = await supabase.from('profiles').select('*').eq('email', email).single();
-
     if (user) {
-        localStorage.setItem('user_nick', user.nickname);
         localStorage.setItem('user_role', user.role);
         alert(`Добро пожаловать, ${user.nickname}!`);
         location.reload();
-    } else {
-        alert("Доступ запрещен.");
-    }
+    } else { alert("Доступ запрещен."); }
 };
 
-// 2. Показываем админку только персоналу
 const myRole = localStorage.getItem('user_role');
 if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
     const btn = document.getElementById('admin-btn');
     if (btn) btn.style.display = 'block';
 }
+
+window.handleAddMatch = handleAddMatch;
+loadRating();
