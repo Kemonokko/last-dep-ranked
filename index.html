@@ -43,37 +43,32 @@
 <body>
   <header><h1>Last Dep Ranked</h1></header>
   
-  <div class="container">
+ <div class="container">
     <!-- Кнопка вызова админки -->
     <button onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'" 
             style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold;">
       ⚙️ АДМИН ПАНЕЛЬ
     </button>
 
-    <!-- Блок Админки -->
+    <!-- ВОТ ЭТИ КНОПКИ БЫЛИ ПОТЕРЯНЫ (ВЕРНУЛИ) -->
+    <div style="display: flex; gap: 10px; margin-bottom: 15px; width: 100%;">
+        <button onclick="showRating()" id="btn-rating" style="flex: 1; background: var(--blood); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">🏆 РЕЙТИНГ</button>
+        <button onclick="showHistory()" id="btn-history" style="flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">📜 ИСТОРИЯ</button>
+    </div>
+
+    <!-- Блок Админки с Предпросмотром -->
     <div id="admin-panel" style="display:none;">
       <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
-      
-      <!-- Поле выбора даты -->
       <input type="date" id="match-date" class="admin-input">
-
-      <!-- Поля ников с автозаполнением и предпросмотром -->
       <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview()">
       <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview()">
-      
       <datalist id="players-list"></datalist>
-
       <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
           <option value="3:0">Счёт 3:0 (x1.3)</option>
           <option value="3:1">Счёт 3:1 (x1.0)</option>
           <option value="3:2">Счёт 3:2 (x0.7)</option>
       </select>
-
-      <!-- Блок для предпросмотра расчета -->
-      <div id="match-preview" style="color: var(--gold); font-size: 0.85em; text-align: center; margin-bottom: 10px; background: rgba(240, 185, 11, 0.1); padding: 8px; border-radius: 8px; display: none;">
-          <!-- Тут будет текст: Победитель +25, Проигравший -18 -->
-      </div>
-
+      <div id="match-preview" style="color: var(--gold); font-size: 0.85em; text-align: center; margin-bottom: 10px; background: rgba(240, 185, 11, 0.1); padding: 8px; border-radius: 8px; display: none;"></div>
       <button class="admin-btn-submit" onclick="handleAddMatch()">ЗАПИСАТЬ В БАЗУ</button>
     </div>
 
