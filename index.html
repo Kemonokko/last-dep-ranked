@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Last Dep Ranked</title>
-  <style>
+<style>
     :root { 
       --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
       --gold: #f0b90b; --blood: #ff0000;
@@ -22,8 +22,12 @@
       display: flex; flex-direction: column; align-items: center; min-height: 100vh;
     }
 
+    /* ЗАГОЛОВОК СЛЕВА */
     header { width: 100%; padding: 15px 25px; text-align: left; box-sizing: border-box; }
-    h1 { color: #ff0000 !important; font-size: 2.5em; text-transform: capitalize; text-shadow: 0 0 15px #ff0000; margin: 0; cursor: pointer; display: inline-block; }
+    h1 { 
+      color: #ff0000 !important; font-size: 2.2em; text-transform: capitalize; 
+      text-shadow: 0 0 15px #ff0000; margin: 0; cursor: pointer; display: inline-block; 
+    }
 
     .container { width: 95%; max-width: 500px; }
 
@@ -32,52 +36,47 @@
     .nav-btn { flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .nav-btn.active { background: var(--blood); border-color: var(--blood); }
 
-    /* КАРТОЧКА ИГРОКА (Исправлено) */
+    /* КАРТОЧКА ИГРОКА (Чистый код без дублей) */
     .match-card { 
       background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 15px; 
-      width: 100%; box-sizing: border-box;
+      margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
+      width: 100%; box-sizing: border-box; min-height: 80px; cursor: pointer; transition: 0.2s;
     }
-    .avatar-circle { width: 52px; height: 52px; border-radius: 50%; background-size: cover; border: 2.5px solid #fff; flex-shrink: 0; transition: 0.3s; }
+    
+    .avatar-circle { 
+      width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
+      border: 2.5px solid; flex-shrink: 0; transition: 0.3s; 
+    }
+
     .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
     .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
 
     /* РАНГИ */
     .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
+    
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
     .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
+    
     .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 15px currentColor; text-shadow: 0 0 5px currentColor; }
     .rank-S\+, .rank-S { color: var(--color-s); border-color: var(--color-s); }
     .rank-A\+, .rank-A { color: var(--color-a); border-color: var(--color-a); }
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
-/* Теперь свечение ника срабатывает при наведении на ВСЮ карточку */
-.match-card:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-.match-card:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-.match-card:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-.match-card:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
-
-/* Плавный переход для ника */
-.nick-hover { transition: 0.3s; pointer-events: none; }
-/* Карточка и Аватар */
-.match-card { 
-    background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-    margin-top: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
-    width: 100%; box-sizing: border-box; min-height: 80px;
-}
-.avatar-circle { 
-    width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
-    border: 2.5px solid; flex-shrink: 0; transition: 0.3s; 
-}
-
-    #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
+    /* УМНЫЙ ХОВЕР: Навел на карту -> загорелся ник */
+    .nick-hover { transition: 0.3s; pointer-events: none; color: white; font-size: 1.15em; text-decoration: none; }
     
-    /* АДМИНКА */
+    .match-card:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
+    .match-card:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+    .match-card:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
+    .match-card:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
+
+    /* ПОИСК И АДМИНКА */
+    #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; outline: none; }
     #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
     .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; }
     .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
-  </style>
+</style>
 </head>
 <body>
   <header><h1>Last Dep Ranked</h1></header>
