@@ -1,4 +1,4 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/main/index.js'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/+esm'
 
 // Твой личный адрес базы (НЕ МЕНЯЙ ЕГО!)
 const supabaseUrl = 'https://lscxyfxnbuwxbocwsvfo.supabase.co'
