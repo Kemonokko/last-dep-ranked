@@ -15,20 +15,20 @@ export function calculateMatchElo(winner, loser, score, totalPlayers, position) 
     baseChange = Math.round(baseChange);
 
     // 3. Расчет бонуса (раз в 14 дней)
-    let bonus = 0;
+    let bonusValue = 0;
     const fourteenDays = 14 * 24 * 60 * 60 * 1000;
     
-    // ИСПРАВЛЕНО: используем last_bonus_date как в твоей таблице
-    const lastWinDate = winner.last_bonus_date ? new Date(winner.last_bonus_date).getTime() : 0;
+    // БЕРЕМ ДАТУ ИЗ ТВОЕЙ КОЛОНКИ "bonus"
+    const lastBonusDate = winner.bonus ? new Date(winner.bonus).getTime() : 0;
     
-    if (Date.now() - lastWinDate > fourteenDays) {
+    if (Date.now() - lastBonusDate > fourteenDays) {
         const rank = getRankByPercentile(position, totalPlayers);
         const bonusMap = {
             'Дракон': 0, 'S+': 1, 'S': 2, 'A+': 3, 
             'A': 4, 'B+': 5, 'B': 6, 'C': 7
         };
-        bonus = bonusMap[rank] || 0;
+        bonusValue = bonusMap[rank] || 0;
     }
 
-    return { total: baseChange + bonus, base: baseChange, bonus: bonus };
+    return { total: baseChange + bonusValue, base: baseChange, bonus: bonusValue };
 }
