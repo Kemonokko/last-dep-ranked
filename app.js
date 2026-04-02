@@ -88,16 +88,53 @@ window.handleLogin = async () => {
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
-// 4. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+// УНИВЕРСАЛЬНАЯ ФУНКЦИЯ ПЕРЕКЛЮЧЕНИЯ
+function switchTab(tabId) {
+    // 1. Сбрасываем все кнопки (удаляем активный класс и очищаем стили)
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = ''; // Очищаем ручные правки фона
+    });
+
+    // 2. Скрываем все блоки контента
+    document.getElementById('rating-list').style.display = 'none';
+    document.getElementById('search').style.display = 'none';
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'none';
+
+    // 3. Подсвечиваем нужную кнопку
+    document.getElementById(tabId).classList.add('active');
+}
+
+const oldShowRating = window.showRating;
 window.showRating = () => {
-    document.getElementById('btn-rating').classList.add('active');
-    document.getElementById('btn-history').classList.remove('active');
-    loadRating();
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('search').style.display = 'block';
+    oldShowRating();
 };
+
 window.showHistory = () => {
-    document.getElementById('btn-history').classList.add('active');
-    document.getElementById('btn-rating').classList.remove('active');
+    switchTab('btn-history');
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('search').style.display = 'block';
     loadHistory();
+};
+
+window.showMyProfile = () => {
+    switchTab('btn-profile');
+    document.getElementById('my-profile-section').style.display = 'block';
+    
+    // Проверка логина
+    const myNick = localStorage.getItem('user_nick');
+    if (myNick) {
+        document.getElementById('auth-ui').style.display = 'none';
+        document.getElementById('cabinet-ui').style.display = 'block';
+        document.getElementById('cabinet-nick').innerText = myNick;
+    } else {
+        document.getElementById('auth-ui').style.display = 'block';
+        document.getElementById('cabinet-ui').style.display = 'none';
+    }
 };
 
 // 5. ПРОВЕРКА АДМИНА
@@ -139,11 +176,3 @@ window.showMyProfile = () => {
     }
 };
 
-// Не забудь добавить возврат видимости поиска в showRating
-const oldShowRating = window.showRating;
-window.showRating = () => {
-    document.getElementById('my-profile-section').style.display = 'none';
-    document.getElementById('rating-list').style.display = 'block';
-    document.getElementById('search').style.display = 'block';
-    oldShowRating();
-};
