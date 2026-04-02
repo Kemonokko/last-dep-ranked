@@ -35,16 +35,18 @@ async function loadRating() {
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     container.innerHTML = list.map((p, i) => {
+        // Ранг считаем через logic.js
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
         
+        // Логика ролей
         const role = p.role || 'Player';
         const secondary = p.secondary_role || 'None';
 
-        // ОПРЕДЕЛЯЕМ ГЛАВНУЮ РОЛЬ ДЛЯ ЦВЕТА
+        // Определяем визуальную роль (рабочая роль главнее VIP)
         let visualRole = role;
         if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
 
-        // ЦВЕТОВАЯ СХЕМА (Рамки + Ховеры)
+        // ЦВЕТА (Рамка авы + Ховер ника)
         const roleColors = { 
             'Founder': '#b64dff', 
             'Overseer': '#00ff00', 
@@ -52,26 +54,33 @@ function renderPlayers(list) {
             'Bloodline': '#ff4d4d' 
         };
         
-        // Если роль есть в списке — берем её цвет, если нет (Player) — белый
+        // Берем цвет роли, если роли нет — белый (для Player)
         const currentColor = roleColors[visualRole] || '#ffffff';
+        // Свечение рамки только если это НЕ обычный игрок
         const hasGlow = visualRole !== 'Player' ? `0 0 10px ${currentColor}66` : 'none';
 
-        const wr = p.winrate ? `${p.winrate}% WR` : '0% WR';
+        // Винрейт из базы
+        const wr = p.winrate !== undefined ? `${p.winrate}% WR` : '0% WR';
 
         return `
         <div class="match-card">
-            <!-- РАМКА: Цветная у всех ролей, белая только у обычных -->
+            <!-- Аватарка: рамка КРАСНАЯ у Bloodline, ФИОЛЕТОВАЯ у Founder и т.д. -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                <!-- Ник с классом роли для цветного свечения при наведении -->
                 <b class="nick-hover role-${visualRole.toLowerCase()}">${p.nickname}</b>
+                
                 <div>
+                    <!-- Только плашка ранга -->
                     <div class="badge rank-${rank}">${rank}</div>
                 </div>
             </div>
 
-            <div style="text-align: right; min-width: 80px;">
+            <div style="text-align: right; min-width: 85px;">
+                <!-- Очки Эло -->
                 <div class="elo-val">${p.elo}</div>
+                <!-- Живой винрейт -->
                 <div class="wr-val">${wr}</div>
             </div>
         </div>`;
