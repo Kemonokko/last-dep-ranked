@@ -62,3 +62,18 @@ loadRating();
 
 import { handleAddMatch } from './admin.js';
 window.handleAddMatch = handleAddMatch;
+import { loadHistory } from './history.js';
+
+window.showRating = () => {
+    document.getElementById('btn-rating').style.background = 'var(--blood)';
+    document.getElementById('btn-history').style.background = 'var(--card)';
+    document.getElementById('search').style.display = 'block'; // Показываем поиск
+    loadRating();
+};
+
+window.showHistory = () => {
+    document.getElementById('btn-history').style.background = 'var(--blood)';
+    document.getElementById('btn-rating').style.background = 'var(--card)';
+    document.getElementById('search').style.display = 'none'; // Скрываем поиск рейтинга
+    loadHistory();
+};
