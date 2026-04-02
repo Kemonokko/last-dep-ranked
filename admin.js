@@ -56,3 +56,6 @@ export async function deleteMatch(matchId) {
 // ДЕЛАЕМ ФУНКЦИИ ВИДИМЫМИ ДЛЯ HTML
 window.handleAddMatch = handleAddMatch;
 window.deleteMatch = deleteMatch;
+
+import { deleteMatch } from './admin.js'; 
+window.deleteMatch = deleteMatch;
