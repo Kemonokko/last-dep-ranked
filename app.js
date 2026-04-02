@@ -53,14 +53,11 @@ function renderPlayers(list) {
         const currentColor = roleColors[role] || '#ffffff';
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
-        // Лог для проверки (можно потом убрать)
+        // Лог для проверки
         console.log("Игрок:", p.nickname, "Роль:", role, "Цвет:", currentColor);
-console.log("Игрок:", p.nickname, "Его роль:", role, "Цвет:", currentColor);
+
         return `
         <div class="match-card">
-            <!-- ТЕПЕРЬ ТУТ currentColor ПРИВЯЗАН К role. ВСЁ СОВПАДАЕТ -->
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-            
             <div style="flex-grow: 1;">
                 <!-- НИК: Светится цветом роли при наведении -->
                 <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">
