@@ -1,6 +1,7 @@
 import { supabase } from './config.js';
 import { calculateMatchElo } from './elo.js';
 
+// ФУНКЦИЯ ЗАПИСИ МАТЧА
 export async function handleAddMatch() {
     const winNick = document.getElementById('win-input').value.trim();
     const lossNick = document.getElementById('loss-input').value.trim();
@@ -19,35 +20,21 @@ export async function handleAddMatch() {
 
     const res = calculateMatchElo(winP, lossP, score, all.length, pos);
 
-    // СОХРАНЯЕМ СТАРУЮ ДАТУ БОНУСА ПЕРЕД ОБНОВЛЕНИЕМ
     const oldBonusDate = winP.bonus; 
 
-    // Обновляем Победителя
-    await supabase.from('profiles').update({ 
-        elo: winP.elo + res.total, 
-        bonus: matchDate 
-    }).eq('nickname', winNick);
-
-    // Обновляем Проигравшего
+    await supabase.from('profiles').update({ elo: winP.elo + res.total, bonus: matchDate }).eq('nickname', winNick);
     await supabase.from('profiles').update({ elo: lossP.elo - res.base }).eq('nickname', lossNick);
 
-    // ПИШЕМ В ИСТОРИЮ (включая старую дату для отката)
-    const [wS, lS] = score.split(':').map(Number);
     await supabase.from('match_history').insert([{
-        win: winNick,
-        loss: lossNick,
-        win_r: wS,
-        loss_r: lS,
-        date: matchDate,
-        "elo+": res.total,
-        "bonus": res.bonus,
-        "elo-": res.base,
-        prev_bonus_date: oldBonusDate // ВОТ ОНО!
+        win: winNick, loss: lossNick, win_r: score.split(':')[0], loss_r: score.split(':')[1],
+        date: matchDate, "elo+": res.total, "bonus": res.bonus, "elo-": res.base, prev_bonus_date: oldBonusDate
     }]);
 
     alert(`Записано!\n${winNick}: +${res.total} (+${res.bonus})\n${lossNick}: -${res.base}`);
     location.reload();
 }
+
+// ФУНКЦИЯ УДАЛЕНИЯ (ОТКАТА) МАТЧА
 export async function deleteMatch(matchId) {
     if (!confirm("Аннулировать матч? Эло и дата бонуса вернутся назад.")) return;
 
@@ -57,19 +44,15 @@ export async function deleteMatch(matchId) {
     const { data: winP } = await supabase.from('profiles').select('*').eq('nickname', match.win).single();
     const { data: lossP } = await supabase.from('profiles').select('*').eq('nickname', match.loss).single();
 
-    // ВОЗВРАЩАЕМ ВСЁ НАЗАД
-    await supabase.from('profiles').update({ 
-        elo: winP.elo - match["elo+"],
-        bonus: match.prev_bonus_date // ВОЗВРАЩАЕМ СТАРУЮ ДАТУ
-    }).eq('nickname', match.win);
-
-    await supabase.from('profiles').update({ 
-        elo: lossP.elo + match["elo-"] 
-    }).eq('nickname', match.loss);
+    await supabase.from('profiles').update({ elo: winP.elo - match["elo+"], bonus: match.prev_bonus_date }).eq('nickname', match.win);
+    await supabase.from('profiles').update({ elo: lossP.elo + match["elo-"] }).eq('nickname', match.loss);
 
     await supabase.from('match_history').delete().eq('id', matchId);
 
-    alert("Матч полностью аннулирован, дата бонуса восстановлена!");
+    alert("Матч аннулирован!");
     location.reload();
 }
+
+// ДЕЛАЕМ ФУНКЦИИ ВИДИМЫМИ ДЛЯ HTML
+window.handleAddMatch = handleAddMatch;
 window.deleteMatch = deleteMatch;
