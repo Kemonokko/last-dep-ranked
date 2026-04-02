@@ -28,6 +28,17 @@
     .rank-Дракон { color: var(--gold); border-color: var(--gold); }
     .rank-S\+ { color: #ff00ff; border-color: #ff00ff; }
     .rank-S { color: #b64dff; border-color: #b64dff; }
+      body {
+    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                      url('bg.jpg');
+}
+
+@media (max-width: 600px) {
+    body {
+        background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                          url('bgm.jpg');
+    }
+}
   </style>
 </head>
 <body>
@@ -39,16 +50,5 @@
   <!-- СТРОГО ТАК (без точек и слэшей в начале) -->
   <script type="module" src="app.js"></script>
 </body>
-  body {
-    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                      url('Без названия.jpg); 
-}
-
-@media (max-width: 600px) {
-    body {
-        background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                          url('фон моб.jpg');
-    }
-}
 </html>
 
