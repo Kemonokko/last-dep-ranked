@@ -39,5 +39,16 @@
   <!-- СТРОГО ТАК (без точек и слэшей в начале) -->
   <script type="module" src="app.js"></script>
 </body>
+  body {
+    background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                      url('bg-pc.jpg'); 
+}
+
+@media (max-width: 600px) {
+    body {
+        background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                          url('bg-mobile.jpg');
+    }
+}
 </html>
 
