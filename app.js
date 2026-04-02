@@ -117,3 +117,36 @@ document.getElementById('search').addEventListener('input', (e) => {
 
 window.handleAddMatch = handleAddMatch;
 loadRating();
+window.showMyProfile = () => {
+    // 1. Прячем всё остальное
+    document.getElementById('rating-list').style.display = 'none';
+    document.getElementById('search').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'none'; // Скрываем админку при переключении
+    
+    // 2. Показываем профиль
+    document.getElementById('my-profile-section').style.display = 'block';
+    
+    // 3. Переключаем кнопки (визуал)
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-profile').classList.add('active');
+
+    // 4. Проверяем статус входа
+    const myNick = localStorage.getItem('user_nick');
+    if (myNick) {
+        document.getElementById('auth-ui').style.display = 'none';
+        document.getElementById('cabinet-ui').style.display = 'block';
+        document.getElementById('cabinet-nick').innerText = myNick;
+    } else {
+        document.getElementById('auth-ui').style.display = 'block';
+        document.getElementById('cabinet-ui').style.display = 'none';
+    }
+};
+
+// Не забудь добавить возврат видимости поиска в showRating
+const oldShowRating = window.showRating;
+window.showRating = () => {
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('search').style.display = 'block';
+    oldShowRating();
+};
