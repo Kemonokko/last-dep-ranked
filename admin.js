@@ -126,5 +126,5 @@ async function refreshWinrate(nickname) {
     const finalWR = Math.round((wonRounds / totalRounds) * 100);
 
     // 2. Записываем новый винрейт в профиль
-    await supabase.from('profiles').update({ winrate: finalWR }).eq('nickname', nickname);
+    await supabase.from('profiles').update({ win_rate: finalWR }).eq('nickname', nickname);
 }
