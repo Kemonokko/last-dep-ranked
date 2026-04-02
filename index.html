@@ -5,61 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Last Dep Ranked</title>
   <style>
-    :root { 
-      --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
-      --gold: #f0b90b; --blood: #cc0000;
-      /* Цвета Рангов */
-      --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
-      /* Цвета Ролей */
-      --founder: #b64dff; --bloodline: #ff4d4d; --overseer: #00ff00; --archivist: #00ffff;
-    }
+:root {
+  --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
+  --gold: #f0b90b; --blood: #cc0000;
+  --founder: #b64dff; --bloodline: #ff4d4d; --overseer: #00ff00; --archivist: #00ffff;
+  --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
+}
 
-    body { 
-      background-color: var(--bg) !important;
-      background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('bg.jpg');
-      background-size: cover; background-position: center; background-attachment: fixed;
-      color: var(--text); font-family: sans-serif; margin: 0; padding: 0 10px 100px 10px;
-      display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-    }
+body { 
+  background-color: var(--bg) !important;
+  background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('bg.jpg');
+  background-size: cover; background-position: center; background-attachment: fixed;
+  color: var(--text); font-family: sans-serif; margin: 0; padding: 0 10px 100px 10px;
+}
 
-    header { width: 100%; max-width: 500px; padding: 20px; text-align: center; }
-    h1 { color: var(--blood); font-size: 1.8em; text-shadow: 0 0 15px rgba(204,0,0,0.6); cursor: pointer; }
+.match-card { 
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
+  margin-top: 12px; padding: 18px; display: flex; align-items: center; gap: 15px; 
+}
 
-    .container { width: 95%; max-width: 500px; }
+.avatar-circle { width: 52px; height: 52px; border-radius: 50%; background-size: cover; border: 2px solid #fff; flex-shrink: 0; }
+.elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; }
 
-    /* КАРТОЧКА ИГРОКА (Исправлено) */
-    .match-card { 
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; 
-      width: 100%; box-sizing: border-box; transition: 0.3s;
-    }
-    .avatar-circle { width: 50px; height: 50px; border-radius: 50%; background-size: cover; border: 2px solid #fff; flex-shrink: 0; }
-    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; }
+/* РАНГИ */
+.badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
 
-    /* РАНГИ (Твои цвета) */
-    .badge { font-size: 0.75em; padding: 4px 10px; border-radius: 8px; border: 1.5px solid; margin-top: 5px; display: inline-block; font-weight: bold; }
-    
-    @keyframes dragon-white-glow {
-      0% { box-shadow: 0 0 10px #fff; }
-      50% { box-shadow: 0 0 20px #fff; }
-      100% { box-shadow: 0 0 10px #fff; }
-    }
-    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-white-glow 3s infinite ease-in-out; }
-    
-    .rank-S\+ { color: var(--color-s); border-color: var(--color-s); box-shadow: 0 0 12px var(--color-s); text-shadow: 0 0 5px var(--color-s); }
-    .rank-A\+ { color: var(--color-a); border-color: var(--color-a); box-shadow: 0 0 12px var(--color-a); text-shadow: 0 0 5px var(--color-a); }
-    .rank-B\+ { color: var(--color-b); border-color: var(--color-b); box-shadow: 0 0 12px var(--color-b); text-shadow: 0 0 5px var(--color-b); }
-    
-    .rank-S { color: var(--color-s); border-color: var(--color-s); opacity: 0.8; }
-    .rank-A { color: var(--color-a); border-color: var(--color-a); opacity: 0.8; }
-    .rank-B { color: var(--color-b); border-color: var(--color-b); opacity: 0.8; }
-    .rank-C { color: var(--color-c); border-color: var(--color-c); opacity: 0.9; }
+@keyframes dragon-glow {
+  0% { box-shadow: 0 0 10px #fff; }
+  50% { box-shadow: 0 0 25px #fff; }
+  100% { box-shadow: 0 0 10px #fff; }
+}
+.rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite ease-in-out; }
 
-    /* ХОВЕРЫ НИКОВ */
-    .nick-hover:hover { cursor: pointer; transition: 0.3s; }
-    .role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-    .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-    .role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+/* Сочные ранги (с подсветкой для + и без для обычных) */
+.rank-S\+ { color: var(--color-s); border-color: var(--color-s); box-shadow: 0 0 15px var(--color-s); text-shadow: 0 0 5px var(--color-s); }
+.rank-A\+ { color: var(--color-a); border-color: var(--color-a); box-shadow: 0 0 15px var(--color-a); text-shadow: 0 0 5px var(--color-a); }
+.rank-B\+ { color: var(--color-b); border-color: var(--color-b); box-shadow: 0 0 15px var(--color-b); text-shadow: 0 0 5px var(--color-b); }
+.rank-S { color: var(--color-s); border-color: var(--color-s); }
+.rank-A { color: var(--color-a); border-color: var(--color-a); }
+.rank-B { color: var(--color-b); border-color: var(--color-b); }
+.rank-C { color: var(--color-c); border-color: var(--color-c); }
+
+/* ХОВЕРЫ НИКОВ (Только для ролей) */
+.nick-hover { cursor: pointer; transition: 0.3s; color: white; text-decoration: none; }
+.role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
+.role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+.role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
+.role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
+/* Обычный ник без подсветки */
+.role-player:hover { text-shadow: none !important; }
 
     /* ИНПУТЫ И КНОПКИ */
     #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
