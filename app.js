@@ -37,34 +37,40 @@ function renderPlayers(list) {
     if (!container) return;
 
     container.innerHTML = list.map((p) => {
-        // 1. Считаем ранг по глобальной позиции (из массива allPlayers)
+        // 1. Находим реальную позицию игрока в общем топе (для ранга)
         const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
         const rank = getRankByPercentile(globalPos, allPlayers.length);
         
-        // 2. Логика Ролей (Берем напрямую из базы)
-        const role = p.role || 'Player';
+        // 2. Берем роль из базы и приводим к нужному формату (на случай опечаток)
+        const rawRole = p.role || 'Player';
+        // Делаем первую букву большой, остальные маленькие (Bloodline, Founder и т.д.)
+        const role = rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
         
+        // 3. Таблица цветов
         const roleColors = { 
             'Founder': '#b64dff',   // Фиолетовый
             'Overseer': '#00ff00',  // Салатовый
             'Archivist': '#00ffff', // Циановый
-            'Bloodline': '#880000', // ТЕМНО-КРАСНЫЙ
+            'Bloodline': '#880000', // ТВОЙ ТЕМНО-КРАСНЫЙ
             'Player': '#ffffff'     // Белый
         };
 
+        // Берем цвет. Если роли нет в списке — будет белый.
         const currentColor = roleColors[role] || '#ffffff';
-        // Свечение рамки только для ролей
+        
+        // Свечение рамки только для ролей (не для Player)
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
-        // 3. Вывод карточки
         return `
         <div class="match-card">
-            <!-- РАМКА: Теперь точно красится под роль, Bloodline будет Кроваво-Красным -->
+            <!-- ТЕПЕРЬ ТУТ currentColor ПРИВЯЗАН К role. ВСЁ СОВПАДАЕТ -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1;">
                 <!-- НИК: Светится цветом роли при наведении -->
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em;">${p.nickname}</b><br>
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">
+                    ${p.nickname}
+                </b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
 
