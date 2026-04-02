@@ -103,6 +103,6 @@ window.showHistory = () => {
     document.getElementById('btn-history').style.background = 'var(--blood)';
     document.getElementById('btn-rating').style.background = 'var(--card)';
     // Поиск ТЕПЕРЬ ВСЕГДА ВИДЕН
-    document.getElementById('search').placeholder = "Поиск по истории (ник)...";
+    document.getElementById('search').placeholder = "Поиск по истории...";
     loadHistory();
 };
