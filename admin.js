@@ -55,3 +55,40 @@ export async function deleteMatch(matchId) {
 
 window.handleAddMatch = handleAddMatch;
 window.deleteMatch = deleteMatch;
+// ФУНКЦИЯ ПРЕДПРОСМОТРА
+export async function updateMatchPreview() {
+    const winNick = document.getElementById('win-input').value.trim();
+    const lossNick = document.getElementById('loss-input').value.trim();
+    const score = document.getElementById('score-select').value;
+    const previewBox = document.getElementById('match-preview');
+
+    // Если ники не введены — прячем превью
+    if (!winNick || !lossNick || winNick === lossNick) {
+        previewBox.style.display = 'none';
+        return;
+    }
+
+    // 1. Быстро берем данные игроков из базы
+    const { data: winP } = await supabase.from('profiles').select('*').eq('nickname', winNick).single();
+    const { data: lossP } = await supabase.from('profiles').select('*').eq('nickname', lossNick).single();
+
+    if (winP && lossP) {
+        // 2. Считаем как в настоящем матче
+        const { data: all } = await supabase.from('profiles').select('nickname').order('elo', { ascending: false });
+        const pos = all.findIndex(p => p.nickname === winNick) + 1;
+        const res = calculateMatchElo(winP, lossP, score, all.length, pos);
+
+        // 3. Показываем результат
+        previewBox.style.display = 'block';
+        previewBox.innerHTML = `
+            <b>Прогноз:</b><br>
+            ${winNick}: <span style="color:#00ff00">+${res.total}</span> (база ${res.base} + бонус ${res.bonus})<br>
+            ${lossNick}: <span style="color:var(--blood)">-${res.base}</span>
+        `;
+    } else {
+        previewBox.style.display = 'none';
+    }
+}
+
+// Делаем функцию глобальной
+window.updateMatchPreview = updateMatchPreview;
