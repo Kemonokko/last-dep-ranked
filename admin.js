@@ -29,7 +29,8 @@ export async function handleAddMatch() {
         win: winNick, loss: lossNick, win_r: score.split(':')[0], loss_r: score.split(':')[1],
         date: matchDate, "elo+": res.total, "bonus": res.bonus, "elo-": res.base, prev_bonus_date: oldBonusDate
     }]);
-
+await refreshWinrate(winNick);
+await refreshWinrate(lossNick);
     alert(`Записано!\n${winNick}: +${res.total} (+${res.bonus})\n${lossNick}: -${res.base}`);
     location.reload();
 }
