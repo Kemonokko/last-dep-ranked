@@ -80,7 +80,7 @@ console.log("Игрок:", p.nickname, "Его роль:", role, "Цвет:", cu
 
             <div style="text-align: right; min-width: 85px;">
                 <div class="elo-val">${p.elo}</div>
-                <div class="wr-val">${p.winrate || 0}% WR</div>
+                <div class="wr-val">${p.win_rate || 0}% WR</div>
             </div>
         </div>`;
     }).join('');
