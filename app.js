@@ -53,27 +53,24 @@ function renderPlayers(list) {
 // 3. ОКНО ПРОФИЛЯ И ВХОД
 let currentViewedNick = "";
 window.openProfile = async (nick) => {
-    currentViewedNick = nick;
-    document.getElementById('profile-modal').style.display = 'flex';
+    const modal = document.getElementById('profile-modal');
+    modal.style.display = 'flex';
+    
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
+    document.getElementById('prof-elo').innerText = p.elo;
+    document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
+    
+    // Красим роль
     const role = (p.role || 'Player').trim();
     const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
     const badge = document.getElementById('prof-role-badge');
     badge.innerText = role.toUpperCase();
-    badge.style.color = roleColors[role];
-    badge.style.borderColor = roleColors[role];
-
-    if (localStorage.getItem('user_nick') === nick) {
-        document.getElementById('auth-section').style.display = 'none';
-        document.getElementById('user-section').style.display = 'block';
-    } else {
-        document.getElementById('auth-section').style.display = 'block';
-        document.getElementById('user-section').style.display = 'none';
-    }
+    badge.style.color = roleColors[role] || '#fff';
+    badge.style.borderColor = roleColors[role] || '#fff';
 };
 
 window.handleLogin = async () => {
