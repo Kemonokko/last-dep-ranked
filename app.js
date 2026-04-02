@@ -1,6 +1,8 @@
 import { supabase } from './config.js';
 import { getRankByPercentile } from './logic.js';
 
+let allPlayers = []; // Храним всех игроков тут для быстрого поиска
+
 async function loadRating() {
     console.log("Начинаю загрузку игроков...");
     const { data: players, error } = await supabase
@@ -10,19 +12,28 @@ async function loadRating() {
 
     if (error) {
         document.getElementById('rating-list').innerHTML = `<div style="color:red">Ошибка базы: ${error.message}</div>`;
-        console.error(error);
         return;
     }
 
+    allPlayers = players || [];
+    renderPlayers(allPlayers);
+    console.log("Игроки успешно загружены!");
+}
+
+// Функция отрисовки списка
+function renderPlayers(playersList) {
     const container = document.getElementById('rating-list');
-    if (!players || players.length === 0) {
-        container.innerHTML = '<div style="color:white; text-align:center">В базе пока нет игроков...</div>';
+    const total = allPlayers.length; // Ранг считаем от общего числа игроков
+
+    if (playersList.length === 0) {
+        container.innerHTML = '<div style="color:white; text-align:center; padding: 20px;">Игрок не найден...</div>';
         return;
     }
 
-    const total = players.length;
-    container.innerHTML = players.map((p, i) => {
-        const rankName = getRankByPercentile(i + 1, total);
+    container.innerHTML = playersList.map((p) => {
+        // Находим позицию игрока в общем списке для правильного ранга
+        const globalIndex = allPlayers.findIndex(item => item.id === p.id);
+        const rankName = getRankByPercentile(globalIndex + 1, total);
         const roleClass = (p.role || 'player').toLowerCase();
         
         return `
@@ -41,7 +52,15 @@ async function loadRating() {
             </div>
         </div>`;
     }).join('');
-    console.log("Игроки успешно отрисованы!");
 }
+
+// Оживляем поиск: фильтрация при каждом вводе символа
+document.getElementById('search').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filtered = allPlayers.filter(p => 
+        p.nickname.toLowerCase().includes(searchTerm)
+    );
+    renderPlayers(filtered);
+});
 
 loadRating();
