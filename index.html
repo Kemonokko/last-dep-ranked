@@ -4,110 +4,97 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Last Dep Ranked</title>
-<style>
+  <style>
     :root { 
-  --bloodline: #880000; /* ТЕМНО-КРАСНЫЙ (Кровавый) */
-  --founder: #b64dff;
-  --overseer: #00ff00;
-  --archivist: #00ffff;
-}
+      --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
+      --gold: #f0b90b; --blood: #ff0000;
+      /* Цвета Ролей */
+      --founder: #b64dff; --bloodline: #880000; --overseer: #00ff00; --archivist: #00ffff;
+      /* Цвета Рангов */
+      --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
+    }
 
     body { 
       background-color: var(--bg) !important;
-      background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('bg.jpg');
+      background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('bg.jpg');
       background-size: cover; background-position: center; background-attachment: fixed;
       color: var(--text); font-family: sans-serif; margin: 0; padding: 0 10px 100px 10px;
+      display: flex; flex-direction: column; align-items: center; min-height: 100vh;
     }
-  header { 
-  width: 100%; 
-  padding: 10px 20px; 
-  text-align: left; /* Перемещает контейнер влево */
-  box-sizing: border-box;
-}
-h1 { 
-  color: #ff0000 !important; 
-  font-size: 2.3em; 
-  text-transform: capitalize; /* ДЕЛАЕТ ЗАГЛАВНЫМИ ТОЛЬКО ПЕРВЫЕ БУКВЫ */
-  text-shadow: 0 0 15px #ff0000; 
-  margin: 0; 
-  cursor: pointer;
-  display: inline-block; /* Чтобы заголовок не растягивался на всю ширину */
-}
-    .container { width: 95%; max-width: 500px; margin: 0 auto; }
 
-    /* КАРТОЧКА ИГРОКА */
-    .match-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; margin-top: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
-    .avatar-circle { width: 50px; height: 50px; border-radius: 50%; background-size: cover; border: 2.5px solid #fff; flex-shrink: 0; }
-    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.35em; }
-    .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; }
+    header { width: 100%; padding: 15px 25px; text-align: left; box-sizing: border-box; }
+    h1 { color: #ff0000 !important; font-size: 1.8em; text-transform: capitalize; text-shadow: 0 0 15px #ff0000; margin: 0; cursor: pointer; display: inline-block; }
+
+    .container { width: 95%; max-width: 500px; }
+
+    /* КНОПКИ ПЕРЕКЛЮЧЕНИЯ */
+    .nav-btns { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
+    .nav-btn { flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .nav-btn.active { background: var(--blood); border-color: var(--blood); }
+
+    /* КАРТОЧКА ИГРОКА (Исправлено) */
+    .match-card { 
+      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
+      margin-top: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 15px; 
+      width: 100%; box-sizing: border-box;
+    }
+    .avatar-circle { width: 52px; height: 52px; border-radius: 50%; background-size: cover; border: 2.5px solid #fff; flex-shrink: 0; transition: 0.3s; }
+    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
+    .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
 
     /* РАНГИ */
-    .badge { font-size: 0.8em; padding: 4px 10px; border-radius: 7px; border: 2.1px solid; margin-top: 5px; display: inline-block; font-weight: 900; }
-    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; box-shadow: 0 0 15px #fff; }
+    .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
+    @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
+    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
+    .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 15px currentColor; text-shadow: 0 0 5px currentColor; }
     .rank-S\+, .rank-S { color: var(--color-s); border-color: var(--color-s); }
     .rank-A\+, .rank-A { color: var(--color-a); border-color: var(--color-a); }
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
-    .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 12px currentColor; text-shadow: 0 0 5px currentColor; }
 
-    /* АДМИН ПАНЕЛЬ (ВОЗВРАТ ВИДА) */
-    #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-    .admin-input { width: 100%; padding: 10px; border-radius: 8px; background: #000; color: #fff; border: 1px solid var(--border); box-sizing: border-box; font-size: 0.9em; }
-    .admin-btn-submit { background: var(--blood); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; }
-
-  .avatar-circle { 
-  width: 50px; 
-  height: 50px; 
-  border-radius: 50%; 
-  background-size: cover; 
-  border: 2.5px solid #fff; 
-  flex-shrink: 0; 
-  transition: 0.3s;
-}
-
-    /* ХОВЕРЫ НИКОВ */
-.role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-.role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-.role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-.role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
-.role-player:hover { color: #fff !important; text-shadow: none; }
+    /* ХОВЕРЫ НИКОВ ПО РОЛЯМ */
+    .nick-hover { cursor: pointer; transition: 0.2s; color: white; text-decoration: none; font-size: 1.15em; }
+    .role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
+    .role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+    .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
+    .role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
 
     #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
-</style>
+    
+    /* АДМИНКА */
+    #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+    .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; }
+    .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
+  </style>
 </head>
 <body>
   <header><h1>Last Dep Ranked</h1></header>
+  
   <div class="container">
     <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'" 
             style="background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold;">
       ⚙️ АДМИН ПАНЕЛЬ
     </button>
 
-    <div style="display: flex; gap: 10px; margin-bottom: 15px; width: 100%;">
-        <button onclick="showRating()" id="btn-rating" style="flex: 1; background: var(--blood); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">🏆 РЕЙТИНГ</button>
-        <button onclick="showHistory()" id="btn-history" style="flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">📜 ИСТОРИЯ</button>
+    <div class="nav-btns">
+        <button onclick="showRating()" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
+        <button onclick="showHistory()" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
     </div>
 
     <div id="admin-panel" style="display:none;">
-      <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.1em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
-      
-      <div class="admin-grid">
-          <input type="date" id="match-date" class="admin-input">
-          <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
-              <option value="3:0">3:0 (x1.3)</option>
-              <option value="3:1">3:1 (x1.0)</option>
-              <option value="3:2">3:2 (x0.7)</option>
-          </select>
-          <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Победитель" oninput="window.updateMatchPreview()">
-          <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Проигравший" oninput="input="window.updateMatchPreview()">
-      </div>
-
+      <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
+      <input type="date" id="match-date" class="admin-input">
+      <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview()">
+      <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview()">
       <datalist id="players-list"></datalist>
-      <div id="match-preview" style="color:var(--gold); font-size:0.8em; text-align:center; margin-bottom:10px; display:none; background:rgba(240,185,11,0.1); padding:10px; border-radius:10px;"></div>
+      <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
+          <option value="3:0">Счёт 3:0 (x1.3)</option>
+          <option value="3:1">Счёт 3:1 (x1.0)</option>
+          <option value="3:2">Счёт 3:2 (x0.7)</option>
+      </select>
+      <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
       <button class="admin-btn-submit" onclick="handleAddMatch()">ЗАПИСАТЬ В БАЗУ</button>
     </div>
-
 
     <input type="text" id="search" placeholder="Поиск игрока...">
     <div id="rating-list">Загрузка...</div>
