@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh'
+import { createClient } from 'https://jsdelivr.net'
 
 // Твой личный адрес базы (НЕ МЕНЯЙ ЕГО!)
 const supabaseUrl = 'https://lscxyfxnbuwxbocwsvfo.supabase.co'
