@@ -34,40 +34,55 @@ async function loadRating() {
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
-    const roleColors = { 
-        'Founder': '#b64dff', 
-        'Overseer': '#00ff00', 
-        'Archivist': '#00ffff', 
-        'Bloodline': '#ff4d4d', 
-        'Player': '#ffffff' 
-    };
-
     container.innerHTML = list.map((p, i) => {
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
         
-        let displayRole = p.role || 'Player';
-        const hasVip = p.secondary_role === 'Bloodline';
-        if (displayRole === 'Player' && hasVip) displayRole = 'Bloodline';
+        // Роль и вторичная роль для логики
+        const role = p.role || 'Player';
+        const secondary = p.secondary_role || 'None';
+        
+        // Определяем "Визуальную роль" (приоритет рабочей роли над VIP)
+        let visualRole = role;
+        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
 
-        const currentColor = roleColors[displayRole] || '#ffffff';
+        // Рамка авы только для Founder
+        const avatarBorder = role === 'Founder' ? 'var(--founder)' : '#fff';
+        const avatarGlow = role === 'Founder' ? '0 0 10px var(--founder)' : 'none';
+
+        // Цвета для плашек ролей
+        const roleColors = { 'Founder': 'var(--founder)', 'Bloodline': 'var(--bloodline)', 'Overseer': 'var(--overseer)', 'Archivist': 'var(--archivist)' };
+        const currentColor = roleColors[visualRole];
 
         return `
         <div class="match-card">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: 0 0 8px ${currentColor}55;"></div>
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${avatarBorder}; box-shadow: ${avatarGlow};"></div>
             
             <div style="flex-grow: 1;">
-                <b class="nick-hover role-${displayRole.toLowerCase()}" style="font-size: 1.1em; color: white;">${p.nickname}</b>
-                <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px;">
-                    <div class="badge" style="color: ${currentColor}; border-color: ${currentColor}; font-size: 0.6em; padding: 2px 6px;">${displayRole.toUpperCase()}</div>
-                    ${hasVip && displayRole !== 'Bloodline' ? `<div class="badge" style="color: #555; border-color: #555; font-size: 0.5em; padding: 1px 4px;">BLOODLINE</div>` : ''}
+                <!-- Ник с классом роли для цветного свечения -->
+                <b class="nick-hover role-${visualRole.toLowerCase()}" style="font-size: 1.2em;">
+                    ${p.nickname}
+                </b><br>
+                
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <!-- Плашка роли показывается только если это НЕ обычный игрок -->
+                    ${currentColor ? `
+                        <div class="badge" style="color: ${currentColor}; border-color: ${currentColor}; font-size: 0.6em; padding: 2px 6px;">
+                            ${visualRole.toUpperCase()}
+                        </div>
+                    ` : ''}
+
+                    <!-- Серая пометка BLOODLINE, если есть VIP и это не основная роль -->
+                    ${secondary === 'Bloodline' && visualRole !== 'Bloodline' ? 
+                        `<div class="badge" style="color: #555; border-color: #555; font-size: 0.5em; padding: 2px 4px;">BLOODLINE</div>` : ''}
                 </div>
-                <!-- ПЛАШКА РАНГА -->
+
+                <!-- Ранг (крупный и яркий) -->
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
 
             <div style="text-align: right;">
                 <div class="elo-val">${p.elo}</div>
-                <div style="font-size: 0.6em; color: #848e9c;">POINTS</div>
+                <div style="font-size: 0.6em; color: #848e9c; font-weight: bold;">POINTS</div>
             </div>
         </div>`;
     }).join('');
