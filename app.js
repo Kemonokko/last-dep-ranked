@@ -37,18 +37,14 @@ function renderPlayers(list) {
     container.innerHTML = list.map((p, i) => {
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
         
+        // 1. ТАБЛИЦА ЦВЕТОВ (Жестко привязано к роли)
         const role = p.role || 'Player';
-        const secondary = p.secondary_role || 'None';
-
-        // ПРИОРИТЕТ РОЛИ ДЛЯ ЦВЕТА (Рамка + Ховер)
-        let visualRole = role;
-        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
-
         const roleColors = { 
-            'Founder': '#b64dff', 
-            'Overseer': '#00ff00', 
-            'Archivist': '#00ffff', 
-            'Bloodline': '#880000' // ТОТ САМЫЙ ТЕМНО-КРАСНЫЙ
+            'Founder': '#b64dff',   // Фиолетовый
+            'Overseer': '#00ff00',  // Салатовый
+            'Archivist': '#00ffff', // Циановый
+            'Bloodline': '#880000', // ТЕМНО-КРАСНЫЙ (Кровавый)
+            'Player': '#ffffff'     // Белый
         };
 
         const currentColor = roleColors[visualRole] || '#ffffff';
