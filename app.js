@@ -40,6 +40,12 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
+    container.innerHTML = list.map((p) => {
+        // 1. Позиция и ранг
+        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+        const rank = getRankByPercentile(globalPos, allPlayers.length);
+        
+        // 2. Роль (ОБЯЗАТЕЛЬНО с .trim() для Bloodline)
         const role = (p.role || 'Player').toString().trim();
 
         const roleColors = { 
@@ -53,13 +59,12 @@ function renderPlayers(list) {
         const currentColor = roleColors[role] || '#ffffff';
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
-        // Лог для проверки
-        console.log("Игрок:", p.nickname, "Роль:", role, "Цвет:", currentColor);
-
+        // 3. Рисуем карточку (ТУТ МЫ УБРАЛИ ЛИШНИЕ СКОБКИ)
         return `
         <div class="match-card">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
+            
             <div style="flex-grow: 1;">
-                <!-- НИК: Светится цветом роли при наведении -->
                 <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">
                     ${p.nickname}
                 </b><br>
