@@ -41,22 +41,18 @@ function renderPlayers(list) {
     if (!container) return;
 
     container.innerHTML = list.map((p) => {
-        // 1. Находим реальную позицию игрока в общем топе (для ранга)
-        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-        const rank = getRankByPercentile(globalPos, allPlayers.length);
-        
-        // 2. Берем роль из базы и приводим к нужному формату (на случай опечаток)
-        const rawRole = (p.role || 'Player').toString().trim();
-        // Делаем первую букву большой, остальные маленькие (Bloodline, Founder и т.д.)
-        const role = rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
-        
-        // 3. Таблица цветов
+        const role = (p.role || 'Player').toString().trim();
+
         const roleColors = { 
-            'Founder': '#b64dff',   // Фиолетовый
-            'Overseer': '#00ff00',  // Салатовый
-            'Archivist': '#00ffff', // Циановый
-            'Bloodline': '#880000', // ТВОЙ ТЕМНО-КРАСНЫЙ
-            'Player': '#ffffff'     // Белый
+            'Founder': '#b64dff', 
+            'Overseer': '#00ff00', 
+            'Archivist': '#00ffff', 
+            'Bloodline': '#880000',
+            'Player': '#ffffff'
+        };
+
+        const currentColor = roleColors[role] || '#ffffff';
+        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
         };
 
         // Берем цвет. Если роли нет в списке — будет белый.
