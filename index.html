@@ -5,9 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Рейтинговая Система</title>
   <style>
-    :root { 
-      --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
-      --gold: #f0b90b; --blood: #cc0000;
+:root {
+  /* Цвета Рангов */
+  --color-s: #b64dff;   /* Фиолетовый S */
+  --color-a: #ff4d4d;   /* Красный A */
+  --color-b: #0088ff;   /* Синий B */
+  --color-c: #00ff00;   /* Зеленый C */
+  --dragon-bg: #000000;
+}
+
+/* Анимация "Белое дыхание" для DRAGON */
+@keyframes dragon-white-glow {
+  0% { box-shadow: 0 0 10px #ffffff, inset 0 0 5px #ffffff; }
+  50% { box-shadow: 0 0 25px #ffffff, inset 0 0 10px #ffffff; }
+  100% { box-shadow: 0 0 10px #ffffff, inset 0 0 5px #ffffff; }
+}
+
+.rank-DRAGON { 
+  background: var(--dragon-bg) !important; 
+  color: #ffffff !important; 
+  border: 1.5px solid #ffffff !important; 
+  animation: dragon-white-glow 3s infinite ease-in-out;
+  font-weight: 900;
+  text-transform: capitalize; /* Сделает "Dragon" */
+}
+
+/* Плюсовые ранги (Яркий неоновый свет) */
+.rank-S\+ { color: var(--color-s); border-color: var(--color-s); box-shadow: 0 0 15px var(--color-s); text-shadow: 0 0 5px var(--color-s); }
+.rank-A\+ { color: var(--color-a); border-color: var(--color-a); box-shadow: 0 0 15px var(--color-a); text-shadow: 0 0 5px var(--color-a); }
+.rank-B\+ { color: var(--color-b); border-color: var(--color-b); box-shadow: 0 0 15px var(--color-b); text-shadow: 0 0 5px var(--color-b); }
+
+/* Обычные ранги (Спокойные цвета) */
+.rank-S { color: var(--color-s); border-color: var(--color-s); opacity: 0.7; }
+.rank-A { color: var(--color-a); border-color: var(--color-a); opacity: 0.7; }
+.rank-B { color: var(--color-b); border-color: var(--color-b); opacity: 0.7; }
+.rank-C { color: var(--color-c); border-color: var(--color-c); opacity: 0.8; }
     }
     body { 
       background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)); 
