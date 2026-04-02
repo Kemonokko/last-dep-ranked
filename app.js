@@ -89,7 +89,19 @@ function renderPlayers(list) {
 
 document.getElementById('search').addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase();
-    renderPlayers(allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
+    const isHistory = document.getElementById('btn-history').style.background === 'var(--blood)';
+
+    if (isHistory) {
+        // Если мы в истории — фильтруем карточки по нику победителя или проигравшего
+        const cards = document.querySelectorAll('#rating-list .match-card');
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(val) ? 'flex' : 'none';
+        });
+    } else {
+        // Если мы в рейтинге — обычная фильтрация массива
+        renderPlayers(allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
+    }
 });
 
 loadRating();
