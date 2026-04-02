@@ -49,7 +49,8 @@ export async function deleteMatch(matchId) {
     await supabase.from('profiles').update({ elo: lossP.elo + match["elo-"] }).eq('nickname', match.loss);
 
     await supabase.from('match_history').delete().eq('id', matchId);
-
+await refreshWinrate(match.win);
+await refreshWinrate(match.loss);
     alert("Матч аннулирован!");
     location.reload();
 }
