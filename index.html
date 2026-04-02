@@ -53,8 +53,17 @@
     <!-- Блок Админки -->
     <div id="admin-panel" style="display:none;">
       <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
-      <input type="text" id="win-input" class="admin-input" placeholder="Ник победителя">
-      <input type="text" id="loss-input" class="admin-input" placeholder="Ник проигравшего">
+      
+      <!-- Новое поле выбора даты -->
+      <input type="date" id="match-date" class="admin-input">
+
+      <!-- Поля ников с поддержкой автозаполнения -->
+      <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя">
+      <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего">
+      
+      <!-- Сюда подставим ники из базы через JS -->
+      <datalist id="players-list"></datalist>
+
       <select id="score-select" class="admin-input">
           <option value="3:0">Счёт 3:0 (x1.3)</option>
           <option value="3:1">Счёт 3:1 (x1.0)</option>
