@@ -1,7 +1,7 @@
 import { supabase } from './config.js';
 import { getRankByPercentile } from './logic.js';
 
-let allPlayers = []; // Храним всех игроков тут для быстрого поиска
+let allPlayers = []; 
 
 async function loadRating() {
     console.log("Начинаю загрузку игроков...");
@@ -20,10 +20,9 @@ async function loadRating() {
     console.log("Игроки успешно загружены!");
 }
 
-// Функция отрисовки списка
 function renderPlayers(playersList) {
     const container = document.getElementById('rating-list');
-    const total = allPlayers.length; // Ранг считаем от общего числа игроков
+    const total = allPlayers.length;
 
     if (playersList.length === 0) {
         container.innerHTML = '<div style="color:white; text-align:center; padding: 20px;">Игрок не найден...</div>';
@@ -31,7 +30,6 @@ function renderPlayers(playersList) {
     }
 
     container.innerHTML = playersList.map((p) => {
-        // Находим позицию игрока в общем списке для правильного ранга
         const globalIndex = allPlayers.findIndex(item => item.id === p.id);
         const rankName = getRankByPercentile(globalIndex + 1, total);
         const roleClass = (p.role || 'player').toLowerCase();
@@ -54,7 +52,6 @@ function renderPlayers(playersList) {
     }).join('');
 }
 
-// Оживляем поиск: фильтрация при каждом вводе символа
 document.getElementById('search').addEventListener('input', (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const filtered = allPlayers.filter(p => 
