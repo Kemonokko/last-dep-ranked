@@ -49,7 +49,6 @@ export async function handleAddMatch() {
         alert("Ошибка записи в историю!");
     } else {
         // ТО САМОЕ ПОДРОБНОЕ СООБЩЕНИЕ
-        alert(`Записано!\n${winNick}: +${res.total} (из них ${res.bonus} бонус, ${res.base} за матч)\n${lossNick}: -${res.base}`);
-        location.reload();
+       alert(`Записано!\n${winNick}: +${res.total} (+${res.bonus})\n${lossNick}: -${res.base}`);
     }
 }
