@@ -40,7 +40,6 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
-    container.innerHTML = list.map((p) => {
         const role = (p.role || 'Player').toString().trim();
 
         const roleColors = { 
@@ -53,13 +52,9 @@ function renderPlayers(list) {
 
         const currentColor = roleColors[role] || '#ffffff';
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
-        };
 
-        // Берем цвет. Если роли нет в списке — будет белый.
-        const currentColor = roleColors[role] || '#ffffff';
-        
-        // Свечение рамки только для ролей (не для Player)
-        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+        // Лог для проверки (можно потом убрать)
+        console.log("Игрок:", p.nickname, "Роль:", role, "Цвет:", currentColor);
 console.log("Игрок:", p.nickname, "Его роль:", role, "Цвет:", currentColor);
         return `
         <div class="match-card">
