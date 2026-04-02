@@ -42,7 +42,7 @@ function renderPlayers(list) {
         const rank = getRankByPercentile(globalPos, allPlayers.length);
         
         // 2. Берем роль из базы и приводим к нужному формату (на случай опечаток)
-        const rawRole = p.role || 'Player';
+        const rawRole = (p.role || 'Player').toString().trim();
         // Делаем первую букву большой, остальные маленькие (Bloodline, Founder и т.д.)
         const role = rawRole.charAt(0).toUpperCase() + rawRole.slice(1).toLowerCase();
         
