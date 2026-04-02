@@ -52,12 +52,14 @@
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
-.role-founder:hover { color: #b64dff !important; text-shadow: 0 0 15px #b64dff; }
-.role-bloodline:hover { color: #880000 !important; text-shadow: 0 0 15px #880000; }
-.role-overseer:hover { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00; }
-.role-archivist:hover { color: #00ffff !important; text-shadow: 0 0 15px #00ffff; }
-.role-player:hover { color: #fff !important; text-shadow: none; }
+/* Теперь свечение ника срабатывает при наведении на ВСЮ карточку */
+.match-card:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
+.match-card:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+.match-card:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
+.match-card:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
 
+/* Плавный переход для ника */
+.nick-hover { transition: 0.3s; pointer-events: none; }
 /* Карточка и Аватар */
 .match-card { 
     background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
