@@ -34,29 +34,37 @@ async function loadRating() {
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
-    container.innerHTML = list.map((p, i) => {
-        const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
+    if (!container) return;
+
+    container.innerHTML = list.map((p) => {
+        // 1. Считаем ранг по глобальной позиции (из массива allPlayers)
+        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+        const rank = getRankByPercentile(globalPos, allPlayers.length);
         
-        // 1. ТАБЛИЦА ЦВЕТОВ (Жестко привязано к роли)
+        // 2. Логика Ролей (Берем напрямую из базы)
         const role = p.role || 'Player';
+        
         const roleColors = { 
             'Founder': '#b64dff',   // Фиолетовый
             'Overseer': '#00ff00',  // Салатовый
             'Archivist': '#00ffff', // Циановый
-            'Bloodline': '#880000', // ТЕМНО-КРАСНЫЙ (Кровавый)
+            'Bloodline': '#880000', // ТЕМНО-КРАСНЫЙ
             'Player': '#ffffff'     // Белый
         };
 
-        const currentColor = roleColors[visualRole] || '#ffffff';
-        const hasGlow = visualRole !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+        const currentColor = roleColors[role] || '#ffffff';
+        // Свечение рамки только для ролей
+        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
+        // 3. Вывод карточки
         return `
         <div class="match-card">
-            <!-- ТЕПЕРЬ ТУТ ЦВЕТНАЯ РАМКА У ВСЕХ РОЛЕЙ (ВКЛЮЧАЯ BLOODLINE) -->
+            <!-- РАМКА: Теперь точно красится под роль, Bloodline будет Кроваво-Красным -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1;">
-                <b class="nick-hover role-${visualRole.toLowerCase()}">${p.nickname}</b><br>
+                <!-- НИК: Светится цветом роли при наведении -->
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em;">${p.nickname}</b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
 
@@ -67,7 +75,6 @@ function renderPlayers(list) {
         </div>`;
     }).join('');
 }
-
 document.getElementById('search').addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase();
     const isHistory = document.getElementById('btn-history').style.background === 'var(--blood)';
