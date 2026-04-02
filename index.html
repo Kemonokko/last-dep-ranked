@@ -6,11 +6,11 @@
   <title>Last Dep Ranked</title>
 <style>
     :root { 
-      --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
-      --gold: #f0b90b; --blood: #ff0000; /* Ядреный красный */
-      --founder: #b64dff; --bloodline: #ff4d4d; --overseer: #00ff00; --archivist: #00ffff;
-      --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
-    }
+  --bloodline: #880000; /* ТЕМНО-КРАСНЫЙ (Кровавый) */
+  --founder: #b64dff;
+  --overseer: #00ff00;
+  --archivist: #00ffff;
+}
 
     body { 
       background-color: var(--bg) !important;
@@ -56,12 +56,22 @@ h1 {
     .admin-input { width: 100%; padding: 10px; border-radius: 8px; background: #000; color: #fff; border: 1px solid var(--border); box-sizing: border-box; font-size: 0.9em; }
     .admin-btn-submit { background: var(--blood); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; }
 
+  .avatar-circle { 
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  background-size: cover; 
+  border: 2.5px solid #fff; 
+  flex-shrink: 0; 
+  transition: 0.3s;
+}
+
     /* ХОВЕРЫ НИКОВ */
-    .nick-hover:hover { cursor: pointer; transition: 0.2s; }
-    .role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-    .role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-    .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-    .role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
+.role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
+.role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
+.role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
+.role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
+.role-player:hover { color: #fff !important; text-shadow: none; }
 
     #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
 </style>
