@@ -69,19 +69,24 @@
     </div>
 
     <div id="admin-panel" style="display:none;">
-      <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
-      <input type="date" id="match-date" class="admin-input">
-      <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview()">
-      <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview()">
+      <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.1em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
+      
+      <div class="admin-grid">
+          <input type="date" id="match-date" class="admin-input">
+          <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
+              <option value="3:0">3:0 (x1.3)</option>
+              <option value="3:1">3:1 (x1.0)</option>
+              <option value="3:2">3:2 (x0.7)</option>
+          </select>
+          <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Победитель" oninput="window.updateMatchPreview()">
+          <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Проигравший" oninput="input="window.updateMatchPreview()">
+      </div>
+
       <datalist id="players-list"></datalist>
-      <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
-          <option value="3:0">Счёт 3:0 (x1.3)</option>
-          <option value="3:1">Счёт 3:1 (x1.0)</option>
-          <option value="3:2">Счёт 3:2 (x0.7)</option>
-      </select>
-      <div id="match-preview" style="color: var(--gold); font-size: 0.85em; text-align: center; margin-bottom: 10px; background: rgba(240,185,11,0.1); padding: 8px; border-radius: 8px; display: none;"></div>
+      <div id="match-preview" style="color:var(--gold); font-size:0.8em; text-align:center; margin-bottom:10px; display:none; background:rgba(240,185,11,0.1); padding:10px; border-radius:10px;"></div>
       <button class="admin-btn-submit" onclick="handleAddMatch()">ЗАПИСАТЬ В БАЗУ</button>
     </div>
+
 
     <input type="text" id="search" placeholder="Поиск игрока...">
     <div id="rating-list">Загрузка...</div>
