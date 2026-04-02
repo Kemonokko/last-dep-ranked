@@ -34,7 +34,10 @@
     /* КНОПКИ ПЕРЕКЛЮЧЕНИЯ */
     .nav-btns { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
     .nav-btn { flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .nav-btn.active { background: var(--blood); border-color: var(--blood); }
+    .nav-btn.active {
+    background: var(--blood) !important;
+    border-color: var(--blood) !important;
+}
 
     /* КАРТОЧКА ИГРОКА (Чистый код без дублей) */
     .match-card { 
