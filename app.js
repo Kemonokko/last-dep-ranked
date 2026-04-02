@@ -60,7 +60,7 @@ function renderPlayers(list) {
         
         // Свечение рамки только для ролей (не для Player)
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
-
+console.log("Игрок:", p.nickname, "Его роль:", role, "Цвет:", currentColor);
         return `
         <div class="match-card">
             <!-- ТЕПЕРЬ ТУТ currentColor ПРИВЯЗАН К role. ВСЁ СОВПАДАЕТ -->
