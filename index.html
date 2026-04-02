@@ -7,21 +7,11 @@
 <style>
     :root { 
       --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
-      --gold: #f0b90b; --blood: #cc0000;
-      /* Цвета Рангов */
-      --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
-      /* Цвета Ролей */
+      --gold: #f0b90b; --blood: #ff0000; /* Ядреный красный */
       --founder: #b64dff; --bloodline: #ff4d4d; --overseer: #00ff00; --archivist: #00ffff;
+      --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
     }
-    h1 { 
-      color: #ff0000 !important; 
-      font-size: 2.2em; 
-      text-transform: uppercase; 
-      letter-spacing: 2px;
-      text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
-      margin: 10px 0;
-      cursor: pointer;
-    }
+
     body { 
       background-color: var(--bg) !important;
       background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('bg.jpg');
@@ -29,59 +19,40 @@
       color: var(--text); font-family: sans-serif; margin: 0; padding: 0 10px 100px 10px;
     }
 
+    /* ЯДРЕНЫЙ КРАСНЫЙ ЗАГОЛОВОК */
+    h1 { color: #ff0000 !important; font-size: 2.2em; text-transform: uppercase; text-shadow: 0 0 20px #ff0000; margin: 15px 0; cursor: pointer; text-align: center; }
+
     .container { width: 95%; max-width: 500px; margin: 0 auto; }
 
     /* КАРТОЧКА ИГРОКА */
-    .match-card { 
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
-    }
-
-    .avatar-circle { 
-      width: 52px; height: 52px; border-radius: 50%; background-size: cover; 
-      border: 2.5px solid #fff; flex-shrink: 0; transition: 0.3s;
-    }
-
-    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
-    .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
+    .match-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; margin-top: 10px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
+    .avatar-circle { width: 50px; height: 50px; border-radius: 50%; background-size: cover; border: 2.5px solid #fff; flex-shrink: 0; }
+    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.35em; }
+    .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; }
 
     /* РАНГИ */
-    .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
-    
-    @keyframes dragon-glow {
-      0% { box-shadow: 0 0 10px #fff; }
-      50% { box-shadow: 0 0 25px #fff; }
-      100% { box-shadow: 0 0 10px #fff; }
-    }
-    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-white-glow 3s infinite ease-in-out; }
-
-    /* Сочные ранги */
-    .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 15px currentColor; text-shadow: 0 0 5px currentColor; }
+    .badge { font-size: 0.8em; padding: 4px 10px; border-radius: 7px; border: 2.1px solid; margin-top: 5px; display: inline-block; font-weight: 900; }
+    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; box-shadow: 0 0 15px #fff; }
     .rank-S\+, .rank-S { color: var(--color-s); border-color: var(--color-s); }
     .rank-A\+, .rank-A { color: var(--color-a); border-color: var(--color-a); }
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
+    .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 12px currentColor; text-shadow: 0 0 5px currentColor; }
 
-    /* ХОВЕРЫ НИКОВ ПО РОЛЯМ */
-    .nick-hover { cursor: pointer; transition: 0.2s; color: white; text-decoration: none; font-size: 1.15em; }
+    /* АДМИН ПАНЕЛЬ (ВОЗВРАТ ВИДА) */
+    #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .admin-input { width: 100%; padding: 10px; border-radius: 8px; background: #000; color: #fff; border: 1px solid var(--border); box-sizing: border-box; font-size: 0.9em; }
+    .admin-btn-submit { background: var(--blood); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 900; cursor: pointer; width: 100%; }
+
+    /* ХОВЕРЫ НИКОВ */
+    .nick-hover:hover { cursor: pointer; transition: 0.2s; }
     .role-founder:hover { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
     .role-bloodline:hover { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
     .role-overseer:hover { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
     .role-archivist:hover { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
-    .role-player:hover { color: #fff !important; text-shadow: none; }
-      #search { 
-      width: 100%; 
-      padding: 14px; 
-      border-radius: 14px; 
-      border: 1.5px solid var(--border); 
-      background: var(--card); 
-      color: white; 
-      margin-bottom: 20px; 
-      box-sizing: border-box; /* Чтобы не вылезала за края */
-      outline: none;
-      transition: 0.3s;
-    }
-    #search:focus { border-color: #ff0000; box-shadow: 0 0 10px rgba(255,0,0,0.3); }
+
+    #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; }
 </style>
 </head>
 <body>
