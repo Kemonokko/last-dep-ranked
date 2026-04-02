@@ -37,13 +37,14 @@ function renderPlayers(list) {
     container.innerHTML = list.map((p, i) => {
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
         
-        // Определяем визуальную роль (приоритет рабочей над VIP)
         const role = p.role || 'Player';
         const secondary = p.secondary_role || 'None';
+
+        // ОПРЕДЕЛЯЕМ ГЛАВНУЮ РОЛЬ ДЛЯ ЦВЕТА
         let visualRole = role;
         if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
 
-        // Цвета для рамок и ховеров
+        // ЦВЕТОВАЯ СХЕМА (Рамки + Ховеры)
         const roleColors = { 
             'Founder': '#b64dff', 
             'Overseer': '#00ff00', 
@@ -51,16 +52,15 @@ function renderPlayers(list) {
             'Bloodline': '#ff4d4d' 
         };
         
-        // Если роль есть в списке — берем её цвет, иначе белый (для обычных)
-        const currentColor = roleColors[visualRole] || '#fff';
-        const hasGlow = visualRole !== 'Player' ? `0 0 10px ${currentColor}55` : 'none';
+        // Если роль есть в списке — берем её цвет, если нет (Player) — белый
+        const currentColor = roleColors[visualRole] || '#ffffff';
+        const hasGlow = visualRole !== 'Player' ? `0 0 10px ${currentColor}66` : 'none';
 
-        // Винрейт
         const wr = p.winrate ? `${p.winrate}% WR` : '0% WR';
 
         return `
         <div class="match-card">
-            <!-- ЦВЕТНАЯ РАМКА У ВСЕХ РОЛЕЙ, БЕЛАЯ ТОЛЬКО У PLAYER -->
+            <!-- РАМКА: Цветная у всех ролей, белая только у обычных -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
