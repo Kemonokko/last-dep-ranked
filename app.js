@@ -42,3 +42,5 @@ document.getElementById('search').addEventListener('input', (e) => {
 });
 
 loadRating();
+import { handleAddMatch } from './admin.js';
+window.handleAddMatch = handleAddMatch;
