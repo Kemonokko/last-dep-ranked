@@ -115,3 +115,69 @@ if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
 
 window.handleAddMatch = handleAddMatch;
 loadRating();
+let currentViewedNick = ""; // Кого сейчас смотрим
+
+// 1. Открытие окна
+window.openProfile = async (nick) => {
+    currentViewedNick = nick;
+    const modal = document.getElementById('profile-modal');
+    modal.style.display = 'flex';
+    
+    // Подгружаем данные чела из базы
+    const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
+    if (!p) return;
+
+    document.getElementById('prof-nick').innerText = p.nickname;
+    document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
+    
+    // Красим плашку роли в окне
+    const role = (p.role || 'Player').trim();
+    const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+    const badge = document.getElementById('prof-role-badge');
+    badge.innerText = role.toUpperCase();
+    badge.style.color = roleColors[role] || '#fff';
+    badge.style.borderColor = roleColors[role] || '#fff';
+
+    // Проверяем: это ТЫ?
+    if (localStorage.getItem('user_nick') === nick) {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('user-section').style.display = 'block';
+    } else {
+        document.getElementById('auth-section').style.display = 'block';
+        document.getElementById('user-section').style.display = 'none';
+    }
+};
+
+// 2. Вход (Проверка почты)
+window.handleLogin = async () => {
+    const inputEmail = document.getElementById('auth-email').value.trim();
+    if (!inputEmail) return alert("Пустоту вводишь? Гений.");
+
+    const { data: user } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('nickname', currentViewedNick)
+        .eq('email', inputEmail)
+        .single();
+
+    if (user) {
+        localStorage.setItem('user_nick', user.nickname);
+        localStorage.setItem('user_role', user.role);
+        alert(`Добро пожаловать, ${user.nickname}. Теперь ты официально в системе.`);
+        location.reload();
+    } else {
+        // Твое издевательское сообщение
+        alert("Ха! Пытаешься зайти на чужой аккаунт? У тебя iq как у табуретки, почта не та. Брысь отсюда!");
+    }
+};
+
+// 3. Выход
+window.handleLogout = () => {
+    localStorage.clear();
+    location.reload();
+};
+
+// Закрытие на крестик
+document.getElementById('close-profile').onclick = () => {
+    document.getElementById('profile-modal').style.display = 'none';
+};
