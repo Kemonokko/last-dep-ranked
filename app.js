@@ -16,6 +16,20 @@ async function loadRating() {
 
     allPlayers = players || [];
     renderPlayers(allPlayers);
+
+    // --- ДОБАВЛЕНО ДЛЯ АДМИНКИ ---
+    // 1. Заполняем список подсказок никами
+    const dataList = document.getElementById('players-list');
+    if (dataList) {
+        dataList.innerHTML = allPlayers.map(p => `<option value="${p.nickname}">`).join('');
+    }
+
+    // 2. Ставим сегодняшнюю дату в календарь по умолчанию
+    const dateInput = document.getElementById('match-date');
+    if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    // ----------------------------
 }
 
 function renderPlayers(list) {
@@ -28,10 +42,13 @@ function renderPlayers(list) {
         <div class="match-card">
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}')"></div>
             <div style="flex-grow: 1;">
-                <b style="color: white;">${p.nickname}</b><br>
+                <b style="font-size: 1.1em; color: white;">${p.nickname}</b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
-            <div class="elo-val">${p.elo}</div>
+            <div style="text-align: right;">
+                <div class="elo-val">${p.elo}</div>
+                <div style="font-size: 0.6em; color: #848e9c;">POINTS</div>
+            </div>
         </div>`;
     }).join('');
 }
@@ -42,5 +59,6 @@ document.getElementById('search').addEventListener('input', (e) => {
 });
 
 loadRating();
+
 import { handleAddMatch } from './admin.js';
 window.handleAddMatch = handleAddMatch;
