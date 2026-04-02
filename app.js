@@ -31,30 +31,37 @@ async function loadRating() {
     }
     // ----------------------------
 }
+
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     container.innerHTML = list.map((p, i) => {
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
+        
         const role = p.role || 'Player';
         const secondary = p.secondary_role || 'None';
 
-        // 1. ОПРЕДЕЛЯЕМ ЦВЕТ РОЛИ
+        // 1. ПРИОРИТЕТ ЦВЕТА
+        // Если есть Bloodline (в любой колонке) и нет "рабочей" роли — он красный.
+        // Если есть рабочая роль (Founder/Overseer) — он в её цвете.
+        let visualRole = role;
+        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
+        
+        // Но если он, например, Overseer и при этом Bloodline — рамка будет зеленая (статус выше),
+        // но права на аву останутся. Если хочешь, чтобы BLOODLINE всегда перекрывал всё красным - скажи.
+
         const roleColors = { 
             'Founder': '#b64dff', 
             'Overseer': '#00ff00', 
             'Archivist': '#00ffff', 
-            'Bloodline': '#ff4d4d' 
+            'Bloodline': '#880000' // ТОТ САМЫЙ ТЕМНО-КРАСНЫЙ
         };
 
-        let visualRole = role;
-        if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
-
-        // 2. ЦВЕТ ОБВОДКИ (Цветная у всех ролей, белая только у Player)
         const currentColor = roleColors[visualRole] || '#ffffff';
         const hasGlow = visualRole !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
         return `
         <div class="match-card">
+            <!-- ТЕПЕРЬ РАМКА БУДЕТ КРАСНОЙ У ВСЕХ BLOODLINE -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1;">
