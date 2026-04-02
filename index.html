@@ -20,8 +20,9 @@ body {
 }
 
 .match-card { 
-  background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-  margin-top: 12px; padding: 18px; display: flex; align-items: center; gap: 15px; 
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; 
+  margin-top: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 15px; 
+  min-height: 80px;
 }
 
 .avatar-circle { 
@@ -34,10 +35,11 @@ body {
   transition: 0.3s;
 }
 .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; }
+.wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
 
 /* РАНГИ */
-.badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
-
+.badge { font-size: 0.9em; padding: 4px 12px; border-radius: 8px; border: 2px solid; margin-top: 6px; display: inline-block; font-weight: 900; }
+    
 @keyframes dragon-glow {
   0% { box-shadow: 0 0 10px #fff; }
   50% { box-shadow: 0 0 25px #fff; }
