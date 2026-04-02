@@ -40,14 +40,9 @@ function renderPlayers(list) {
         const role = p.role || 'Player';
         const secondary = p.secondary_role || 'None';
 
-        // 1. ПРИОРИТЕТ ЦВЕТА
-        // Если есть Bloodline (в любой колонке) и нет "рабочей" роли — он красный.
-        // Если есть рабочая роль (Founder/Overseer) — он в её цвете.
+        // ПРИОРИТЕТ РОЛИ ДЛЯ ЦВЕТА (Рамка + Ховер)
         let visualRole = role;
         if (role === 'Player' && secondary === 'Bloodline') visualRole = 'Bloodline';
-        
-        // Но если он, например, Overseer и при этом Bloodline — рамка будет зеленая (статус выше),
-        // но права на аву останутся. Если хочешь, чтобы BLOODLINE всегда перекрывал всё красным - скажи.
 
         const roleColors = { 
             'Founder': '#b64dff', 
@@ -61,15 +56,15 @@ function renderPlayers(list) {
 
         return `
         <div class="match-card">
-            <!-- ТЕПЕРЬ РАМКА БУДЕТ КРАСНОЙ У ВСЕХ BLOODLINE -->
+            <!-- ТЕПЕРЬ ТУТ ЦВЕТНАЯ РАМКА У ВСЕХ РОЛЕЙ (ВКЛЮЧАЯ BLOODLINE) -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             
             <div style="flex-grow: 1;">
-                <b class="nick-hover role-${visualRole.toLowerCase()}" style="font-size: 1.15em;">${p.nickname}</b><br>
+                <b class="nick-hover role-${visualRole.toLowerCase()}">${p.nickname}</b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
 
-            <div style="text-align: right; min-width: 80px;">
+            <div style="text-align: right; min-width: 85px;">
                 <div class="elo-val">${p.elo}</div>
                 <div class="wr-val">${p.winrate || 0}% WR</div>
             </div>
