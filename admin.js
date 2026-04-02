@@ -92,3 +92,37 @@ export async function updateMatchPreview() {
 
 // Делаем функцию глобальной
 window.updateMatchPreview = updateMatchPreview;
+// ФУНКЦИЯ ПЕРЕСЧЕТА ВИНРЕЙТА
+async function refreshWinrate(nickname) {
+    // 1. Берем все матчи этого игрока
+    const { data: matches } = await supabase
+        .from('match_history')
+        .select('win, loss, win_r, loss_r')
+        .or(`win.eq.${nickname},loss.eq.${nickname}`);
+
+    if (!matches || matches.length === 0) {
+        await supabase.from('profiles').update({ winrate: 0 }).eq('nickname', nickname);
+        return;
+    }
+
+    let totalRounds = 0;
+    let wonRounds = 0;
+
+    matches.forEach(m => {
+        const wR = Number(m.win_r);
+        const lR = Number(m.loss_r);
+        
+        totalRounds += (wR + lR); // Всего раундов в этом матче
+
+        if (m.win === nickname) {
+            wonRounds += wR; // Если победил, берем его раунды (обычно 3)
+        } else {
+            wonRounds += lR; // Если проиграл, берем сколько он успел забрать (0, 1 или 2)
+        }
+    });
+
+    const finalWR = Math.round((wonRounds / totalRounds) * 100);
+
+    // 2. Записываем новый винрейт в профиль
+    await supabase.from('profiles').update({ winrate: finalWR }).eq('nickname', nickname);
+}
