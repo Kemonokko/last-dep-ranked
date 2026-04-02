@@ -15,6 +15,10 @@ async function loadRating() {
     }
 
     allPlayers = players || [];
+        window.roleCache = {};
+    allPlayers.forEach(p => {
+        window.roleCache[p.nickname] = (p.role || 'Player').toString().trim();
+    });
     renderPlayers(allPlayers);
 
     // --- ДОБАВЛЕНО ДЛЯ АДМИНКИ ---
