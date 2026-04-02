@@ -34,17 +34,37 @@ async function loadRating() {
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
-    if (!list.length) { container.innerHTML = "Никого не нашли"; return; }
+    const roleColors = { 
+        'Founder': '#b64dff', 
+        'Overseer': '#00ff00', 
+        'Archivist': '#00ffff', 
+        'Bloodline': '#ff4d4d', 
+        'Player': '#ffffff' 
+    };
 
     container.innerHTML = list.map((p, i) => {
         const rank = getRankByPercentile(allPlayers.indexOf(p) + 1, allPlayers.length);
+        
+        let displayRole = p.role || 'Player';
+        const hasVip = p.secondary_role === 'Bloodline';
+        if (displayRole === 'Player' && hasVip) displayRole = 'Bloodline';
+
+        const currentColor = roleColors[displayRole] || '#ffffff';
+
         return `
         <div class="match-card">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}')"></div>
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: 0 0 8px ${currentColor}55;"></div>
+            
             <div style="flex-grow: 1;">
-                <b style="font-size: 1.1em; color: white;">${p.nickname}</b><br>
+                <b class="nick-hover role-${displayRole.toLowerCase()}" style="font-size: 1.1em; color: white;">${p.nickname}</b>
+                <div style="display: flex; align-items: center; gap: 5px; margin-top: 4px;">
+                    <div class="badge" style="color: ${currentColor}; border-color: ${currentColor}; font-size: 0.6em; padding: 2px 6px;">${displayRole.toUpperCase()}</div>
+                    ${hasVip && displayRole !== 'Bloodline' ? `<div class="badge" style="color: #555; border-color: #555; font-size: 0.5em; padding: 1px 4px;">BLOODLINE</div>` : ''}
+                </div>
+                <!-- ПЛАШКА РАНГА -->
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
+
             <div style="text-align: right;">
                 <div class="elo-val">${p.elo}</div>
                 <div style="font-size: 0.6em; color: #848e9c;">POINTS</div>
