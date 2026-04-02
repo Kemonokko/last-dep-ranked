@@ -73,16 +73,78 @@ window.openProfile = async (nick) => {
     badge.style.borderColor = roleColors[role] || '#fff';
 };
 
+// 1. УНИВЕРСАЛЬНЫЙ ПЕРЕКЛЮЧАТЕЛЬ (Чинит кнопки)
+function switchTab(activeBtnId) {
+    // Убираем активный класс и ручной фон у всех кнопок
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.background = ''; 
+    });
+
+    // Скрываем все блоки
+    document.getElementById('rating-list').style.display = 'none';
+    document.getElementById('search').style.display = 'none';
+    document.getElementById('my-profile-section').style.display = 'none';
+    
+    // Подсвечиваем нужную кнопку
+    const activeBtn = document.getElementById(activeBtnId);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+window.showRating = () => {
+    switchTab('btn-rating');
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('search').style.display = 'block';
+    loadRating();
+};
+
+window.showHistory = () => {
+    switchTab('btn-history');
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('search').style.display = 'block';
+    loadHistory();
+};
+
+window.showMyProfile = () => {
+    switchTab('btn-profile');
+    document.getElementById('my-profile-section').style.display = 'block';
+    
+    // Проверка авторизации
+    const myNick = localStorage.getItem('user_nick');
+    if (myNick) {
+        document.getElementById('auth-ui').style.display = 'none';
+        document.getElementById('cabinet-ui').style.display = 'block';
+        document.getElementById('cabinet-nick').innerText = myNick;
+    } else {
+        document.getElementById('auth-ui').style.display = 'block';
+        document.getElementById('cabinet-ui').style.display = 'none';
+    }
+};
+
+// 2. ИСПРАВЛЕННЫЙ ВХОД (Чтобы "Подтвердить" заработало)
 window.handleLogin = async () => {
-    const email = document.getElementById('auth-email').value.trim();
-    const { data: user } = await supabase.from('profiles').select('*').eq('nickname', currentViewedNick).eq('email', email).single();
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) return alert("Введите почту!");
+
+    const { data: user, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', email)
+        .single();
+
     if (user) {
         localStorage.setItem('user_nick', user.nickname);
         localStorage.setItem('user_role', user.role);
-        location.reload();
+        alert(`Авторизация успешна: ${user.nickname}`);
+        location.reload(); // Перезагрузка, чтобы обновить права
     } else {
-        alert("Ха! Пытаешься зайти на чужой аккаунт? У тебя iq как у табуретки, почта не та. Брысь отсюда!");
+        alert("Ха! Почта не та. Брысь отсюда, пока тапок не прилетел!");
     }
+};
+
+window.handleLogout = () => {
+    localStorage.clear();
+    location.reload();
 };
 
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
@@ -105,37 +167,6 @@ function switchTab(tabId) {
     // 3. Подсвечиваем нужную кнопку
     document.getElementById(tabId).classList.add('active');
 }
-
-const oldShowRating = window.showRating;
-window.showRating = () => {
-    document.getElementById('my-profile-section').style.display = 'none';
-    document.getElementById('rating-list').style.display = 'block';
-    document.getElementById('search').style.display = 'block';
-    oldShowRating();
-};
-
-window.showHistory = () => {
-    switchTab('btn-history');
-    document.getElementById('rating-list').style.display = 'block';
-    document.getElementById('search').style.display = 'block';
-    loadHistory();
-};
-
-window.showMyProfile = () => {
-    switchTab('btn-profile');
-    document.getElementById('my-profile-section').style.display = 'block';
-    
-    // Проверка логина
-    const myNick = localStorage.getItem('user_nick');
-    if (myNick) {
-        document.getElementById('auth-ui').style.display = 'none';
-        document.getElementById('cabinet-ui').style.display = 'block';
-        document.getElementById('cabinet-nick').innerText = myNick;
-    } else {
-        document.getElementById('auth-ui').style.display = 'block';
-        document.getElementById('cabinet-ui').style.display = 'none';
-    }
-};
 
 // 5. ПРОВЕРКА АДМИНА
 const userRole = localStorage.getItem('user_role');
