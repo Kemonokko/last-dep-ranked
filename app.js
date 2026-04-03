@@ -147,6 +147,17 @@ window.showMyProfile = () => {
         if (tip) tip.style.display = 'block';
         loadRating(); // Загружаем игроков, чтобы было кого искать
     }
+        document.getElementById('rating-list').style.display = 'block';
+    
+    // ВАЖНО: Прячем всех игроков сразу, чтобы не накладывались на подсказку
+    document.querySelectorAll('.match-card').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('.history-item').forEach(c => c.style.display = 'none');
+
+    const tip = document.getElementById('login-tip');
+    if (tip) tip.style.display = 'block';
+    
+    // Очищаем поиск, чтобы при входе всегда была подсказка
+    document.getElementById('search').value = "";
 };
 
 window.filterPlayers = () => {
