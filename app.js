@@ -86,14 +86,24 @@ window.openProfile = async (nick) => {
 
 // 4. ОСТАЛЬНАЯ ЛОГИКА
 window.handleLogin = async () => {
-    const email = document.getElementById('login-email').value.trim();
-    const { data: user } = await supabase.from('profiles').select('*').eq('email', email).single();
+    const nick = document.getElementById('login-nick').value.trim();
+    
+    if (!nick) return alert("Введи свой ник!");
+
+    // Теперь ищем в базе по нику, а не по почте
+    const { data: user, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('nickname', nick)
+        .single();
+    
     if (user) { 
         localStorage.setItem('user_nick', user.nickname); 
         localStorage.setItem('user_role', user.role || 'Player'); 
         location.reload(); 
+    } else { 
+        alert("Игрок не найден."); 
     }
-    else { alert("Ха! Почта не та. Брысь отсюда!"); }
 };
 
 // Исправленное переключение на РЕЙТИНГ
