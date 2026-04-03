@@ -6,11 +6,11 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-// 1. УНИВЕРСАЛЬНЫЙ ПЕРЕКЛЮЧАТЕЛЬ ВКЛАДОК
+// 1. ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК (Исправлено: теперь кнопки не горят одновременно)
 function switchTab(activeBtnId) {
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('active');
-        btn.style.background = ''; 
+        btn.style.background = ''; // Очищаем ручной фон
     });
     document.getElementById('rating-list').style.display = 'none';
     document.getElementById('search').style.display = 'none';
@@ -63,27 +63,6 @@ async function loadRating() {
     if (dataList) dataList.innerHTML = allPlayers.map(p => `<option value="${p.nickname}">`).join('');
 }
 
-window.updateUserData = async () => {
-    const myNick = localStorage.getItem('user_nick');
-    const newAva = document.getElementById('new-avatar-url').value.trim();
-    const newBio = document.getElementById('new-bio-text').value.trim();
-
-    const updates = {};
-    if (newAva) updates.avatar_url = newAva;
-    if (newBio) updates.bio = newBio;
-
-    if (Object.keys(updates).length === 0) return alert("Ничего не введено!");
-
-    const { error } = await supabase.from('profiles').update(updates).eq('nickname', myNick);
-
-    if (error) {
-        alert("Ошибка: " + error.message);
-    } else {
-        alert("Данные обновлены! Красава.");
-        location.reload();
-    }
-};
-
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     container.innerHTML = list.map((p) => {
@@ -98,7 +77,7 @@ function renderPlayers(list) {
         <div class="match-card" onclick="window.openProfile('${p.nickname}')">
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             <div style="flex-grow: 1;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
+                <b class="nick-hover role-${role.toLowerCase()}">${p.nickname}</b><br>
                 <div class="badge rank-${rank}">${rank}</div>
             </div>
             <div style="text-align: right; min-width: 85px;">
@@ -109,22 +88,11 @@ function renderPlayers(list) {
     }).join('');
 }
 
-// 3. ПОИСК
-document.getElementById('search').addEventListener('input', (e) => {
-    const val = e.target.value.toLowerCase();
-    const isHistory = document.getElementById('btn-history').classList.contains('active');
-    if (isHistory) {
-        document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = c.innerText.toLowerCase().includes(val) ? 'flex' : 'none');
-    } else {
-        renderPlayers(allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
-    }
-});
-
+// 3. ОКНО ПРОФИЛЯ И ЛОГИН
+let currentViewedNick = "";
 window.openProfile = async (nick) => {
-    const modal = document.getElementById('profile-modal');
-    modal.style.display = 'flex';
-    
-    // 1. Данные профиля
+    currentViewedNick = nick;
+    document.getElementById('profile-modal').style.display = 'flex';
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
@@ -133,42 +101,13 @@ window.openProfile = async (nick) => {
     document.getElementById('prof-elo').innerText = p.elo;
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
     document.getElementById('prof-bio').innerText = p.bio || "Этот боец предпочитает молчать о себе...";
-
-    // Покраска роли (ИСПРАВЛЕНО)
+    
     const role = (p.role || 'Player').trim();
     const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
     const badge = document.getElementById('prof-role-badge');
     badge.innerText = role.toUpperCase();
-    badge.style.color = roleColors[role] || '#fff';
-    badge.style.borderColor = roleColors[role] || '#fff';
-
-    // 2. ЗАГРУЗКА 3 ПОСЛЕДНИХ БОЕВ
-    const { data: matches } = await supabase
-        .from('match_history')
-        .select('*')
-        .or(`win.eq."${nick}",loss.eq."${nick}"`) // Исправлено экранирование кавычек
-        .order('date', { ascending: false })
-        .limit(3);
-
-    const gamesContainer = document.getElementById('prof-recent-games');
-    if (matches && matches.length > 0) {
-        gamesContainer.innerHTML = matches.map(m => {
-            const isWin = m.win === nick;
-            const oppNick = isWin ? m.loss : m.win;
-            const resColor = isWin ? '#00ff00' : 'var(--blood)';
-            const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
-            
-            return `
-            <div style="background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; font-size:0.85em; border-left: 3px solid ${resColor};">
-                <span style="color:${resColor}; font-weight:bold; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
-                <span style="color:#848e9c; font-size:0.8em;">vs</span>
-                <b class="nick-hover role-${oppRole}" onclick="window.openProfile('${oppNick}')" style="cursor:pointer; flex:1; text-align:left; margin-left:10px;">${oppNick}</b>
-                <span style="font-weight:bold; color:var(--gold);">${m.win_r}:${m.loss_r}</span>
-            </div>`;
-        }).join('');
-    } else {
-        gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center;">Матчей еще не было</div>';
-    }
+    badge.style.color = roleColors[role];
+    badge.style.borderColor = roleColors[role];
 };
 
 window.handleLogin = async () => {
@@ -177,27 +116,38 @@ window.handleLogin = async () => {
     if (user) {
         localStorage.setItem('user_nick', user.nickname);
         localStorage.setItem('user_role', user.role);
+        alert(`Авторизация успешна, ${user.nickname}!`);
         location.reload();
-    } else { alert("Почта не та. Съебался"); }
+    } else { alert("Ха! Почта не та. Брысь отсюда, пока тапок не прилетел, у тебя iq как у табуретки!"); }
 };
 
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
-const myRole = localStorage.getItem('user_role');
-if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
+// 4. ОБНОВЛЕНИЕ ДАННЫХ (Ава и Био)
+window.updateUserData = async () => {
+    const myNick = localStorage.getItem('user_nick');
+    const newAva = document.getElementById('new-avatar-url').value.trim();
+    const newBio = document.getElementById('new-bio-text').value.trim();
+    const updates = {};
+    if (newAva) updates.avatar_url = newAva;
+    if (newBio) updates.bio = newBio;
+    if (Object.keys(updates).length === 0) return alert("Ничего не введено!");
+    const { error } = await supabase.from('profiles').update(updates).eq('nickname', myNick);
+    if (error) alert(error.message); else { alert("Данные обновлены!"); location.reload(); }
+};
+
+// 5. АДМИН-ПРАВА И ПОИСК
+const userRole = localStorage.getItem('user_role');
+if (['Founder', 'Overseer', 'Archivist'].includes(userRole)) {
     const btn = document.getElementById('admin-btn');
     if (btn) btn.style.display = 'block';
 }
 
-window.handleAddMatch = handleAddMatch;
-loadRating();
-window.showRating = showRating;
-window.showHistory = showHistory;
-window.showMyProfile = showMyProfile;
-window.openProfile = openProfile; // ЭТО ОЖИВИТ КЛИКИ ПО НИКАМ
-window.handleLogin = handleLogin;
-window.handleLogout = handleLogout;
-window.handleAddMatch = handleAddMatch;
+document.getElementById('search').addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase();
+    renderPlayers(allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
+});
 
+window.handleAddMatch = handleAddMatch;
 loadRating();
