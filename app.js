@@ -173,3 +173,19 @@ window.claimProfile = async () => {
         alert("Это не твой профиль, идиот.");
     }
 };
+window.filterPlayers = () => {
+    const val = document.getElementById('search').value.toLowerCase().trim();
+    const tip = document.getElementById('login-tip');
+    const cards = document.querySelectorAll('#rating-list .match-card');
+
+    // Если мы на вкладке профиля и начали искать — скрываем подсказку
+    if (tip) {
+        tip.style.display = (val.length > 0) ? 'none' : 'block';
+    }
+
+    // Фильтруем сами карточки
+    cards.forEach(card => {
+        const nick = card.querySelector('b').innerText.toLowerCase();
+        card.style.display = nick.includes(val) ? 'flex' : 'none';
+    });
+};
