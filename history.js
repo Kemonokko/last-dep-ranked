@@ -29,11 +29,7 @@ export async function loadHistory() {
 <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
     <!-- НИК ПОБЕДИТЕЛЯ -->
     <div style="flex: 1; text-align: left; overflow: hidden;">
-        <b class="nick-hover role-${winRole}" 
-           onclick="window.openProfile('${m.win}')" 
-           style="font-size: 1.15em; white-space: nowrap; color: white; cursor: pointer;">
-           ${m.win}
-        </b>
+<b class="nick-hover role-${winRole}" onclick="window.openProfile('${m.win}')" style="cursor:pointer; color:white;">${m.win}</b>
         <div style="color: #00ff00; font-size: 0.95em; font-weight: 900; margin-top: 2px;">+${m["elo+"]}</div>
     </div>
 
@@ -44,11 +40,7 @@ export async function loadHistory() {
 
     <!-- НИК ПРОИГРАВШЕГО -->
     <div style="flex: 1; text-align: right; overflow: hidden;">
-        <b class="nick-hover role-${lossRole}" 
-           onclick="window.openProfile('${m.loss}')" 
-           style="font-size: 1.15em; white-space: nowrap; color: white; cursor: pointer;">
-           ${m.loss}
-        </b>
+       <b class="nick-hover role-${lossRole}" onclick="window.openProfile('${m.loss}')" style="cursor:pointer; color:white;">${m.loss}</b>
         <div style="color: var(--blood); font-size: 0.95em; font-weight: 900; margin-top: 2px;">-${m["elo-"]}</div>
     </div>
 </div>
