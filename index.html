@@ -90,53 +90,63 @@
   ⚙️ АДМИН ПАНЕЛЬ
 </button>
 
-<div class="nav-btns">
-<button onclick="showRating()" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
-<button onclick="showHistory()" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
-<button onclick="showMyProfile()" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
-</div>
-    <div id="my-profile-section" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; margin-top:10px;">
-        
-        <!-- Форма Входа (если не залогинен) -->
-        <div id="auth-ui">
-            <h2 style="color:var(--gold); text-align:center; margin-top:0;">Вход в аккаунт</h2>
-            <p style="font-size:0.8em; color:#848e9c; text-align:center;">Найдите себя в рейтинге и введите почту, чтобы получить доступ к функциям.</p>
-            <input type="email" id="login-email" class="admin-input" placeholder="Введите ваш Email..." style="text-align:center; margin-top:10px;">
-            <button onclick="window.handleLogin()" class="admin-btn-submit" style="margin-top:10px;">ПОДТВЕРДИТЬ</button>
-        </div>
+<div class="container">
+  <!-- 1. АДМИНКА (ВСЕГДА СВЕРХУ, ЕСЛИ ЕСТЬ ДОСТУП) -->
+  <button id="admin-btn" onclick="..." style="display:none; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold;">
+    ⚙️ АДМИН ПАНЕЛЬ
+  </button>
 
-        <!-- Личный Кабинет (если залогинен) -->
-        <div id="cabinet-ui" style="display:none; text-align:center;">
-            <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
-            <div id="cabinet-role" style="font-size:0.7em; font-weight:900; color:var(--gold); border:1px solid var(--gold); display:inline-block; padding:3px 10px; border-radius:5px;">FOUNDER</div>
-            
-            <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-            
-            <p style="font-size:0.8em; color:#848e9c; margin-bottom:10px;">Смена аватарки:</p>
-            <input type="text" id="new-avatar-url" class="admin-input" placeholder="https://ссылка-на-фото.jpg">
-            <button onclick="window.updateAvatar()" class="admin-btn-submit" style="margin-top:10px; background:#222; border:1px solid #444;">ОБНОВИТЬ АВУ</button>
-            
-            <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
-        </div>
-    </div>
-    <div id="admin-panel" style="display:none;">
-      <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
-      <input type="date" id="match-date" class="admin-input">
-      <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview()">
-      <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview()">
-      <datalist id="players-list"></datalist>
-      <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
-          <option value="3:0">Счёт 3:0 (x1.3)</option>
-          <option value="3:1">Счёт 3:1 (x1.0)</option>
-          <option value="3:2">Счёт 3:2 (x0.7)</option>
-      </select>
-      <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
-      <button class="admin-btn-submit" onclick="handleAddMatch()">ЗАПИСАТЬ В БАЗУ</button>
-    </div>
-
-    <input type="text" id="search" placeholder="Поиск игрока...">
-    <div id="rating-list">Загрузка...</div>
+  <!-- 2. КНОПКИ НАВИГАЦИИ -->
+  <div class="nav-btns">
+    <button onclick="showRating()" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
+    <button onclick="showHistory()" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
+    <button onclick="showMyProfile()" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
   </div>
+
+  <!-- 3. ПОИСК (ВЫНЕСЕН СЮДА: ТЕПЕРЬ ОН ВСЕГДА НА ОДНОЙ ВЫСОТЕ) -->
+  <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.filterPlayers()">
+
+  <!-- 4. СЕКЦИЯ ПРОФИЛЯ / ВХОДА -->
+  <div id="my-profile-section" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; margin-top:10px; margin-bottom: 20px;">
+    <!-- Вход по Нику -->
+    <div id="auth-ui">
+      <h2 style="color:var(--gold); text-align:center; margin-top:0;">Вход в аккаунт</h2>
+      <p style="font-size:0.8em; color:#848e9c; text-align:center;">Просто введи свой никнейм из рейтинга:</p>
+      <input type="text" id="login-nick" class="admin-input" list="players-list" placeholder="Твой ник..." style="text-align:center; margin-top:10px;">
+      <button onclick="window.handleLogin()" class="admin-btn-submit" style="margin-top:10px;">ВОЙТИ</button>
+    </div>
+
+    <!-- Личный Кабинет -->
+    <div id="cabinet-ui" style="display:none; text-align:center;">
+      <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
+      <div id="cabinet-role" style="font-size:0.7em; font-weight:900; color:var(--gold); border:1px solid var(--gold); display:inline-block; padding:3px 10px; border-radius:5px;">PLAYER</div>
+      <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+      <p style="font-size:0.8em; color:#848e9c; margin-bottom:10px;">Смена аватарки:</p>
+      <input type="text" id="new-avatar-url" class="admin-input" placeholder="https://ссылка-на-фото.jpg">
+      <button onclick="window.updateAvatar()" class="admin-btn-submit" style="margin-top:10px; background:#222; border:1px solid #444;">ОБНОВИТЬ АВУ</button>
+      <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
+    </div>
+  </div>
+
+  <!-- 5. ПАНЕЛЬ ЗАПИСИ МАТЧА (ТОЛЬКО ДЛЯ АДМИНОВ) -->
+  <div id="admin-panel" style="display:none; margin-bottom: 20px;">
+    <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
+    <input type="date" id="match-date" class="admin-input">
+    <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview()">
+    <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview()">
+    <datalist id="players-list"></datalist>
+    <select id="score-select" class="admin-input" onchange="window.updateMatchPreview()">
+      <option value="3:0">Счёт 3:0 (x1.3)</option>
+      <option value="3:1">Счёт 3:1 (x1.0)</option>
+      <option value="3:2">Счёт 3:2 (x0.7)</option>
+    </select>
+    <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
+    <button class="admin-btn-submit" onclick="handleAddMatch()">ЗАПИСАТЬ В БАЗУ</button>
+  </div>
+
+  <!-- 6. ВЫВОД РЕЙТИНГА ИЛИ ИСТОРИИ -->
+  <div id="rating-list">Загрузка...</div>
+</div>
 
 <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
     <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:450px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto;">
