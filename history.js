@@ -43,7 +43,11 @@ export async function loadHistory() {
 
                 <!-- Проигравший (Крупный ник) -->
                 <div style="flex: 1; text-align: right; overflow: hidden;">
-                    <b class="nick-hover role-${lossRole}" style="font-size: 1.15em; white-space: nowrap; color: white;">${m.loss}</b>
+                      <b class="nick-hover role-${lossRole}" 
+           onclick="window.openProfile('${m.loss}')" 
+           style="font-size: 1.15em; white-space: nowrap; color: white; cursor: pointer;">
+           ${m.loss}
+        </b>
                     <div style="color: var(--blood); font-size: 1em; font-weight: 900; margin-top: 2px;">-${m["elo-"]}</div>
                 </div>
             </div>
