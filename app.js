@@ -98,3 +98,21 @@ document.getElementById('close-profile').onclick = () => { document.getElementBy
 
 window.handleAddMatch = handleAddMatch;
 loadRating();
+window.showMyProfile = () => {
+    // Скрываем список рейтинга и показываем секцию профиля
+    document.getElementById('rating-list').style.display = 'none';
+    document.getElementById('my-profile-section').style.display = 'block';
+    
+    // Переключаем активную кнопку
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-profile').classList.add('active');
+
+    // Проверяем, залогинен ли юзер
+    const userNick = localStorage.getItem('user_nick');
+    if (userNick) {
+        document.getElementById('auth-ui').style.display = 'none';
+        document.getElementById('cabinet-ui').style.display = 'block';
+        document.getElementById('cabinet-nick').innerText = userNick;
+        document.getElementById('cabinet-role').innerText = localStorage.getItem('user_role') || 'PLAYER';
+    }
+};
