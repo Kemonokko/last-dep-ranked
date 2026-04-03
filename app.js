@@ -83,13 +83,10 @@ window.openProfile = async (nick) => {
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
 };
-
 window.handleLogin = async () => {
     const nick = document.getElementById('login-nick')?.value.trim();
     if (!nick) return alert("Введи ник!");
-
     const { data: user } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
-    
     if (user) { 
         localStorage.setItem('user_nick', user.nickname); 
         localStorage.setItem('user_role', user.role || 'Player'); 
@@ -101,16 +98,13 @@ window.handleLogin = async () => {
 
 // Переключение на РЕЙТИНГ
 window.showRating = () => { 
-    // Очищаем поиск и сбрасываем фильтры
     const searchInput = document.getElementById('search');
-    if (searchInput) searchInput.value = ""; 
+    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
     
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
     
-    // Показываем всех игроков (сбрасываем скрытие для профиля)
     document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'flex');
-
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
     loadRating(); 
@@ -118,9 +112,8 @@ window.showRating = () => {
 
 // Переключение на ИСТОРИЮ
 window.showHistory = () => { 
-    // Очищаем поиск при переходе в историю
     const searchInput = document.getElementById('search');
-    if (searchInput) searchInput.value = "";
+    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'none'; }
 
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
@@ -130,66 +123,49 @@ window.showHistory = () => {
     loadHistory(); 
 };
 
-// Переключение на ПРОФИЛЬ (Вход)
+// Переключение на ПРОФИЛЬ
 window.showMyProfile = () => {
-    // 1. Очищаем поиск при входе во вкладку профиля
     const searchInput = document.getElementById('search');
-    if (searchInput) searchInput.value = "";
-
-    // 2. Скрываем всех игроков, пока поиск пустой
-    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
+    const userNick = localStorage.getItem('user_nick');
     
-    // 3. Показываем подсказку "Найди себя"
-    const tip = document.getElementById('login-tip');
-    if (tip) tip.style.display = 'block';
-
-    document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'block';
-    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
-    const userNick = localStorage.getItem('user_nick');
     if (userNick) {
-        document.getElementById('auth-ui').style.display = 'none';
-        document.getElementById('cabinet-ui').style.display = 'block';
-        document.getElementById('cabinet-nick').innerText = userNick;
-        // Если залогинен — поиск и список вообще не нужны
-        document.getElementById('search').style.display = 'none';
+        // Если залогинен
+        if (searchInput) searchInput.style.display = 'none';
         document.getElementById('rating-list').style.display = 'none';
-    }
-};
-
-    const userNick = localStorage.getItem('user_nick');
-    if (userNick) {
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
+    } else {
+        // Если НЕ залогинен
+        if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
+        document.getElementById('rating-list').style.display = 'block'; 
+        document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
+        document.getElementById('auth-ui').style.display = 'block';
+        document.getElementById('cabinet-ui').style.display = 'none';
+        const tip = document.getElementById('login-tip');
+        if (tip) tip.style.display = 'block';
     }
 };
 
-// Умный поиск
+// Умный поиск и фильтр
 window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const tip = document.getElementById('login-tip');
     const cards = document.querySelectorAll('#rating-list .match-card');
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
 
-    // Управляем подсказкой
-    if (tip) {
-        tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
-    }
+    if (tip) tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
 
-    // Фильтруем карточки
     cards.forEach(card => {
         const nick = card.querySelector('b').innerText.toLowerCase();
         const matches = nick.includes(val);
-        
         if (isProfileTab) {
-            // На вкладке профиля показываем карточки только если есть текст в поиске
             card.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
         } else {
-            // На рейтинге просто фильтруем
             card.style.display = matches ? 'flex' : 'none';
         }
     });
@@ -199,4 +175,5 @@ window.handleLogout = () => { localStorage.clear(); location.reload(); };
 window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
+// Старт
 loadRating();
