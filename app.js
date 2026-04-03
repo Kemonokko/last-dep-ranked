@@ -151,21 +151,35 @@ window.showMyProfile = () => {
     }
 };
 
-// Умный поиск и фильтр
 window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
-    const tip = document.getElementById('login-tip');
-    const cards = document.querySelectorAll('#rating-list .match-card');
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
+    const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
+    const tip = document.getElementById('login-tip');
+    
+    // Берем ВСЕ карточки (и игроков, и матчей)
+    const cards = document.querySelectorAll('#rating-list .match-card');
 
-    if (tip) tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
+    // 1. Управляем подсказкой в Профиле
+    if (tip) {
+        tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
+    }
 
     cards.forEach(card => {
-        const nick = card.querySelector('b').innerText.toLowerCase();
-        const matches = nick.includes(val);
+        // Вытаскиваем ВЕСЬ текст из карточки (там будут все ники, которые есть внутри)
+        const content = card.innerText.toLowerCase();
+        const matches = content.includes(val);
+        
         if (isProfileTab) {
+            // В ПРОФИЛЕ: показываем игрока только если начали писать и ник совпал
             card.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
-        } else {
+        } 
+        else if (isHistoryTab) {
+            // В ИСТОРИИ: просто фильтруем матчи по введеному нику
+            card.style.display = matches ? 'flex' : 'none';
+        }
+        else {
+            // В РЕЙТИНГЕ: обычный фильтр игроков
             card.style.display = matches ? 'flex' : 'none';
         }
     });
