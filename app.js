@@ -56,7 +56,7 @@ window.openProfile = async (nick) => {
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
     document.getElementById('prof-elo').innerText = p.elo;
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
-    document.getElementById('prof-bio').innerText = p.bio || "Этот боец предпочитает молчать о себе...";
+    document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
     
     const role = (p.role || 'Player').trim();
     const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
