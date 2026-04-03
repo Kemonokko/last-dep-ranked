@@ -63,6 +63,27 @@ async function loadRating() {
     if (dataList) dataList.innerHTML = allPlayers.map(p => `<option value="${p.nickname}">`).join('');
 }
 
+window.updateUserData = async () => {
+    const myNick = localStorage.getItem('user_nick');
+    const newAva = document.getElementById('new-avatar-url').value.trim();
+    const newBio = document.getElementById('new-bio-text').value.trim();
+
+    const updates = {};
+    if (newAva) updates.avatar_url = newAva;
+    if (newBio) updates.bio = newBio;
+
+    if (Object.keys(updates).length === 0) return alert("Ничего не введено!");
+
+    const { error } = await supabase.from('profiles').update(updates).eq('nickname', myNick);
+
+    if (error) {
+        alert("Ошибка: " + error.message);
+    } else {
+        alert("Данные обновлены! Красава.");
+        location.reload();
+    }
+};
+
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     container.innerHTML = list.map((p) => {
