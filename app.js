@@ -151,3 +151,12 @@ document.getElementById('search').addEventListener('input', (e) => {
 
 window.handleAddMatch = handleAddMatch;
 loadRating();
+window.showRating = showRating;
+window.showHistory = showHistory;
+window.showMyProfile = showMyProfile;
+window.openProfile = openProfile; // ТЕПЕРЬ КЛИКИ ЗАРАБОТАЮТ
+window.handleLogin = handleLogin;
+window.handleLogout = handleLogout;
+window.updateUserData = updateUserData;
+
+loadRating();
