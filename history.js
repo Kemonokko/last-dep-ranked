@@ -22,28 +22,27 @@ export async function loadHistory() {
         const winRole = (window.roleCache[m.win] || 'Player').toLowerCase();
         const lossRole = (window.roleCache[m.loss] || 'Player').toLowerCase();
 
-        return `
-        <div class="match-card" ondblclick="window.deleteMatch('${m.id}')" 
-             style="flex-direction: column; gap: 5px; padding: 18px 12px; border-color: #222; cursor: pointer; user-select: none;">
-            
-<div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-    <!-- НИК ПОБЕДИТЕЛЯ -->
-    <div style="flex: 1; text-align: left; overflow: hidden;">
-<b class="nick-hover role-${winRole}" onclick="window.openProfile('${m.win}')" style="cursor:pointer; color:white;">${m.win}</b>
-        <div style="color: #00ff00; font-size: 0.95em; font-weight: 900; margin-top: 2px;">+${m["elo+"]}</div>
-    </div>
+return `
+<div class="match-card" ondblclick="window.deleteMatch('${m.id}')" style="flex-direction: column; padding: 15px 12px;">
+    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+        <!-- ПОБЕДИТЕЛЬ -->
+        <div style="flex: 1; text-align: left;">
+            <b class="nick-hover role-${winRole}">${m.win}</b>
+            <div style="color: #00ff00; font-size: 0.85em; font-weight: 700;">
+                +${m["elo+"]} <span style="font-size: 0.8em; opacity: 0.7;">(${m.bonus || 0})</span>
+            </div>
+        </div>
 
-    <!-- СЧЁТ -->
-    <div style="text-align: center; min-width: 95px;">
-        <div style="font-size: 1.4em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
-    </div>
+        <!-- СЧЁТ И ДАТА -->
+        <div style="text-align: center; min-width: 80px;">
+            <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
+            <div style="font-size: 0.6em; color: #555; margin-top: 4px;">${dateStr}</div>
+        </div>
 
-    <!-- НИК ПРОИГРАВШЕГО -->
-    <div style="flex: 1; text-align: right; overflow: hidden;">
-       <b class="nick-hover role-${lossRole}" onclick="window.openProfile('${m.loss}')" style="cursor:pointer; color:white;">${m.loss}</b>
-        <div style="color: var(--blood); font-size: 0.95em; font-weight: 900; margin-top: 2px;">-${m["elo-"]}</div>
+        <!-- ПРОИГРАВШИЙ -->
+        <div style="flex: 1; text-align: right;">
+            <b class="nick-hover role-${lossRole}">${m.loss}</b>
+            <div style="color: var(--blood); font-size: 0.85em; font-weight: 700;">-${m["elo-"]}</div>
+        </div>
     </div>
-</div>
-        </div>`;
-    }).join('');
-}
+</div>`;
