@@ -171,3 +171,12 @@ if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
 
 window.handleAddMatch = handleAddMatch;
 loadRating();
+window.showRating = showRating;
+window.showHistory = showHistory;
+window.showMyProfile = showMyProfile;
+window.openProfile = openProfile; // ЭТО ОЖИВИТ КЛИКИ ПО НИКАМ
+window.handleLogin = handleLogin;
+window.handleLogout = handleLogout;
+window.handleAddMatch = handleAddMatch;
+
+loadRating();
