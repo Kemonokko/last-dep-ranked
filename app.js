@@ -155,30 +155,32 @@ window.filterPlayers = () => {
     const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
     const tip = document.getElementById('login-tip');
     
-    // Берем ВСЕ карточки (и игроков, и матчей)
-    const cards = document.querySelectorAll('#rating-list .match-card');
-
     // 1. Управляем подсказкой в Профиле
     if (tip) {
         tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
     }
 
-    cards.forEach(card => {
-        // Вытаскиваем ВЕСЬ текст из карточки (там будут все ники, которые есть внутри)
-        const content = card.innerText.toLowerCase();
-        const matches = content.includes(val);
-        
-        if (isProfileTab) {
-            // В ПРОФИЛЕ: показываем игрока только если начали писать и ник совпал
-            card.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
-        } 
-        else if (isHistoryTab) {
-            // В ИСТОРИИ: просто фильтруем матчи по введеному нику
-            card.style.display = matches ? 'flex' : 'none';
+    // 2. ФИЛЬТРУЕМ ИГРОКОВ (match-card)
+    const players = document.querySelectorAll('.match-card');
+    players.forEach(p => {
+        const matches = p.innerText.toLowerCase().includes(val);
+        if (isHistoryTab) {
+            p.style.display = 'none'; // В истории ИГРОКОВ не показываем
+        } else if (isProfileTab) {
+            p.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
+        } else {
+            p.style.display = matches ? 'flex' : 'none';
         }
-        else {
-            // В РЕЙТИНГЕ: обычный фильтр игроков
-            card.style.display = matches ? 'flex' : 'none';
+    });
+
+    // 3. ФИЛЬТРУЕМ МАТЧИ (history-item)
+    const matchesList = document.querySelectorAll('.history-item');
+    matchesList.forEach(m => {
+        const fits = m.innerText.toLowerCase().includes(val);
+        if (isHistoryTab) {
+            m.style.display = fits ? 'flex' : 'none'; // В истории показываем только МАТЧИ
+        } else {
+            m.style.display = 'none'; // В остальных вкладках МАТЧИ скрываем совсем
         }
     });
 };
