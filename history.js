@@ -29,7 +29,7 @@ export async function loadHistory() {
                 <!-- ПОБЕДИТЕЛЬ: Всё в одну строку, размер 0.85em -->
                 <div style="flex: 1; text-align: left;">
                     <b class="nick-hover role-${winRole}">${m.win}</b>
-                    <div style="color: #00ff00; font-size: 0.9em; font-weight: 900; margin-top: 2px;">
+                    <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
                         +${m["elo+"]}(${m.bonus || 0})
                     </div>
                 </div>
@@ -43,7 +43,7 @@ export async function loadHistory() {
                 <!-- ПРОИГРАВШИЙ -->
                 <div style="flex: 1; text-align: right;">
                     <b class="nick-hover role-${lossRole}">${m.loss}</b>
-                    <div style="color: var(--blood); font-size: 0.9em; font-weight: 900; margin-top: 2px;">-${m["elo-"]}</div>
+                    <div style="color: var(--blood); font-size: 0.9em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
                 </div>
 
             </div>
