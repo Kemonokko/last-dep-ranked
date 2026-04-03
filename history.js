@@ -31,7 +31,7 @@ export async function loadHistory() {
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 <!-- Победитель (Крупный ник) -->
                 <div style="flex: 1; text-align: left; overflow: hidden;">
-                    <b class="nick-hover role-${winRole}" style="font-size: 1.15em; white-space: nowrap; color: white;">${m.win}</b>
+                    <b class="nick-hover role-${winRole}" onclick="window.openProfile('${m.win}')" style="font-size: 1.15em; cursor: pointer;">${m.win}</b>
                     <div style="color: #00ff00; font-size: 0.85em; font-weight: 900;">+${m["elo+"]} (+${m.bonus})</div>
                 </div>
 
