@@ -23,7 +23,7 @@ export async function loadHistory() {
         const lossRole = (window.roleCache[m.loss] || 'Player').toLowerCase();
 
         return `
-        <div class="match-card" ondblclick="window.deleteMatch('${m.id}')" style="flex-direction: column; padding: 15px 12px; border-color: #222;">
+        <div class="history-item" ondblclick="window.deleteMatch('${m.id}')" style="flex-direction: column; padding: 15px 12px; border-color: #222;">
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                 
                 <!-- ПОБЕДИТЕЛЬ: Всё в одну строку, размер 0.85em -->
