@@ -118,7 +118,7 @@ window.handleLogin = async () => {
         localStorage.setItem('user_nick', user.nickname);
         localStorage.setItem('user_role', user.role);
         location.reload();
-    } else { alert("Ха! Почта не та. Брысь отсюда!"); }
+    } else { alert("Почта не та. Съебался"); }
 };
 
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
