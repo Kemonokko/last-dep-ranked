@@ -46,3 +46,5 @@ return `
         </div>
     </div>
 </div>`;
+    }).join('');
+}
