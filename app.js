@@ -88,26 +88,42 @@ window.openProfile = async (nick) => {
 window.handleLogin = async () => {
     const email = document.getElementById('login-email').value.trim();
     const { data: user } = await supabase.from('profiles').select('*').eq('email', email).single();
-    if (user) { localStorage.setItem('user_nick', user.nickname); localStorage.setItem('user_role', user.role); location.reload(); }
+    if (user) { 
+        localStorage.setItem('user_nick', user.nickname); 
+        localStorage.setItem('user_role', user.role || 'Player'); 
+        location.reload(); 
+    }
     else { alert("Ха! Почта не та. Брысь отсюда!"); }
 };
 
-window.showRating = () => { loadRating(); document.getElementById('rating-list').style.display = 'block'; };
-window.showHistory = () => { loadHistory(); };
-document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
+// Исправленное переключение на РЕЙТИНГ
+window.showRating = () => { 
+    document.getElementById('rating-list').style.display = 'block'; 
+    document.getElementById('my-profile-section').style.display = 'none'; // Скрываем профиль
+    
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-rating').classList.add('active');
+    loadRating(); 
+};
 
-window.handleAddMatch = handleAddMatch;
-loadRating();
+// Исправленное переключение на ИСТОРИЮ
+window.showHistory = () => { 
+    document.getElementById('rating-list').style.display = 'block'; 
+    document.getElementById('my-profile-section').style.display = 'none'; // Скрываем профиль
+    
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-history').classList.add('active');
+    loadHistory(); 
+};
+
+// Твоя функция профиля (добавил только очистку кнопок)
 window.showMyProfile = () => {
-    // Скрываем список рейтинга и показываем секцию профиля
     document.getElementById('rating-list').style.display = 'none';
     document.getElementById('my-profile-section').style.display = 'block';
     
-    // Переключаем активную кнопку
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
-    // Проверяем, залогинен ли юзер
     const userNick = localStorage.getItem('user_nick');
     if (userNick) {
         document.getElementById('auth-ui').style.display = 'none';
@@ -116,3 +132,9 @@ window.showMyProfile = () => {
         document.getElementById('cabinet-role').innerText = localStorage.getItem('user_role') || 'PLAYER';
     }
 };
+
+window.handleLogout = () => { localStorage.clear(); location.reload(); };
+window.handleAddMatch = handleAddMatch;
+document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
+
+loadRating();
