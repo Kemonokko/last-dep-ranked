@@ -88,11 +88,14 @@ function renderPlayers(list) {
     }).join('');
 }
 
-// 3. ОКНО ПРОФИЛЯ И ЛОГИН
+// 3. ОКНО ПРОФИЛЯ С ПОСЛЕДНИМИ ИГРАМИ
 let currentViewedNick = "";
 window.openProfile = async (nick) => {
     currentViewedNick = nick;
-    document.getElementById('profile-modal').style.display = 'flex';
+    const modal = document.getElementById('profile-modal');
+    modal.style.display = 'flex';
+    
+    // 1. Грузим данные игрока
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
@@ -108,8 +111,39 @@ window.openProfile = async (nick) => {
     badge.innerText = role.toUpperCase();
     badge.style.color = roleColors[role];
     badge.style.borderColor = roleColors[role];
-};
 
+    // 2. ГРУЗИМ 3 ПОСЛЕДНИХ БОЯ (Новый блок)
+    const { data: matches } = await supabase
+        .from('match_history')
+        .select('*')
+        .or(`win.eq."${nick}",loss.eq."${nick}"`)
+        .order('date', { ascending: false })
+        .limit(3);
+
+    const gamesContainer = document.getElementById('prof-recent-games');
+    if (!gamesContainer) return; // На всякий случай
+
+    if (matches && matches.length > 0) {
+        gamesContainer.innerHTML = matches.map(m => {
+            const isWin = m.win === nick;
+            const oppNick = isWin ? m.loss : m.win;
+            const resColor = isWin ? '#00ff00' : '#ff0000';
+            const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
+            
+            return `
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor};">
+                <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
+                <!-- КЛИКАБЕЛЬНЫЙ НИК ПРОТИВНИКА -->
+                <b class="nick-hover role-${oppRole}" onclick="window.openProfile('${oppNick}')" style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">
+                    ${oppNick}
+                </b>
+                <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
+            </div>`;
+        }).join('');
+    } else {
+        gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+    }
+};
 window.handleLogin = async () => {
     const email = document.getElementById('login-email').value.trim();
     const { data: user } = await supabase.from('profiles').select('*').eq('email', email).single();
