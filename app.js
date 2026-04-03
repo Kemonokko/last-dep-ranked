@@ -96,7 +96,6 @@ window.handleLogin = async () => {
     }
 };
 
-// Переключение на РЕЙТИНГ
 window.showRating = () => { 
     const searchInput = document.getElementById('search');
     if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
@@ -104,16 +103,15 @@ window.showRating = () => {
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
     
-    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'flex');
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
     loadRating(); 
 };
 
-// Переключение на ИСТОРИЮ
 window.showHistory = () => { 
     const searchInput = document.getElementById('search');
-    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'none'; }
+    // ВКЛЮЧАЕМ ПОИСК ДЛЯ ИСТОРИИ (было none)
+    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
 
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
@@ -123,7 +121,6 @@ window.showHistory = () => {
     loadHistory(); 
 };
 
-// Переключение на ПРОФИЛЬ
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
@@ -133,21 +130,22 @@ window.showMyProfile = () => {
     document.getElementById('btn-profile').classList.add('active');
 
     if (userNick) {
-        // Если залогинен
         if (searchInput) searchInput.style.display = 'none';
         document.getElementById('rating-list').style.display = 'none';
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
     } else {
-        // Если НЕ залогинен
+        // ДЛЯ ВХОДА ПОИСК НУЖЕН
         if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
         document.getElementById('rating-list').style.display = 'block'; 
-        document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
+        // Прячем всё в списке изначально
+        document.getElementById('rating-list').innerHTML = ""; 
         document.getElementById('auth-ui').style.display = 'block';
         document.getElementById('cabinet-ui').style.display = 'none';
         const tip = document.getElementById('login-tip');
         if (tip) tip.style.display = 'block';
+        loadRating(); // Загружаем игроков, чтобы было кого искать
     }
 };
 
