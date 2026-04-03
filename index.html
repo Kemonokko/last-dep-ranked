@@ -139,28 +139,45 @@
   </div>
 
 <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
-    <div style="background:var(--card); border:2px solid var(--border); width:90%; max-width:400px; padding:30px; border-radius:20px; position:relative; text-align:center;">
+    <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:450px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto;">
         <div id="close-profile" style="position:absolute; top:15px; right:20px; color:#555; cursor:pointer; font-size:1.5em;">✕</div>
         
-        <div id="prof-avatar" style="width:110px; height:110px; border-radius:50%; border:3px solid #fff; margin:0 auto 15px; background-size:cover; background-position:center;"></div>
-        <h2 id="prof-nick" style="margin:0; color:white; font-size:1.8em;">Никнейм</h2>
-        <div id="prof-role-badge" style="display:inline-block; margin-top:8px; font-weight:900; font-size:0.75em; padding:4px 12px; border-radius:6px; border: 1.5px solid;">РОЛЬ</div>
+        <!-- Верхняя часть -->
+        <div id="prof-avatar" style="width:90px; height:90px; border-radius:50%; border:3px solid #fff; margin:0 auto 10px; background-size:cover; background-position:center;"></div>
+        <h2 id="prof-nick" style="margin:0; color:white; font-size:1.6em;">Никнейм</h2>
+        <div id="prof-role-badge" style="display:inline-block; margin-top:5px; font-weight:900; font-size:0.65em; padding:3px 10px; border-radius:5px; border: 1.5px solid;">РОЛЬ</div>
         
-        <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
-        
-        <!-- Подробная статистика игрока -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; text-align:left;">
-            <div>
-                <div style="font-size:0.7em; color:#848e9c;">ТЕКУЩИЙ ЭЛО</div>
-                <div id="prof-elo" style="color:var(--gold); font-weight:900; font-size:1.2em;">0</div>
+        <!-- Описание -->
+        <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Нет описания...</p>
+
+        <!-- Статистика -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
+                <div style="font-size:0.6em; color:#848e9c;">ELO</div>
+                <div id="prof-elo" style="color:var(--gold); font-weight:900; font-size:1.1em;">0</div>
             </div>
-            <div>
-                <div style="font-size:0.7em; color:#848e9c;">ВИНРЕЙТ</div>
-                <div id="prof-wr" style="color:white; font-weight:900; font-size:1.2em;">0%</div>
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
+                <div style="font-size:0.6em; color:#848e9c;">WINRATE</div>
+                <div id="prof-wr" style="color:white; font-weight:900; font-size:1.1em;">0%</div>
             </div>
+        </div>
+
+        <!-- ПОСЛЕДНИЕ 3 БОЯ -->
+        <div style="text-align:left; margin-bottom:20px;">
+            <div style="font-size:0.7em; color:#848e9c; margin-bottom:8px; font-weight:bold;">ПОСЛЕДНИЕ ИГРЫ</div>
+            <div id="prof-recent-games" style="display:flex; flex-direction:column; gap:5px;">
+                <!-- Тут будут игры -->
+            </div>
+        </div>
+
+        <!-- ГРАФИК (На будущее) -->
+        <div style="position:relative; width:100%; height:80px; background:rgba(0,0,0,0.3); border:1px dashed #333; border-radius:10px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:0.6em; color:#444; position:absolute; top:5px; left:10px;">ГРАФИК ELO</span>
+            <span style="font-size:0.7em; color:#333;">В разработке...</span>
         </div>
     </div>
 </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
