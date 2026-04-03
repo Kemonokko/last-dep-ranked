@@ -37,20 +37,30 @@ await refreshWinrate(lossNick);
 
 // ФУНКЦИЯ УДАЛЕНИЯ (ОТКАТА) МАТЧА
 export async function deleteMatch(matchId) {
-    if (!confirm("Аннулировать матч? Эло и дата бонуса вернутся назад.")) return;
+    if (!confirm("Аннулировать матч?")) return;
 
     const { data: match } = await supabase.from('match_history').select('*').eq('id', matchId).single();
     if (!match) return;
 
-    const { data: winP } = await supabase.from('profiles').select('*').eq('nickname', match.win).single();
-    const { data: lossP } = await supabase.from('profiles').select('*').eq('nickname', match.loss).single();
+    // Сначала откатываем Эло и бонус
+    await supabase.from('profiles').update({ 
+        elo: winP.elo - match["elo+"], 
+        bonus: match.prev_bonus_date 
+    }).eq('nickname', match.win);
 
-    await supabase.from('profiles').update({ elo: winP.elo - match["elo+"], bonus: match.prev_bonus_date }).eq('nickname', match.win);
-    await supabase.from('profiles').update({ elo: lossP.elo + match["elo-"] }).eq('nickname', match.loss);
+    await supabase.from('profiles').update({ 
+        elo: lossP.elo + match["elo-"] 
+    }).eq('nickname', match.loss);
 
+    // Удаляем запись
     await supabase.from('match_history').delete().eq('id', matchId);
-await refreshWinrate(match.win);
-await refreshWinrate(match.loss);
+
+    // ВАЖНО: ждем пересчета, прежде чем обновлять страницу
+    await Promise.all([
+        refreshWinrate(match.win),
+        refreshWinrate(match.loss)
+    ]);
+
     alert("Матч аннулирован!");
     location.reload();
 }
