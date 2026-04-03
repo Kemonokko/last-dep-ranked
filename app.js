@@ -148,3 +148,28 @@ window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
 loadRating();
+window.claimProfile = async () => {
+    const currentNick = document.getElementById('prof-nick').innerText;
+    const storedEmail = localStorage.getItem('user_email'); // Твоя почта, сохраненная при первом входе
+
+    if (!storedEmail) {
+        alert("Сначала введи свою почту во вкладке ПРОФИЛЬ!");
+        return window.showMyProfile();
+    }
+
+    // Проверяем в базе: совпадает ли почта у этого ника с твоей
+    const { data: user } = await supabase
+        .from('profiles')
+        .select('email, role')
+        .eq('nickname', currentNick)
+        .single();
+
+    if (user && user.email === storedEmail) {
+        localStorage.setItem('user_nick', currentNick);
+        localStorage.setItem('user_role', user.role || 'Player');
+        alert("Профиль подтвержден!");
+        location.reload();
+    } else {
+        alert("Это не твой профиль, идиот.");
+    }
+};
