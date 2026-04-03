@@ -84,18 +84,11 @@ window.openProfile = async (nick) => {
     }
 };
 
-// 4. ОСТАЛЬНАЯ ЛОГИКА
 window.handleLogin = async () => {
-    const nick = document.getElementById('login-nick').value.trim();
-    
-    if (!nick) return alert("Введи свой ник!");
+    const nick = document.getElementById('login-nick')?.value.trim();
+    if (!nick) return alert("Введи ник!");
 
-    // Теперь ищем в базе по нику, а не по почте
-    const { data: user, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('nickname', nick)
-        .single();
+    const { data: user } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     
     if (user) { 
         localStorage.setItem('user_nick', user.nickname); 
@@ -106,41 +99,79 @@ window.handleLogin = async () => {
     }
 };
 
-// Исправленное переключение на РЕЙТИНГ
+// Переключение на РЕЙТИНГ
 window.showRating = () => { 
     document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none'; // Скрываем профиль
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.getElementById('search').value = ""; // Очищаем поиск
     
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
+    
+    // Показываем всех игроков
+    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'flex');
     loadRating(); 
 };
 
-// Исправленное переключение на ИСТОРИЮ
+// Переключение на ИСТОРИЮ
 window.showHistory = () => { 
     document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none'; // Скрываем профиль
+    document.getElementById('my-profile-section').style.display = 'none';
     
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-history').classList.add('active');
     loadHistory(); 
 };
 
-// Твоя функция профиля (добавил только очистку кнопок)
+// Переключение на ПРОФИЛЬ (Вход)
 window.showMyProfile = () => {
-    document.getElementById('rating-list').style.display = 'none';
+    // ВАЖНО: Список НЕ скрываем, но сначала прячем все карточки, пока юзер не начал искать
+    document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'block';
     
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
+
+    // Если поиск пуст — прячем игроков, показываем подсказку
+    if (document.getElementById('search').value.length === 0) {
+        document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
+        const tip = document.getElementById('login-tip');
+        if (tip) tip.style.display = 'block';
+    }
 
     const userNick = localStorage.getItem('user_nick');
     if (userNick) {
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
-        document.getElementById('cabinet-role').innerText = localStorage.getItem('user_role') || 'PLAYER';
     }
+};
+
+// Умный поиск
+window.filterPlayers = () => {
+    const val = document.getElementById('search').value.toLowerCase().trim();
+    const tip = document.getElementById('login-tip');
+    const cards = document.querySelectorAll('#rating-list .match-card');
+    const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
+
+    // Управляем подсказкой
+    if (tip) {
+        tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
+    }
+
+    // Фильтруем карточки
+    cards.forEach(card => {
+        const nick = card.querySelector('b').innerText.toLowerCase();
+        const matches = nick.includes(val);
+        
+        if (isProfileTab) {
+            // На вкладке профиля показываем карточки только если есть текст в поиске
+            card.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
+        } else {
+            // На рейтинге просто фильтруем
+            card.style.display = matches ? 'flex' : 'none';
+        }
+    });
 };
 
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
@@ -148,44 +179,3 @@ window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
 loadRating();
-window.claimProfile = async () => {
-    const currentNick = document.getElementById('prof-nick').innerText;
-    const storedEmail = localStorage.getItem('user_email'); // Твоя почта, сохраненная при первом входе
-
-    if (!storedEmail) {
-        alert("Сначала введи свою почту во вкладке ПРОФИЛЬ!");
-        return window.showMyProfile();
-    }
-
-    // Проверяем в базе: совпадает ли почта у этого ника с твоей
-    const { data: user } = await supabase
-        .from('profiles')
-        .select('email, role')
-        .eq('nickname', currentNick)
-        .single();
-
-    if (user && user.email === storedEmail) {
-        localStorage.setItem('user_nick', currentNick);
-        localStorage.setItem('user_role', user.role || 'Player');
-        alert("Профиль подтвержден!");
-        location.reload();
-    } else {
-        alert("Это не твой профиль, идиот.");
-    }
-};
-window.filterPlayers = () => {
-    const val = document.getElementById('search').value.toLowerCase().trim();
-    const tip = document.getElementById('login-tip');
-    const cards = document.querySelectorAll('#rating-list .match-card');
-
-    // Если мы на вкладке профиля и начали искать — скрываем подсказку
-    if (tip) {
-        tip.style.display = (val.length > 0) ? 'none' : 'block';
-    }
-
-    // Фильтруем сами карточки
-    cards.forEach(card => {
-        const nick = card.querySelector('b').innerText.toLowerCase();
-        card.style.display = nick.includes(val) ? 'flex' : 'none';
-    });
-};
