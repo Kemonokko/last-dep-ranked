@@ -101,20 +101,27 @@ window.handleLogin = async () => {
 
 // Переключение на РЕЙТИНГ
 window.showRating = () => { 
+    // Очищаем поиск и сбрасываем фильтры
+    const searchInput = document.getElementById('search');
+    if (searchInput) searchInput.value = ""; 
+    
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
-    document.getElementById('search').value = ""; // Очищаем поиск
     
+    // Показываем всех игроков (сбрасываем скрытие для профиля)
+    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'flex');
+
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
-    
-    // Показываем всех игроков
-    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'flex');
     loadRating(); 
 };
 
 // Переключение на ИСТОРИЮ
 window.showHistory = () => { 
+    // Очищаем поиск при переходе в историю
+    const searchInput = document.getElementById('search');
+    if (searchInput) searchInput.value = "";
+
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
     
@@ -125,19 +132,33 @@ window.showHistory = () => {
 
 // Переключение на ПРОФИЛЬ (Вход)
 window.showMyProfile = () => {
-    // ВАЖНО: Список НЕ скрываем, но сначала прячем все карточки, пока юзер не начал искать
+    // 1. Очищаем поиск при входе во вкладку профиля
+    const searchInput = document.getElementById('search');
+    if (searchInput) searchInput.value = "";
+
+    // 2. Скрываем всех игроков, пока поиск пустой
+    document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
+    
+    // 3. Показываем подсказку "Найди себя"
+    const tip = document.getElementById('login-tip');
+    if (tip) tip.style.display = 'block';
+
     document.getElementById('rating-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'block';
     
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
-    // Если поиск пуст — прячем игроков, показываем подсказку
-    if (document.getElementById('search').value.length === 0) {
-        document.querySelectorAll('#rating-list .match-card').forEach(c => c.style.display = 'none');
-        const tip = document.getElementById('login-tip');
-        if (tip) tip.style.display = 'block';
+    const userNick = localStorage.getItem('user_nick');
+    if (userNick) {
+        document.getElementById('auth-ui').style.display = 'none';
+        document.getElementById('cabinet-ui').style.display = 'block';
+        document.getElementById('cabinet-nick').innerText = userNick;
+        // Если залогинен — поиск и список вообще не нужны
+        document.getElementById('search').style.display = 'none';
+        document.getElementById('rating-list').style.display = 'none';
     }
+};
 
     const userNick = localStorage.getItem('user_nick');
     if (userNick) {
