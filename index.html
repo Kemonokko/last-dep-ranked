@@ -91,7 +91,15 @@
   width: 100%; 
   box-sizing: border-box;
 }
-  
+  #my-profile-section ~ #rating-list .match-card .badge, 
+#my-profile-section ~ #rating-list .match-card div:last-child {
+    display: none !important;
+}
+/* Если секция профиля скрыта, возвращаем всё назад автоматически */
+#my-profile-section[style*="display: none"] ~ #rating-list .match-card .badge,
+#my-profile-section[style*="display: none"] ~ #rating-list .match-card div:last-child {
+    display: block !important;
+}
 </style>
 </head>
 <body>
