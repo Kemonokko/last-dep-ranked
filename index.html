@@ -139,16 +139,24 @@
         </div>
     </div>
 
-    <!-- Личный Кабинет (появится после входа) -->
-    <div id="cabinet-ui" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px;">
-        <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
-        <div id="cabinet-role" style="font-size:0.7em; font-weight:900; color:var(--gold); border:1px solid var(--gold); display:inline-block; padding:3px 10px; border-radius:5px;">PLAYER</div>
-        <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-        <p style="font-size:0.8em; color:#848e9c; margin-bottom:10px;">Смена аватарки:</p>
-        <input type="text" id="new-avatar-url" class="admin-input" placeholder="Вставь ссылку на фото...">
-        <button onclick="window.updateAvatar()" class="admin-btn-submit" style="margin-top:10px; background:#222; border:1px solid #444;">ОБНОВИТЬ АВУ</button>
-        <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
-    </div>
+<div id="cabinet-ui" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; text-align:center;">
+    <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
+    <div id="cabinet-role" style="font-size:0.7em; font-weight:900; padding:3px 10px; border-radius:5px; border: 1.5px solid; display:inline-block;">PLAYER</div>
+    
+    <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+    
+    <!-- ПОЛЕ БИО -->
+    <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Твое описание (Био):</p>
+    <textarea id="new-bio" class="admin-input" style="height:60px; resize:none;" placeholder="Расскажи о себе..."></textarea>
+    <button onclick="window.updateProfileData()" class="admin-btn-submit" style="margin-bottom:15px; background:var(--gold); color:black;">ОБНОВИТЬ ПРОФИЛЬ</button>
+
+    <!-- СМЕНА АВАТАРКИ -->
+    <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Смена аватарки (1 раз для Player):</p>
+    <input type="text" id="new-avatar-url" class="admin-input" placeholder="Вставь ссылку на фото (jpg/png)">
+    <button id="ava-btn" onclick="window.updateAvatar()" class="admin-btn-submit" style="background:#222; border:1px solid #444;">СМЕНИТЬ АВАТАР</button>
+    
+    <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
+</div>
 </div>
 
     <!-- Личный Кабинет -->
