@@ -270,7 +270,7 @@ window.loginWithEmail = async (nickname) => {
         await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.href
+                redirectTo: 'https://last-dep-ranked.vercel.app'
             }
         });
         return;
