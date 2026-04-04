@@ -199,6 +199,96 @@ window.filterPlayers = () => {
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
+async function loadAllPlayersForSearch() {
+    const { data: players } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+    if (players) {
+        window.allPlayers = players;
+        window.roleCache = {};
+        players.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
+    }
+}
 
+window.filterPlayersForLogin = () => {
+    const val = document.getElementById('search').value.toLowerCase().trim();
+    const container = document.getElementById('rating-list');
+    
+    if (!val) {
+        container.innerHTML = `
+            <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center;">
+                <h2 style="color:var(--gold);">🔐 Вход</h2>
+                <p>Начни вводить свой ник в строку поиска</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const matches = window.allPlayers.filter(p => 
+        p.nickname.toLowerCase().startsWith(val) || 
+        p.nickname.toLowerCase().includes(val)
+    );
+    
+    if (matches.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#888;">❌ Игрок не найден</div>`;
+        return;
+    }
+    
+    container.innerHTML = matches.map(p => {
+        const rank = getRankByPercentile(
+            window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1, 
+            window.allPlayers.length
+        );
+        return `
+        <div class="match-card" style="justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}');"></div>
+                <div>
+                    <b style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
+                    <div class="badge rank-${rank}">${rank}</div>
+                </div>
+            </div>
+            <button onclick="window.loginWithEmail('${p.nickname}')" 
+                    style="background: var(--blood); border: none; color: white; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                ВОЙТИ
+            </button>
+        </div>`;
+    }).join('');
+};
+
+window.loginWithEmail = async (nickname) => {
+    const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('nickname', nickname)
+        .single();
+    
+    if (error || !profile || !profile.email) {
+        alert("❌ У этого аккаунта не привязан email. Обратитесь к администратору.");
+        return;
+    }
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+        alert(`🔐 Для входа под ником "${nickname}" необходим email ${profile.email}`);
+        await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.href
+            }
+        });
+        return;
+    }
+    
+    if (user.email !== profile.email) {
+        alert(`❌ Несовпадение email!\n\nВы зашли как: ${user.email}\nАккаунт "${nickname}" привязан к: ${profile.email}\n\nВыйдите из текущего аккаунта и войдите под правильным.`);
+        return;
+    }
+    
+    localStorage.setItem('user_nick', nickname);
+    localStorage.setItem('user_role', profile.role || 'Player');
+    
+    alert(`✅ Добро пожаловать, ${nickname}!`);
+    location.reload();
+};
 // Старт
 loadRating();
