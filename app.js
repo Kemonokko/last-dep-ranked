@@ -259,14 +259,15 @@ window.loginWithEmail = async (nickname) => {
         .single();
     
     if (error || !profile || !profile.email) {
-        alert("❌ У этого аккаунта не привязан email. Обратитесь к администратору.");
+        alert("❌ У этого профиля не настроен вход через Email. Обратитесь к администратору.");
         return;
     }
     
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getSession(); // Используем getSession для быстрой проверки
     
     if (!user) {
-        alert(`🔐 Для входа под ником "${nickname}" необходим email ${profile.email}`);
+        // УБРАЛИ ПОЧТУ: теперь просто просим войти через Google
+        alert(`🔐 Для входа под ником "${nickname}" подтвердите свою личность через Google.`);
         await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -276,8 +277,9 @@ window.loginWithEmail = async (nickname) => {
         return;
     }
     
-    if (user.email !== profile.email) {
-        alert(`❌ Несовпадение email!\n\nВы зашли как: ${user.email}\nАккаунт "${nickname}" привязан к: ${profile.email}\n\nВыйдите из текущего аккаунта и войдите под правильным.`);
+    if (user.user.email !== profile.email) {
+        // УБРАЛИ ПОЧТУ: пишем общее сообщение об ошибке доступа
+        alert(`❌ Ошибка доступа!\n\nВы вошли через Google-аккаунт, который не привязан к нику "${nickname}".\n\nВыйдите из текущего аккаунта и попробуйте снова с правильной почтой.`);
         return;
     }
     
