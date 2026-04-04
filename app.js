@@ -6,6 +6,7 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
+// 1. ЗАГРУЗКА РЕЙТИНГА
 async function loadRating() {
     const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
@@ -16,6 +17,7 @@ async function loadRating() {
     renderPlayers(allPlayers);
 }
 
+// 2. ОТРИСОВКА КАРТОЧЕК ИГРОКОВ
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
@@ -42,6 +44,7 @@ function renderPlayers(list) {
     }).join('');
 }
 
+// 3. ОТКРЫТИЕ МОДАЛКИ ПРОФИЛЯ
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
@@ -79,43 +82,8 @@ window.openProfile = async (nick) => {
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
 };
-window.handleLogin = async () => {
-    const nick = document.getElementById('login-nick')?.value.trim();
-    if (!nick) return alert("Введи ник!");
-    const { data: user } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
-    if (user) { 
-        localStorage.setItem('user_nick', user.nickname); 
-        localStorage.setItem('user_role', user.role || 'Player'); 
-        location.reload(); 
-    } else { 
-        alert("Игрок не найден."); 
-    }
-};
 
-window.showRating = () => { 
-    const searchInput = document.getElementById('search');
-    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
-    
-    document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none';
-    
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-rating').classList.add('active');
-    loadRating(); 
-};
-
-window.showHistory = () => { 
-    const searchInput = document.getElementById('search');
-    if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
-
-    document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none';
-    
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-history').classList.add('active');
-    loadHistory(); 
-};
-
+// 4. ЛИЧНЫЙ КАБИНЕТ И АДМИНКА
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
@@ -134,88 +102,82 @@ window.showMyProfile = () => {
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
         
+        // --- ЛОГИКА АДМИНКИ ---
         const adminBtn = document.getElementById('admin-btn');
         const adminPanel = document.getElementById('admin-panel');
 
         if (userRole === 'Founder' || userRole === 'Archivist') {
-            if (adminBtn) adminBtn.style.display = 'block';
-            if (adminPanel) adminPanel.style.display = 'block';
+            if (adminBtn) {
+                adminBtn.style.display = 'block';
+                adminBtn.onclick = () => {
+                    const isHidden = adminPanel.style.display === 'none';
+                    adminPanel.style.display = isHidden ? 'block' : 'none';
+                };
+            }
+            if (adminPanel) adminPanel.style.display = 'none'; // По умолчанию скрыта
         } else {
             if (adminBtn) adminBtn.style.display = 'none';
             if (adminPanel) adminPanel.style.display = 'none';
         }
 
-        const roleNames = { 'Founder': 'FOUNDER', 'Overseer': 'OVERSEER', 'Archivist': 'ARCHIVIST', 'Bloodline': 'BLOODLINE', 'Player': 'PLAYER' };
+        // --- ЦВЕТА И ТЕКСТ РОЛИ В КАБИНЕТЕ ---
+        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const roleBadge = document.getElementById('cabinet-role');
         if (roleBadge) {
-            roleBadge.innerText = roleNames[userRole] || 'PLAYER';
-            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+            roleBadge.innerText = userRole.toUpperCase();
             roleBadge.style.color = roleColors[userRole] || '#ffffff';
             roleBadge.style.borderColor = roleColors[userRole] || '#ffffff';
         }
     } else {
+        // Логика когда не залогинен (вход через поиск)
         if (searchInput) {
             searchInput.style.display = 'block';
             searchInput.value = "";
             searchInput.placeholder = "Поиск...";
             searchInput.oninput = () => window.filterPlayersForLogin();
         }
-        
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'none';
-        
         document.getElementById('rating-list').innerHTML = `
             <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center; margin-top:20px;">
                 <h2 style="color:var(--gold);">🔐 Вход</h2>
                 <p>Для входа ввести ник в строку поиска</p>
             </div>
         `;
-        
         loadAllPlayersForSearch();
     }
 };
 
+// 5. ФИЛЬТРАЦИЯ (ПОИСК)
 window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
     const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
-    const tip = document.getElementById('login-tip');
     
-    if (tip) {
-        tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
-    }
-
     const players = document.querySelectorAll('.match-card');
     players.forEach(p => {
         const matches = p.innerText.toLowerCase().includes(val);
-        if (isHistoryTab) {
-            p.style.display = 'none';
-        } else if (isProfileTab) {
-            p.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
-        } else {
-            p.style.display = matches ? 'flex' : 'none';
-        }
+        if (isHistoryTab) p.style.display = 'none';
+        else if (isProfileTab) p.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
+        else p.style.display = matches ? 'flex' : 'none';
     });
 
     const matchesList = document.querySelectorAll('.history-item');
     matchesList.forEach(m => {
         const fits = m.innerText.toLowerCase().includes(val);
-        if (isHistoryTab) {
-            m.style.display = fits ? 'flex' : 'none';
-        } else {
-            m.style.display = 'none';
-        }
+        m.style.display = (isHistoryTab && fits) ? 'flex' : 'none';
     });
 };
 
+// 6. СИСТЕМНЫЕ ФУНКЦИИ
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
+
 async function loadAllPlayersForSearch() {
     const { data: players } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (players) {
         window.allPlayers = players;
-        window.roleCache = {};
         players.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
     }
 }
@@ -223,92 +185,50 @@ async function loadAllPlayersForSearch() {
 window.filterPlayersForLogin = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const container = document.getElementById('rating-list');
-    
     if (!val) {
-        container.innerHTML = `
-            <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center;">
-                <h2 style="color:var(--gold);">🔐 Вход</h2>
-                <p>Поиск</p>
-            </div>
-        `;
+        container.innerHTML = `<div style="text-align:center; padding:30px;"><h2>🔐 Вход</h2><p>Поиск</p></div>`;
         return;
     }
-    
-    const matches = window.allPlayers.filter(p => 
-        p.nickname.toLowerCase().startsWith(val) || 
-        p.nickname.toLowerCase().includes(val)
-    );
-    
+    const matches = window.allPlayers.filter(p => p.nickname.toLowerCase().includes(val));
     if (matches.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:20px; color:#888;">❌ Игрок не найден</div>`;
         return;
     }
-    
     container.innerHTML = matches.map(p => {
-        const rank = getRankByPercentile(
-            window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1, 
-            window.allPlayers.length
-        );
-        return `
-        <div class="match-card" style="justify-content: space-between;">
+        const rank = getRankByPercentile(window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1, window.allPlayers.length);
+        return `<div class="match-card" style="justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}');"></div>
-                <div>
-                    <b style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                    <div class="badge rank-${rank}">${rank}</div>
-                </div>
+                <div><b style="color: white;">${p.nickname}</b><br><div class="badge rank-${rank}">${rank}</div></div>
             </div>
-            <button onclick="window.loginWithEmail('${p.nickname}')" 
-                    style="background: var(--blood); border: none; color: white; padding: 8px 20px; border-radius: 10px; font-weight: bold; cursor: pointer;">
-                ВОЙТИ
-            </button>
+            <button onclick="window.loginWithEmail('${p.nickname}')" style="background:var(--blood); border:none; color:white; padding:8px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">ВОЙТИ</button>
         </div>`;
     }).join('');
 };
 
 window.loginWithEmail = async (nickname) => {
-    const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('email, role')
-        .eq('nickname', nickname)
-        .single();
+    const { data: profile, error } = await supabase.from('profiles').select('email, role').eq('nickname', nickname).single();
+    if (error || !profile || !profile.email) return alert("❌ У профиля не настроен вход через Email.");
     
-    if (error || !profile || !profile.email) {
-        alert("❌ У этого профиля не настроен вход через Email. Обратитесь к администратору.");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        alert(`🔐 Для входа под ником "${nickname}" подтвердите личность через Google.`);
+        await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://vercel.app' } });
         return;
     }
-    
-    const { data: { user } } = await supabase.auth.getSession();
-    
-    if (!user) {
-        alert(`🔐 Для входа под ником "${nickname}" подтвердите свою личность через Google.`);
-        await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: 'https://last-dep-ranked.vercel.app',
-            }
-        });
-        return;
-    }
-    
-    if (user.user.email !== profile.email) {
-        alert(`❌ Доступ запрещен!\n\nВаш Google-аккаунт не имеет прав для входа в профиль "${nickname}".`);
-        return;
-    }
+    if (session.user.email !== profile.email) return alert(`❌ Ошибка доступа! Ваш Google-аккаунт не привязан к нику "${nickname}".`);
     
     localStorage.setItem('user_nick', nickname);
     localStorage.setItem('user_role', profile.role || 'Player');
-    
     alert(`✅ Добро пожаловать, ${nickname}!`);
     location.reload();
 };
-loadRating();
+
+// 7. ОБНОВЛЕНИЕ ДАННЫХ ПРОФИЛЯ
 window.updateProfileData = async () => {
     const nick = localStorage.getItem('user_nick');
-    const bio = document.getElementById('new-bio').value;
-    
+    const bio = document.getElementById('new-bio')?.value || "";
     const { error } = await supabase.from('profiles').update({ bio: bio }).eq('nickname', nick);
-    
     if (error) return alert("Ошибка сохранения био");
     alert("✅ Профиль обновлен!");
     location.reload();
@@ -316,14 +236,13 @@ window.updateProfileData = async () => {
 
 window.updateAvatar = async () => {
     const nick = localStorage.getItem('user_nick');
-    const url = document.getElementById('new-avatar-url').value;
+    const url = document.getElementById('new-avatar-url').value.trim();
     if (!url) return alert("Вставь ссылку!");
 
     const { data: p } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
 
-    if (p.role === 'Player' && p.avatar_changes >= 1) {
-        alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз.\n\nОбратитесь к Archivist для сброса лимита!");
-        return;
+    if (p.role === 'Player' && (p.avatar_changes || 0) >= 1) {
+        return alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз. Обратитесь к Archivist!");
     }
 
     const { error } = await supabase.from('profiles').update({ 
@@ -332,15 +251,28 @@ window.updateAvatar = async () => {
     }).eq('nickname', nick);
 
     if (error) return alert("Ошибка при смене авы");
-    
     alert("✅ Аватарка успешно изменена!");
     location.reload();
 };
 
-const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-const roleBadge = document.getElementById('cabinet-role');
-if (roleBadge) {
-    const userRole = localStorage.getItem('user_role') || 'Player';
-    roleBadge.style.color = roleColors[userRole];
-    roleBadge.style.borderColor = roleColors[userRole];
-}
+// Навигация
+window.showRating = () => { 
+    const s = document.getElementById('search'); if(s) s.style.display = 'block';
+    document.getElementById('rating-list').style.display = 'block'; 
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-rating').classList.add('active');
+    loadRating(); 
+};
+
+window.showHistory = () => { 
+    const s = document.getElementById('search'); if(s) s.style.display = 'block';
+    document.getElementById('rating-list').style.display = 'block'; 
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-history').classList.add('active');
+    loadHistory(); 
+};
+
+// Запуск при старте
+loadRating();
