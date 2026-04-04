@@ -119,7 +119,7 @@ window.showHistory = () => {
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
-    const userRole = localStorage.getItem('user_role') || 'Player'; // Добавили роль
+    const userRole = localStorage.getItem('user_role') || 'Player';
     
     document.getElementById('my-profile-section').style.display = 'block';
     document.getElementById('rating-list').style.display = 'block';
@@ -134,7 +134,6 @@ window.showMyProfile = () => {
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
         
-        // --- ВКЛЮЧАЕМ АДМИНКУ ---
         const adminBtn = document.getElementById('admin-btn');
         const adminPanel = document.getElementById('admin-panel');
 
@@ -145,13 +144,11 @@ window.showMyProfile = () => {
             if (adminBtn) adminBtn.style.display = 'none';
             if (adminPanel) adminPanel.style.display = 'none';
         }
-        // ------------------------
 
         const roleNames = { 'Founder': 'FOUNDER', 'Overseer': 'OVERSEER', 'Archivist': 'ARCHIVIST', 'Bloodline': 'BLOODLINE', 'Player': 'PLAYER' };
         const roleBadge = document.getElementById('cabinet-role');
         if (roleBadge) {
             roleBadge.innerText = roleNames[userRole] || 'PLAYER';
-            // Исправляем "желтый" цвет роли на правильный
             const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
             roleBadge.style.color = roleColors[userRole] || '#ffffff';
             roleBadge.style.borderColor = roleColors[userRole] || '#ffffff';
@@ -200,7 +197,6 @@ window.filterPlayers = () => {
         }
     });
 
-    // 3. ФИЛЬТРУЕМ МАТЧИ (history-item)
     const matchesList = document.querySelectorAll('.history-item');
     matchesList.forEach(m => {
         const fits = m.innerText.toLowerCase().includes(val);
@@ -282,10 +278,9 @@ window.loginWithEmail = async (nickname) => {
         return;
     }
     
-    const { data: { user } } = await supabase.auth.getSession(); // Используем getSession для быстрой проверки
+    const { data: { user } } = await supabase.auth.getSession();
     
     if (!user) {
-        // УБРАЛИ ПОЧТУ: теперь просто просим войти через Google
         alert(`🔐 Для входа под ником "${nickname}" подтвердите свою личность через Google.`);
         await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -297,7 +292,6 @@ window.loginWithEmail = async (nickname) => {
     }
     
     if (user.user.email !== profile.email) {
-        // УБРАЛИ ПОЧТУ: пишем общее сообщение об ошибке доступа
         alert(`❌ Доступ запрещен!\n\nВаш Google-аккаунт не имеет прав для входа в профиль "${nickname}".`);
         return;
     }
@@ -309,7 +303,6 @@ window.loginWithEmail = async (nickname) => {
     location.reload();
 };
 loadRating();
-// 1. ФУНКЦИЯ ОБНОВЛЕНИЯ БИО
 window.updateProfileData = async () => {
     const nick = localStorage.getItem('user_nick');
     const bio = document.getElementById('new-bio').value;
@@ -321,22 +314,18 @@ window.updateProfileData = async () => {
     location.reload();
 };
 
-// 2. ФУНКЦИЯ СМЕНЫ АВАТАРКИ С ЛИМИТОМ
 window.updateAvatar = async () => {
     const nick = localStorage.getItem('user_nick');
     const url = document.getElementById('new-avatar-url').value;
     if (!url) return alert("Вставь ссылку!");
 
-    // Получаем текущие данные из базы
     const { data: p } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
 
-    // ПРОВЕРКА ЛИМИТА: если ты Player и уже менял аву хотя бы 1 раз
     if (p.role === 'Player' && p.avatar_changes >= 1) {
         alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз.\n\nОбратитесь к Archivist для сброса лимита!");
         return;
     }
 
-    // Если проверка пройдена (или ты Founder), обновляем
     const { error } = await supabase.from('profiles').update({ 
         avatar_url: url, 
         avatar_changes: (p.avatar_changes || 0) + 1 
@@ -348,8 +337,6 @@ window.updateAvatar = async () => {
     location.reload();
 };
 
-// 3. ИСПРАВЛЕНИЕ ЦВЕТА РОЛИ В ЛИЧНОМ КАБИНЕТЕ (Вставь это внутрь showMyProfile)
-// Найти в коде место, где заполняется кабинет и добавить:
 const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
 const roleBadge = document.getElementById('cabinet-role');
 if (roleBadge) {
