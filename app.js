@@ -254,7 +254,7 @@ window.filterPlayersForLogin = () => {
 window.loginWithEmail = async (nickname) => {
     const { data: profile, error } = await supabase
         .from('profiles')
-        .select('email')
+        .select('email, role')
         .eq('nickname', nickname)
         .single();
     
