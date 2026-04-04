@@ -43,7 +43,7 @@ export async function loadHistory() {
                 <!-- ПРОИГРАВШИЙ -->
                 <div style="flex: 1; text-align: right;">
                     <b class="nick-hover role-${lossRole}">${m.loss}</b>
-                    <div style="color: var(--blood); font-size: 1em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
+                    <div style="color: var(--blood); font-size: 0.9em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
                 </div>
 
             </div>
