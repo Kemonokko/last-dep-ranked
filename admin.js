@@ -39,29 +39,45 @@ await refreshWinrate(lossNick);
 export async function deleteMatch(matchId) {
     if (!confirm("Аннулировать матч?")) return;
 
-    const { data: match } = await supabase.from('match_history').select('*').eq('id', matchId).single();
-    if (!match) return;
+    // 1. Получаем данные самого матча, который хотим удалить
+    const { data: match, error: matchError } = await supabase
+        .from('match_history')
+        .select('*')
+        .eq('id', matchId)
+        .single();
 
-    // Сначала откатываем Эло и бонус
+    if (matchError || !match) return alert("Матч не найден в базе!");
+
+    // 2. ПОЛУЧАЕМ ДАННЫЕ ИГРОКОВ (этот шаг мы добавили)
+    // Нам нужно знать их ТЕКУЩИЙ эло, чтобы вычесть/прибавить очки
+    const { data: winP } = await supabase.from('profiles').select('*').eq('nickname', match.win).single();
+    const { data: lossP } = await supabase.from('profiles').select('*').eq('nickname', match.loss).single();
+
+    if (!winP || !lossP) return alert("Игроки этого матча не найдены в профилях!");
+
+    // 3. ОТКАТЫВАЕМ ЭЛО И БОНУС
+    // У победителя отнимаем то, что начислили (включая бонус)
+    // И возвращаем ему старую дату бонуса (prev_bonus_date)
     await supabase.from('profiles').update({ 
         elo: winP.elo - match["elo+"], 
         bonus: match.prev_bonus_date 
     }).eq('nickname', match.win);
 
+    // Проигравшему возвращаем отнятые очки
     await supabase.from('profiles').update({ 
         elo: lossP.elo + match["elo-"] 
     }).eq('nickname', match.loss);
 
-    // Удаляем запись
+    // 4. УДАЛЯЕМ ЗАПИСЬ О МАТЧЕ
     await supabase.from('match_history').delete().eq('id', matchId);
 
-    // ВАЖНО: ждем пересчета, прежде чем обновлять страницу
+    // 5. ПЕРЕСЧИТЫВАЕМ ВИНРЕЙТ (так как матчей стало меньше)
     await Promise.all([
         refreshWinrate(match.win),
         refreshWinrate(match.loss)
     ]);
 
-    alert("Матч аннулирован!");
+    alert("Матч аннулирован, рейтинг восстановлен!");
     location.reload();
 }
 
