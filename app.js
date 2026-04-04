@@ -6,7 +6,6 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-// 1. ЗАГРУЗКА РЕЙТИНГА
 async function loadRating() {
     const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
@@ -17,7 +16,6 @@ async function loadRating() {
     renderPlayers(allPlayers);
 }
 
-// 2. ОТРИСОВКА КАРТОЧЕК (Клик работает)
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
@@ -44,7 +42,6 @@ function renderPlayers(list) {
     }).join('');
 }
 
-// 3. ОТКРЫТИЕ КАРТОЧКИ (ПРОФИЛЯ)
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
@@ -65,7 +62,6 @@ window.openProfile = async (nick) => {
     badge.style.color = roleColors[role];
     badge.style.borderColor = roleColors[role];
 
-    // ЗАГРУЗКА 3 ПОСЛЕДНИХ БОЕВ В КАРТОЧКУ
     const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
     const gamesContainer = document.getElementById('prof-recent-games');
     if (gamesContainer) {
@@ -110,7 +106,6 @@ window.showRating = () => {
 
 window.showHistory = () => { 
     const searchInput = document.getElementById('search');
-    // ВКЛЮЧАЕМ ПОИСК ДЛЯ ИСТОРИИ (было none)
     if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
 
     document.getElementById('rating-list').style.display = 'block'; 
@@ -170,17 +165,15 @@ window.filterPlayers = () => {
     const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
     const tip = document.getElementById('login-tip');
     
-    // 1. Управляем подсказкой в Профиле
     if (tip) {
         tip.style.display = (val.length > 0 || !isProfileTab) ? 'none' : 'block';
     }
 
-    // 2. ФИЛЬТРУЕМ ИГРОКОВ (match-card)
     const players = document.querySelectorAll('.match-card');
     players.forEach(p => {
         const matches = p.innerText.toLowerCase().includes(val);
         if (isHistoryTab) {
-            p.style.display = 'none'; // В истории ИГРОКОВ не показываем
+            p.style.display = 'none';
         } else if (isProfileTab) {
             p.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
         } else {
@@ -193,9 +186,9 @@ window.filterPlayers = () => {
     matchesList.forEach(m => {
         const fits = m.innerText.toLowerCase().includes(val);
         if (isHistoryTab) {
-            m.style.display = fits ? 'flex' : 'none'; // В истории показываем только МАТЧИ
+            m.style.display = fits ? 'flex' : 'none';
         } else {
-            m.style.display = 'none'; // В остальных вкладках МАТЧИ скрываем совсем
+            m.style.display = 'none';
         }
     });
 };
@@ -294,5 +287,4 @@ window.loginWithEmail = async (nickname) => {
     alert(`✅ Добро пожаловать, ${nickname}!`);
     location.reload();
 };
-// Старт
 loadRating();
