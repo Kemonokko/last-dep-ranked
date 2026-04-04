@@ -146,7 +146,7 @@ window.showMyProfile = () => {
         if (searchInput) {
             searchInput.style.display = 'block';
             searchInput.value = "";
-            searchInput.placeholder = "🔍 Начни вводить свой ник...";
+            searchInput.placeholder = "🔍 Поиск...";
             searchInput.oninput = () => window.filterPlayersForLogin();
         }
         
@@ -156,7 +156,7 @@ window.showMyProfile = () => {
         document.getElementById('rating-list').innerHTML = `
             <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center; margin-top:20px;">
                 <h2 style="color:var(--gold);">🔐 Вход</h2>
-                <p>Начни вводить свой ник в строку поиска</p>
+                <p>Для входа ввести ник в строку поиска</p>
             </div>
         `;
         
@@ -220,7 +220,7 @@ window.filterPlayersForLogin = () => {
         container.innerHTML = `
             <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center;">
                 <h2 style="color:var(--gold);">🔐 Вход</h2>
-                <p>Начни вводить свой ник в строку поиска</p>
+                <p>Поиск</p>
             </div>
         `;
         return;
