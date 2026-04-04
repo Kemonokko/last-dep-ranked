@@ -126,6 +126,8 @@ window.showMyProfile = () => {
     const userNick = localStorage.getItem('user_nick');
     
     document.getElementById('my-profile-section').style.display = 'block';
+    document.getElementById('rating-list').style.display = 'block';
+    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
@@ -135,29 +137,31 @@ window.showMyProfile = () => {
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
+        
+        const role = localStorage.getItem('user_role') || 'Player';
+        const roleNames = { 'Founder': 'FOUNDER', 'Overseer': 'OVERSEER', 'Archivist': 'ARCHIVIST', 'Bloodline': 'BLOODLINE', 'Player': 'PLAYER' };
+        const roleBadge = document.getElementById('cabinet-role');
+        if (roleBadge) roleBadge.innerText = roleNames[role] || 'PLAYER';
     } else {
-        // ДЛЯ ВХОДА ПОИСК НУЖЕН
-        if (searchInput) { searchInput.value = ""; searchInput.style.display = 'block'; }
-        document.getElementById('rating-list').style.display = 'block'; 
-        // Прячем всё в списке изначально
-        document.getElementById('rating-list').innerHTML = ""; 
-        document.getElementById('auth-ui').style.display = 'block';
+        if (searchInput) {
+            searchInput.style.display = 'block';
+            searchInput.value = "";
+            searchInput.placeholder = "🔍 Начни вводить свой ник...";
+            searchInput.oninput = () => window.filterPlayersForLogin();
+        }
+        
+        document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'none';
-        const tip = document.getElementById('login-tip');
-        if (tip) tip.style.display = 'block';
-        loadRating(); // Загружаем игроков, чтобы было кого искать
+        
+        document.getElementById('rating-list').innerHTML = `
+            <div style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; text-align:center; margin-top:20px;">
+                <h2 style="color:var(--gold);">🔐 Вход</h2>
+                <p>Начни вводить свой ник в строку поиска</p>
+            </div>
+        `;
+        
+        loadAllPlayersForSearch();
     }
-        document.getElementById('rating-list').style.display = 'block';
-    
-    // ВАЖНО: Прячем всех игроков сразу, чтобы не накладывались на подсказку
-    document.querySelectorAll('.match-card').forEach(c => c.style.display = 'none');
-    document.querySelectorAll('.history-item').forEach(c => c.style.display = 'none');
-
-    const tip = document.getElementById('login-tip');
-    if (tip) tip.style.display = 'block';
-    
-    // Очищаем поиск, чтобы при входе всегда была подсказка
-    document.getElementById('search').value = "";
 };
 
 window.filterPlayers = () => {
