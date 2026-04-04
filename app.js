@@ -119,6 +119,7 @@ window.showHistory = () => {
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
+    const userRole = localStorage.getItem('user_role') || 'Player'; // Добавили роль
     
     document.getElementById('my-profile-section').style.display = 'block';
     document.getElementById('rating-list').style.display = 'block';
@@ -133,15 +134,33 @@ window.showMyProfile = () => {
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
         
-        const role = localStorage.getItem('user_role') || 'Player';
+        // --- ВКЛЮЧАЕМ АДМИНКУ ---
+        const adminBtn = document.getElementById('admin-btn');
+        const adminPanel = document.getElementById('admin-panel');
+
+        if (userRole === 'Founder' || userRole === 'Archivist') {
+            if (adminBtn) adminBtn.style.display = 'block';
+            if (adminPanel) adminPanel.style.display = 'block';
+        } else {
+            if (adminBtn) adminBtn.style.display = 'none';
+            if (adminPanel) adminPanel.style.display = 'none';
+        }
+        // ------------------------
+
         const roleNames = { 'Founder': 'FOUNDER', 'Overseer': 'OVERSEER', 'Archivist': 'ARCHIVIST', 'Bloodline': 'BLOODLINE', 'Player': 'PLAYER' };
         const roleBadge = document.getElementById('cabinet-role');
-        if (roleBadge) roleBadge.innerText = roleNames[role] || 'PLAYER';
+        if (roleBadge) {
+            roleBadge.innerText = roleNames[userRole] || 'PLAYER';
+            // Исправляем "желтый" цвет роли на правильный
+            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+            roleBadge.style.color = roleColors[userRole] || '#ffffff';
+            roleBadge.style.borderColor = roleColors[userRole] || '#ffffff';
+        }
     } else {
         if (searchInput) {
             searchInput.style.display = 'block';
             searchInput.value = "";
-            searchInput.placeholder = "🔍 Поиск...";
+            searchInput.placeholder = "Поиск...";
             searchInput.oninput = () => window.filterPlayersForLogin();
         }
         
