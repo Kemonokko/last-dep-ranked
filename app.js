@@ -290,3 +290,51 @@ window.loginWithEmail = async (nickname) => {
     location.reload();
 };
 loadRating();
+// 1. ФУНКЦИЯ ОБНОВЛЕНИЯ БИО
+window.updateProfileData = async () => {
+    const nick = localStorage.getItem('user_nick');
+    const bio = document.getElementById('new-bio').value;
+    
+    const { error } = await supabase.from('profiles').update({ bio: bio }).eq('nickname', nick);
+    
+    if (error) return alert("Ошибка сохранения био");
+    alert("✅ Профиль обновлен!");
+    location.reload();
+};
+
+// 2. ФУНКЦИЯ СМЕНЫ АВАТАРКИ С ЛИМИТОМ
+window.updateAvatar = async () => {
+    const nick = localStorage.getItem('user_nick');
+    const url = document.getElementById('new-avatar-url').value;
+    if (!url) return alert("Вставь ссылку!");
+
+    // Получаем текущие данные из базы
+    const { data: p } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
+
+    // ПРОВЕРКА ЛИМИТА: если ты Player и уже менял аву хотя бы 1 раз
+    if (p.role === 'Player' && p.avatar_changes >= 1) {
+        alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз.\n\nОбратитесь к Archivist для сброса лимита!");
+        return;
+    }
+
+    // Если проверка пройдена (или ты Founder), обновляем
+    const { error } = await supabase.from('profiles').update({ 
+        avatar_url: url, 
+        avatar_changes: (p.avatar_changes || 0) + 1 
+    }).eq('nickname', nick);
+
+    if (error) return alert("Ошибка при смене авы");
+    
+    alert("✅ Аватарка успешно изменена!");
+    location.reload();
+};
+
+// 3. ИСПРАВЛЕНИЕ ЦВЕТА РОЛИ В ЛИЧНОМ КАБИНЕТЕ (Вставь это внутрь showMyProfile)
+// Найти в коде место, где заполняется кабинет и добавить:
+const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+const roleBadge = document.getElementById('cabinet-role');
+if (roleBadge) {
+    const userRole = localStorage.getItem('user_role') || 'Player';
+    roleBadge.style.color = roleColors[userRole];
+    roleBadge.style.borderColor = roleColors[userRole];
+}
