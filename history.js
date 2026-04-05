@@ -46,7 +46,7 @@ container.innerHTML = matches.map(m => {
                 <b class="nick-hover role-${lossRole}" 
                    onclick="window.openProfile('${m.loss}')" 
                    style="cursor:pointer; font-size: 1.15em; display: inline-block;">${m.loss}</b>
-                <div style="color: var(--blood); font-size: 0.9em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
+                <div style="color: var(--blood); font-size: 0.93em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
             </div>
 
         </div>
