@@ -44,7 +44,6 @@ function renderPlayers(list) {
     }).join('');
 }
 
-// 3. ОТКРЫТИЕ МОДАЛКИ ПРОФИЛЯ
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
@@ -74,12 +73,40 @@ window.openProfile = async (nick) => {
             const resColor = isWin ? '#00ff00' : '#ff0000';
             const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
             return `
-            <div style="background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor};">
+            <div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s;">
                 <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
-                <b class="nick-hover role-${oppRole}" onclick="window.openProfile('${oppNick}')" style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
+                
+                <!-- НИК: Светится и открывает профиль другого игрока -->
+                <b class="nick-hover role-${oppRole}" 
+                   onclick="event.stopPropagation(); window.openProfile('${oppNick}')" 
+                   style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
+                
                 <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
             </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+    }
+
+    // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
+    const oldMod = document.getElementById('mod-tools');
+    if (oldMod) oldMod.remove();
+
+    const myRole = localStorage.getItem('user_role');
+    const isModerator = ['Founder', 'Overseer', 'Archivist'].includes(myRole);
+
+    if (isModerator) {
+        const modDiv = document.createElement('div');
+        modDiv.id = 'mod-tools';
+        modDiv.style.marginTop = '20px';
+        modDiv.style.borderTop = '1px dashed #444';
+        modDiv.style.paddingTop = '15px';
+        modDiv.innerHTML = `
+            <div style="font-size:0.6em; color:#555; margin-bottom:10px; font-weight:bold; text-align:center;">MOD TOOLS</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <button onclick="window.resetAvatar('${p.nickname}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
+                <button onclick="window.resetBio('${p.nickname}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍️ БИО</button>
+            </div>
+        `;
+        modal.querySelector('div').appendChild(modDiv);
     }
 };
 
@@ -298,6 +325,23 @@ window.createNewPlayer = async () => {
         alert(`✅ Игрок ${nick} успешно зарегистрирован!`);
         location.reload();
     }
+};
+// СБРОС АВАТАРКИ
+window.resetAvatar = async (nick) => {
+    if (!confirm(`Сбросить аватар игрока ${nick}?`)) return;
+    const { error } = await supabase.from('profiles').update({ avatar_url: '' }).eq('nickname', nick);
+    if (error) return alert("Ошибка при сбросе авы");
+    alert("Аватар удален.");
+    location.reload();
+};
+
+// СБРОС БИО
+window.resetBio = async (nick) => {
+    if (!confirm(`Очистить описание (био) игрока ${nick}?`)) return;
+    const { error } = await supabase.from('profiles').update({ bio: '' }).eq('nickname', nick);
+    if (error) return alert("Ошибка при сбросе био");
+    alert("Описание очищено.");
+    location.reload();
 };
 // Запуск при старте
 loadRating();
