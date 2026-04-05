@@ -39,18 +39,16 @@
     border-color: var(--blood) !important;
 }
 
-.match-card {
-    background: rgba(20, 0, 0, 0.6) !important; /* Делаем чуть светлее фона, чтобы видеть */
-    border: 1.5px solid #330000;
-    border-radius: 20px;
-    margin-bottom: 12px;
-    padding: 15px;
-    display: flex !important; /* ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ */
-    align-items: center;
-    gap: 15px;
-    width: 100%;
+.badge { 
+    display: inline-block !important; 
+    width: max-content !important; /* Сжаться максимально по тексту */
+    font-size: 0.85em; 
+    padding: 5px 12px; 
+    border-radius: 8px; 
+    border: 2px solid; 
+    margin-top: 8px; 
+    font-weight: 900;
     box-sizing: border-box;
-    min-height: 80px; /* Чтобы не были плоскими */
 }
     
     .avatar-circle { 
