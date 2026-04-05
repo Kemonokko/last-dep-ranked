@@ -36,6 +36,7 @@ async function loadRating() {
 }
 
 function renderPlayers(list) {
+    console.log("Данные первого игрока в списке:", list[0]);
     console.log("🎨 Начинаю рендер списка...");
     const container = document.getElementById('rating-list');
     
