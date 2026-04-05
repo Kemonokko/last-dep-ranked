@@ -28,7 +28,7 @@ container.innerHTML = matches.map(m => {
             <!-- ПОБЕДИТЕЛЬ: Крупный шрифт и принудительный клик -->
             <div style="flex: 1; text-align: left; position: relative; z-index: 10;">
                 <b class="nick-hover role-${winRole}" 
-                   onclick="window.openProfile('${m.win}')" 
+                   onclick="window.openProfile(`${m.win}`)"
                    style="cursor:pointer; font-size: 1.15em; display: inline-block;">${m.win}</b>
                 <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
                     +${m["elo+"]}(${m.bonus || 0})
