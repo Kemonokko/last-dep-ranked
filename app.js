@@ -27,12 +27,6 @@ async function loadRating() {
         // 3. Рисуем рейтинг
         renderPlayers(allPlayers);
 
-        // --- ТОТ САМЫЙ УЛЬТИМАТИВНЫЙ КОСТЫЛЬ ---
-        // Имитируем "перезагрузку" видимости, как при переходе из профиля
-        setTimeout(() => {
-            console.log("🛠️ Принудительно проявляю интерфейс...");
-            if (window.showRating) window.showRating(); 
-            
             // Если и это не поможет, то точечно включаем видимость
             const list = document.getElementById('rating-list');
             if (list) {
