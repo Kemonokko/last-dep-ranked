@@ -39,12 +39,19 @@
     border-color: var(--blood) !important;
 }
 
-    /* КАРТОЧКА ИГРОКА (Чистый код без дублей) */
-    .match-card { 
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
-      width: 100%; box-sizing: border-box; min-height: 80px; cursor: pointer; transition: 0.2s;
-    }
+.match-card {
+    background: rgba(20, 0, 0, 0.6) !important; /* Делаем чуть светлее фона, чтобы видеть */
+    border: 1.5px solid #330000;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    padding: 15px;
+    display: flex !important; /* ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ */
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 80px; /* Чтобы не были плоскими */
+}
     
     .avatar-circle { 
       width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
