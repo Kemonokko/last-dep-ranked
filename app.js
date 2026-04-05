@@ -9,28 +9,20 @@ window.roleCache = {};
 async function loadRating() {
     try {
         const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-        
         if (error) {
             alert("ОШИБКА БАЗЫ: " + error.message);
             return;
         }
-
         if (!players || players.length === 0) {
             alert("В БАЗЕ ПУСТО! Проверь таблицу profiles в Supabase.");
             return;
         }
-
-        // КРИТИЧЕСКИ ВАЖНО: Заполняем список СРАЗУ для расчёта рангов
         window.allPlayers = players; 
         allPlayers = players; 
-
         allPlayers.forEach(p => { 
             window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
         });
-
-        // Теперь renderPlayers точно увидит список и нарисует ранги (S+, A и т.д.)
         renderPlayers(allPlayers);
-        
     } catch (e) {
         alert("ОШИБКА КОДА: " + e.message);
     }
