@@ -339,14 +339,13 @@ window.updateAvatar = async () => {
     location.reload();
 };
 
-// Навигация
 window.showRating = () => { 
-    const s = document.getElementById('search'); if(s) s.style.display = 'block';
+    // Просто переключаем видимость, не перегружая базу данных
     document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none';
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-rating').classList.add('active');
-    loadRating(); 
+    document.getElementById('my-profile-section').style.display = 'none'; 
+    // Если есть блок истории, его тоже скрыть
+    const hist = document.getElementById('history-section');
+    if (hist) hist.style.display = 'none';
 };
 
 window.showHistory = () => { 
