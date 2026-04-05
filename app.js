@@ -7,22 +7,23 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
-    const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    // ИСПРАВЛЕНО: Добавили window, чтобы функции рангов видели список сразу
+    // 1. Сначала наполняем память
     window.allPlayers = players || []; 
     allPlayers = window.allPlayers; 
-        setTimeout(() => {
-            console.log("⏳ Задержка прошла, рисую рейтинг...");
-            renderPlayers(allPlayers);
-        }, 100); 
+
+    // 2. Наполняем кэш ролей (важно сделать ДО отрисовки)
     allPlayers.forEach(p => { 
         window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
     });
 
-    renderPlayers(allPlayers);
+    // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, чтобы logic.js успел «проснуться»
+    setTimeout(() => {
+        console.log("⏳ Задержка прошла, рисую рейтинг...");
+        renderPlayers(allPlayers);
+    }, 100); 
 }
 
 function renderPlayers(list) {
