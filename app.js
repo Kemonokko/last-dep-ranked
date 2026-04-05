@@ -42,21 +42,20 @@ function renderPlayers(list) {
         alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
     }
 }
+
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
     
-    // 1. СНАЧАЛА ПОЛУЧАЕМ ДАННЫЕ (Переменная 'p' рождается ТУТ!)
+    // 1. СНАЧАЛА СОЗДАЕМ 'p' (Берем данные из базы)
     const { data: p, error } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
-    
-    // Если ошибка или игрока нет — выходим, чтобы не вешать сайт
-    if (error || !p) return console.error("Игрок не найден в базе");
+    if (error || !p) return console.error("Игрок не найден");
 
-    // 2. ТЕПЕРЬ СЧИТАЕМ РАНГ (используем наш список allPlayers)
+    // 2. ТЕПЕРЬ СЧИТАЕМ РАНГ (Используем p.nickname)
     const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
     const rank = getRankByPercentile(globalPos, allPlayers.length);
 
-    // 3. ЗАПОЛНЯЕМ ПОЛЯ (Винрейт, Эло, Био)
+    // 3. ЗАПОЛНЯЕМ ПОЛЯ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
     document.getElementById('prof-elo').innerText = p.elo;
@@ -66,10 +65,10 @@ window.openProfile = async (nick) => {
     const rankText = document.getElementById('prof-rank-text');
     if (rankText) {
         rankText.innerText = rank;
-        rankText.className = `rank-${rank}`; 
+        rankText.className = `rank-${rank}`;
     }
 
-    // 4. ПЛАШКА РОЛИ (ТЕПЕРЬ ОНА ВИДИТ 'p' И НЕ ВЫДАЕТ ОШИБКУ)
+    // 4. ТВОЯ СТРОКА С РОЛЬЮ (Теперь она видит 'p' и не тупит)
     const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
@@ -84,7 +83,7 @@ window.openProfile = async (nick) => {
         }
     }
 
-    // 5. ПОСЛЕДНИЕ ИГРЫ (Оставляем как было)
+    // 5. ПОСЛЕДНИЕ ИГРЫ
     const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
     const gamesContainer = document.getElementById('prof-recent-games');
     if (gamesContainer) {
@@ -102,7 +101,7 @@ window.openProfile = async (nick) => {
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
 
-    // 6. КНОПКИ МОДЕРАЦИИ (Для админов)
+    // 6. МОДЕРАЦИЯ (Исправлено: используем nick вместо p.nickname)
     const oldMod = document.getElementById('mod-tools');
     if (oldMod) oldMod.remove();
     const myRole = localStorage.getItem('user_role');
@@ -114,13 +113,14 @@ window.openProfile = async (nick) => {
         modDiv.style.paddingTop = '15px';
         modDiv.innerHTML = `
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button onclick="window.resetAvatar('${p.nickname}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
-                <button onclick="window.resetBio('${p.nickname}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍️ БИО</button>
+                <button onclick="window.resetAvatar('${nick}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
+                <button onclick="window.resetBio('${nick}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍️ БИО</button>
             </div>
         `;
         modal.querySelector('div').appendChild(modDiv);
     }
 };
+
 async function loadRating() {
     console.log("🚀 Шаг 1: Запуск loadRating...");
     try {
