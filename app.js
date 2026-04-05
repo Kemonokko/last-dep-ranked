@@ -6,39 +6,6 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-async function loadRating() {
-    document.getElementById('rating-list').style.display = 'block';
-    console.log("🚀 Запуск loadRating...");
-    try {
-        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-        
-        if (error) {
-            alert("❌ ОШИБКА БАЗЫ: " + error.message);
-            return;
-        }
-
-        if (!players || players.length === 0) {
-            alert("⚠️ В БАЗЕ ПУСТО! Добавь хотя бы одного игрока в таблицу profiles.");
-            return;
-        }
-
-        console.log("✅ Игроки получены из базы:", players.length);
-
-        allPlayers = players; 
-        window.allPlayers = players; 
-
-        allPlayers.forEach(p => { 
-            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-        });
-
-        console.log("🏃 Перехожу к отрисовке (renderPlayers)...");
-        renderPlayers(allPlayers);
-
-    } catch (e) {
-        alert("⛔ КРИТИЧЕСКАЯ ОШИБКА КОДА В loadRating: " + e.message);
-    }
-}
-
 function renderPlayers(list) {
     console.log("🎨 Начинаю рендер списка...");
     const container = document.getElementById('rating-list');
