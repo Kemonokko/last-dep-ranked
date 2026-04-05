@@ -83,12 +83,12 @@ const globalPos = window.allPlayers.findIndex(player => player.nickname === p.ni
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
     document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
     
-    // Вставляем ранг в новую колонку и красим его
-    const rankText = document.getElementById('prof-rank-text');
-    if (rankText) {
-        rankText.innerText = rank;
-        rankText.className = `rank-${rank}`; // Добавит цвет тексту ранга (например, фиолетовый для S+)
-    }
+const rankText = document.getElementById('prof-rank-text');
+if (rankText) {
+    rankText.innerText = rank;
+    // Это добавит класс (например, rank-S+), и CSS его покрасит
+    rankText.className = `rank-${rank}`; 
+}
 
     // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
     const role = (p.role || 'Player').trim();
