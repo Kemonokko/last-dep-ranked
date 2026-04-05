@@ -7,6 +7,7 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
+    document.getElementById('rating-list').style.display = 'block';
     console.log("🚀 Запуск loadRating...");
     try {
         const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
