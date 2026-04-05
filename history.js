@@ -1,7 +1,11 @@
 import { supabase } from './config.js';
 
 export async function loadHistory() {
-    const container = document.getElementById('rating-list');
+    // МЕНЯЕМ ID: теперь история ищет свой собственный блок 'history-list'
+    const container = document.getElementById('history-list'); 
+    
+    if (!container) return; // Защита, если блока нет в HTML
+    
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
 
     const { data: matches, error } = await supabase
