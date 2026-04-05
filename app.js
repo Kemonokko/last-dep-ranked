@@ -147,7 +147,6 @@ async function loadRating() {
             </div>
         `;
         modal.querySelector('div').appendChild(modDiv);
-    }
 };
 
 // 4. ЛИЧНЫЙ КАБИНЕТ И АДМИНКА
