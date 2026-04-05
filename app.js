@@ -10,23 +10,16 @@ async function loadRating() {
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    // 1. СНАЧАЛА жестко наполняем память
     window.allPlayers = players || [];
-    allPlayers = window.allPlayers;
+    
+    // Сначала рисуем
+    renderPlayers(window.allPlayers);
 
-    allPlayers.forEach(p => { 
-        window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-    });
-
-    // 2. ПЕРВАЯ ОТРИСОВКА (создаем скелет)
-    renderPlayers(allPlayers);
-
-    // 3. КОНТРОЛЬНЫЙ ВЫСТРЕЛ (через 50мс - это миг, но для браузера вечность)
-    // Это имитирует твой заход в профиль и обратно
-    setTimeout(() => {
-        console.log("🔄 Контрольная перерисовка для проявления данных...");
-        renderPlayers(allPlayers);
-    }, 500); 
+    // Потом ПРИНУДИТЕЛЬНО вызываем навигацию, которая "чинит" всё при клике
+    // Но убедись, что внутри showRating() НЕТ вызова loadRating()!
+    if (window.showRating) {
+        document.getElementById('rating-list').style.display = 'block';
+    }
 }
 
 function renderPlayers(list) {
@@ -328,7 +321,6 @@ window.showRating = () => {
     document.getElementById('my-profile-section').style.display = 'none';
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
-    loadRating(); 
 };
 
 window.showHistory = () => { 
