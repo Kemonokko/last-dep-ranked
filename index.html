@@ -61,13 +61,11 @@
     
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
     .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
-.rank-S\+ { border-color: #ffaa00 !important; color: #ffaa00 !important; } /* S+ пишется через обратный слэш в CSS */
-.rank-S { border-color: #ffcc00 !important; color: #ffcc00 !important; }
-.rank-A\+ { border-color: #ffff00 !important; color: #ffff00 !important; }
-.rank-A { border-color: #aaff00 !important; color: #aaff00 !important; }
-.rank-B\+ { border-color: #00ff00 !important; color: #00ff00 !important; }
-.rank-B { border-color: #00ffaa !important; color: #00ffaa !important; }
-.rank-C { border-color: #888888 !important; color: #888888 !important; }
+    .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 15px currentColor; text-shadow: 0 0 5px currentColor; }
+    .rank-S\+, .rank-S { color: var(--color-s); border-color: var(--color-s); }
+    .rank-A\+, .rank-A { color: var(--color-a); border-color: var(--color-a); }
+    .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
+    .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
     /* УМНЫЙ ХОВЕР: Навел на карту -> загорелся ник */
  .nick-hover { 
