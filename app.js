@@ -6,40 +6,13 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-async function loadRating() {
-    try {
-        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-        
-        if (error || !players) {
-            console.error("Ошибка при получении игроков:", error);
-            return;
-        }
-
-        // 1. Наполняем память
-        window.allPlayers = players;
-        allPlayers = players;
-
-        // 2. Наполняем кэш ролей
-        allPlayers.forEach(p => { 
-            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-        });
-
-        // 3. Рисуем рейтинг
-        renderPlayers(allPlayers);
-
-            // Если и это не поможет, то точечно включаем видимость
-            const list = document.getElementById('rating-list');
-            if (list) {
-                list.style.display = 'block';
-                list.style.opacity = '1';
-                list.style.visibility = 'visible';
-            }
-        }, 100);
-
-    } catch (err) {
-        console.error("Критическая ошибка в loadRating:", err);
-    }
-}
+sync function loadRating() 
+{ try { const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false }); 
+       if (error || !players) { console.error("Ошибка при получении игроков:", error); return; }
+    window.allPlayers = players; allPlayers = players; 
+    allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); }); 
+    setTimeout(() => { console.log("🚀 Данные готовы, запускаю отрисовку рейтинга..."); renderPlayers(allPlayers); }, 150); 
+    } catch (err) { console.error("Критическая ошибка в loadRating:", err); }}
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
