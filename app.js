@@ -40,23 +40,26 @@ function renderPlayers(list) {
         const eloVal = p.elo || 0;
         const wrVal = p.win_rate || 0;
 
-        return `
-<div style="flex-grow: 1; text-align: left;">
-    <!-- 1. НИК: Убрали белый стиль, теперь CSS (hover) сам решит: белый или цвет роли -->
-    <b class="nick-hover role-${role.toLowerCase()}">${p.nickname}</b><br>
-    
-    <!-- 2. РАНГ: Убрали белый цвет и белую рамку. Теперь работают твои .rank-S+, .rank-Дракон и т.д. -->
-    <span class="badge rank-${rank}">${rank}</span>
-</div>
+        return
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')">
+            <!-- Аватар -->
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
+            
+            <!-- Левая часть: Ник и Ранг -->
+            <div style="flex-grow: 1; text-align: left;">
+                <!-- НИК: Убрали инлайн-стиль цвета, теперь он слушается CSS -->
+                <b class="nick-hover role-${role.toLowerCase()}">${p.nickname}</b><br>
+                
+                <!-- РАНГ: Чистый класс, без принудительного белого цвета -->
+                <span class="badge rank-${rank}">${rank}</span>
+            </div>
 
-            <!-- ЖЕЛЕЗОБЕТОННЫЙ БЛОК ЦИФР (ELO + WR) -->
-            <div style="text-align: right; min-width: 95px; display: block !important;">
-                <!-- ЭЛО: Золотой цвет -->
-                <div style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em; display: block !important;">
+            <!-- Правая часть: ELO и WR (Железно стоят на месте) -->
+            <div style="text-align: right; min-width: 95px;">
+                <div style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em;">
                     ${eloVal}
                 </div>
-                <!-- ВИНРЕЙТ: Белый цвет, всегда под ЭЛО -->
-                <div style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; margin-top: 2px; display: block !important;">
+                <div style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; margin-top: 2px;">
                     ${wrVal}% WR
                 </div>
             </div>
