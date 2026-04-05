@@ -50,7 +50,17 @@ function renderPlayers(list) {
                     ${rank}
                 </span>
             </div>
-
+<div style="text-align: right; min-width: 90px; display: block !important; visibility: visible !important; opacity: 1 !important;">
+    <!-- ЭЛО: Принудительно золотой цвет -->
+    <div class="elo-val" style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em; display: block !important;">
+        ${p.elo || 0}
+    </div>
+    
+    <!-- ВИНРЕЙТ: Принудительно белый/серый цвет -->
+    <div class="wr-val" style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; display: block !important; margin-top: 2px;">
+        ${p.win_rate || 0}% WR
+    </div>
+</div>
             <div style="text-align: right; min-width: 90px; color: white !important;">
                 <!-- ЦИФРЫ ГОЛЫМ ТЕКСТОМ -->
                 <div style="font-weight: bold; color: #f3ba2f !important;">${elo}</div>
