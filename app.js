@@ -40,12 +40,6 @@ function renderPlayers(list) {
         const eloVal = p.elo || 0;
         const wrVal = p.win_rate || 0;
 
-        const role = (p.role || 'Player').toString().trim();
-        const eloVal = p.elo || 0;
-        const wrVal = p.win_rate || 0; // Если в базе нет win_rate, будет 0
-        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-        const currentColor = roleColors[role] || '#ffffff';
-
         return `
         <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white; margin-bottom: 12px;">
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
