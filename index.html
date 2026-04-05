@@ -220,26 +220,34 @@
 </div>
 
 <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
-    <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:450px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto;">
+    <!-- Ширина 480px убирает ползунок, overflow-x скрывает его намертво -->
+    <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:480px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto; overflow-x: hidden;">
+        
         <div id="close-profile" style="position:absolute; top:15px; right:20px; color:#555; cursor:pointer; font-size:1.5em;">✕</div>
         
         <!-- Верхняя часть -->
         <div id="prof-avatar" style="width:90px; height:90px; border-radius:50%; border:3px solid #fff; margin:0 auto 10px; background-size:cover; background-position:center;"></div>
         <h2 id="prof-nick" style="margin:0; color:white; font-size:1.6em;">Никнейм</h2>
+        
+        <!-- Плашка роли (будет скрыта через JS для обычных игроков) -->
         <div id="prof-role-badge" style="display:inline-block; margin-top:5px; font-weight:900; font-size:0.65em; padding:3px 10px; border-radius:5px; border: 1.5px solid;">РОЛЬ</div>
         
         <!-- Описание -->
-        <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Нет описания...</p>
+        <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Пусто...</p>
 
-        <!-- Статистика -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
-            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
-                <div style="font-size:0.6em; color:#848e9c;">ELO</div>
-                <div id="prof-elo" style="color:var(--gold); font-weight:900; font-size:1.1em;">0</div>
+        <!-- Статистика: ТРИ колонки (Rank, ELO, Winrate) -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:20px;">
+            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
+                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">Rank</div>
+                <div id="prof-rank-text" style="font-weight:900; font-size:0.9em; margin-top:3px; color: white;">-</div>
             </div>
-            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;">
-                <div style="font-size:0.6em; color:#848e9c;">WINRATE</div>
-                <div id="prof-wr" style="color:white; font-weight:900; font-size:1.1em;">0%</div>
+            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
+                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">ELO</div>
+                <div id="prof-elo" style="color:var(--gold); font-weight:900; font-size:0.9em; margin-top:3px;">0</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
+                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">Winrate</div>
+                <div id="prof-wr" style="color:white; font-weight:900; font-size:0.9em; margin-top:3px;">0%</div>
             </div>
         </div>
 
