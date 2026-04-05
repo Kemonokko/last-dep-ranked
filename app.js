@@ -44,7 +44,7 @@ const rank = getRankByPercentile(globalPos, list.length);
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
             <div style="flex-grow: 1;">
                 <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                <div class="badge rank-${rank}">${rank}</div>
+                <span class="badge rank-${rank}">${rank}</span>
             </div>
             <div style="text-align: right; min-width: 85px;">
                 <div class="elo-val">${p.elo}</div>
