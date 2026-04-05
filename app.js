@@ -40,7 +40,7 @@ function renderPlayers(list) {
         const eloVal = p.elo || 0;
         const wrVal = p.win_rate || 0;
 
-        return
+        return `
         <div class="match-card" onclick="window.openProfile('${p.nickname}')">
             <!-- Аватар -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
