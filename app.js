@@ -11,8 +11,14 @@ async function loadRating() {
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    allPlayers = players || [];
-    allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
+    // ИСПРАВЛЕНО: Добавили window, чтобы функции рангов видели список сразу
+    window.allPlayers = players || []; 
+    allPlayers = window.allPlayers; 
+
+    allPlayers.forEach(p => { 
+        window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
+    });
+
     renderPlayers(allPlayers);
 }
 
