@@ -36,28 +36,20 @@ async function loadRating() {
 }
 
 function renderPlayers(list) {
-    console.log("Данные первого игрока в списке:", list[0]);
-    console.log("🎨 Начинаю рендер списка...");
     const container = document.getElementById('rating-list');
-    
-    if (!container) {
-        alert("❌ ОШИБКА: Элемент 'rating-list' не найден в HTML!");
-        return;
-    }
+    if (!container) return;
 
     try {
-container.innerHTML = list.map((p, index) => {
-    const globalPos = index + 1;
-    const total = list.length; // Берем длину ПРЯМО ИЗ СПИСКА
-    
-    const rank = getRankByPercentile(globalPos, total);
-            
+        container.innerHTML = list.map((p, index) => {
+            const globalPos = index + 1;
+            const total = list.length;
+            // 1. Считаем ранг ОДИН раз (используем let, чтобы не было ошибок)
+            let rank = "C"; 
             try {
-                rank = getRankByPercentile(globalPos, list.length);
-            } catch(rankErr) {
-                console.error("Ошибка в getRankByPercentile:", rankErr);
+                rank = getRankByPercentile(globalPos, total);
+            } catch(err) {
+                console.error("Ошибка в расчете ранга:", err);
             }
-
             const role = (p.role || 'Player').toString().trim();
             const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
             const currentColor = roleColors[role] || '#ffffff';
@@ -71,17 +63,15 @@ container.innerHTML = list.map((p, index) => {
                     <span class="badge rank-${rank}">${rank}</span>
                 </div>
                 <div style="text-align: right; min-width: 85px;">
-                    <div class="elo-val">${p.elo}</div>
+                    <div class="elo-val">${p.elo || 0}</div>
                     <div class="wr-val">${p.win_rate || 0}% WR</div>
                 </div>
             </div>`;
         }).join('');
-        console.log("🏁 Рендер завершен успешно!");
     } catch (e) {
         alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
     }
 }
-
 
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
