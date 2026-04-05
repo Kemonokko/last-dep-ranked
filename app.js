@@ -41,33 +41,30 @@ function renderPlayers(list) {
 
         return `
         <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white;">
+            <!-- Аватар -->
             <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border: 1px solid white;"></div>
             
+            <!-- Левая часть: Ник и Ранг -->
             <div style="flex-grow: 1; text-align: left; color: white !important;">
-                <b class="nick-hover" style="color: white !important;">${p.nickname}</b><br>
-                <!-- РАНГ ГОЛЫМ ТЕКСТОМ -->
+                <!-- ВОЗВРАЩАЕМ ЦВЕТ НИКА: добавили класс role -->
+                <b class="nick-hover role-${role.toLowerCase()}" style="color: white !important;">${p.nickname}</b><br>
+                
                 <span class="badge rank-${rank}" style="background: #333 !important; color: white !important; display: inline-block !important; border: 1px solid white !important;">
                     ${rank}
                 </span>
             </div>
-<div style="text-align: right; min-width: 90px; display: block !important; visibility: visible !important; opacity: 1 !important;">
-    <!-- ЭЛО: Принудительно золотой цвет -->
-    <div class="elo-val" style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em; display: block !important;">
-        ${p.elo || 0}
-    </div>
-    
-    <!-- ВИНРЕЙТ: Принудительно белый/серый цвет -->
-    <div class="wr-val" style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; display: block !important; margin-top: 2px;">
-        ${p.win_rate || 0}% WR
-    </div>
-</div>
-            <div style="text-align: right; min-width: 90px; color: white !important;">
-                <!-- ЦИФРЫ ГОЛЫМ ТЕКСТОМ -->
-                <div style="font-weight: bold; color: #f3ba2f !important;">${elo}</div>
-                <div style="font-size: 0.8em; color: #848e9c !important;">${wr}% WR</div>
+
+            <!-- Правая часть: ELO и WR (ОСТАВИЛИ ОДИН БЛОК) -->
+            <div style="text-align: right; min-width: 90px; display: block !important; visibility: visible !important; opacity: 1 !important;">
+                <div class="elo-val" style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em; display: block !important;">
+                    ${p.elo || 0}
+                </div>
+                <div class="wr-val" style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; display: block !important; margin-top: 2px;">
+                    ${p.win_rate || 0}% WR
+                </div>
             </div>
         </div>`;
-    }).join('');
+  }).join('');
 }
 
 window.openProfile = async (nick) => {
