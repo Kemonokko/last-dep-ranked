@@ -7,20 +7,22 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
+    console.log("🚀 Запуск loadRating...");
     try {
         const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
         
         if (error) {
-            alert("ОШИБКА БАЗЫ: " + error.message);
+            alert("❌ ОШИБКА БАЗЫ: " + error.message);
             return;
         }
 
         if (!players || players.length === 0) {
-            alert("В БАЗЕ ПУСТО! Проверь таблицу profiles в Supabase.");
+            alert("⚠️ В БАЗЕ ПУСТО! Добавь хотя бы одного игрока в таблицу profiles.");
             return;
         }
 
-        // ЗАПИСЫВАЕМ В ОБЕ ПЕРЕМЕННЫЕ СРАЗУ
+        console.log("✅ Игроки получены из базы:", players.length);
+
         allPlayers = players; 
         window.allPlayers = players; 
 
@@ -28,38 +30,57 @@ async function loadRating() {
             window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
         });
 
-        // Теперь рендер увидит заполненный список и сразу нарисует ранги
+        console.log("🏃 Перехожу к отрисовке (renderPlayers)...");
         renderPlayers(allPlayers);
 
     } catch (e) {
-        alert("ОШИБКА КОДА: " + e.message);
+        alert("⛔ КРИТИЧЕСКАЯ ОШИБКА КОДА В loadRating: " + e.message);
     }
 }
 
 function renderPlayers(list) {
+    console.log("🎨 Начинаю рендер списка...");
     const container = document.getElementById('rating-list');
-    if (!container) return;
-    container.innerHTML = list.map((p) => {
-const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
-const rank = getRankByPercentile(globalPos, list.length);
-        const role = (p.role || 'Player').toString().trim();
-        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-        const currentColor = roleColors[role] || '#ffffff';
-        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+    
+    if (!container) {
+        alert("❌ ОШИБКА: Элемент 'rating-list' не найден в HTML!");
+        return;
+    }
 
-        return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-            <div style="flex-grow: 1;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                <span class="badge rank-${rank}">${rank}</span>
-            </div>
-            <div style="text-align: right; min-width: 85px;">
-                <div class="elo-val">${p.elo}</div>
-                <div class="wr-val">${p.win_rate || 0}% WR</div>
-            </div>
-        </div>`;
-    }).join('');
+    try {
+        container.innerHTML = list.map((p) => {
+            const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
+            
+            // Проверка функции ранга
+            let rank = "Ошибка";
+            try {
+                rank = getRankByPercentile(globalPos, list.length);
+            } catch(rankErr) {
+                console.error("Ошибка в getRankByPercentile:", rankErr);
+            }
+
+            const role = (p.role || 'Player').toString().trim();
+            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+            const currentColor = roleColors[role] || '#ffffff';
+            const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+
+            return `
+            <div class="match-card" onclick="window.openProfile('${p.nickname}')">
+                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
+                <div style="flex-grow: 1;">
+                    <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
+                    <span class="badge rank-${rank}">${rank}</span>
+                </div>
+                <div style="text-align: right; min-width: 85px;">
+                    <div class="elo-val">${p.elo}</div>
+                    <div class="wr-val">${p.win_rate || 0}% WR</div>
+                </div>
+            </div>`;
+        }).join('');
+        console.log("🏁 Рендер завершен успешно!");
+    } catch (e) {
+        alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
+    }
 }
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
