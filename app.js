@@ -53,8 +53,6 @@ function renderPlayers(list) {
 
 async function loadRating() {
 }
-    // --- 4. ПЛАШКА РОЛИ (Скрываем для обычных игроков) ---
-    const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
         if (role === 'Player') {
