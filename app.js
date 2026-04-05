@@ -83,6 +83,7 @@ function renderPlayers(list) {
         alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
     }
 }
+
 async function loadRating() {
     console.log("🚀 Шаг 1: Запуск loadRating...");
     try {
