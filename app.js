@@ -73,26 +73,25 @@ window.openProfile = async (nick) => {
     const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
     const rank = getRankByPercentile(globalPos, window.allPlayers.length);
 
-    // 3. ЗАПОЛНЯЕМ ДАННЫЕ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
     document.getElementById('prof-elo').innerText = p.elo;
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
     document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
     
-    // Вставляем ранг в новую колонку и красим его
+    // Вставляем ранг в новую колонку (ID: prof-rank-text)
     const rankText = document.getElementById('prof-rank-text');
     if (rankText) {
         rankText.innerText = rank;
-        rankText.className = `rank-${rank}`; // Добавит цвет тексту ранга (например, фиолетовый для S+)
+        rankText.className = `rank-${rank}`; // Покрасит текст в цвет ранга (S+, Dragon и т.д.)
     }
 
-    // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
+    // --- 4. ПЛАШКА РОЛИ (Скрываем для обычных игроков) ---
     const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
         if (role === 'Player') {
-            badge.style.display = 'none'; // Убираем плашку совсем
+            badge.style.display = 'none'; // Полностью убираем плашку, если игрок обычный
         } else {
             badge.style.display = 'inline-block';
             badge.innerText = role.toUpperCase();
