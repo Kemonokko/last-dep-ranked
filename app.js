@@ -32,8 +32,8 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
     container.innerHTML = list.map((p) => {
-        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-        const rank = getRankByPercentile(globalPos, allPlayers.length);
+const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
+const rank = getRankByPercentile(globalPos, list.length);
         const role = (p.role || 'Player').toString().trim();
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const currentColor = roleColors[role] || '#ffffff';
