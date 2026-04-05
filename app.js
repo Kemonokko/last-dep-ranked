@@ -7,23 +7,32 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
-    const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-    if (error) return;
+    try {
+        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+        
+        if (error || !players) {
+            console.error("Ошибка при получении игроков:", error);
+            return;
+        }
 
-    // 1. Сначала наполняем память
-    window.allPlayers = players || []; 
-    allPlayers = window.allPlayers; 
+        // 1. СНАЧАЛА жестко наполняем память
+        window.allPlayers = players;
+        allPlayers = players;
 
-    // 2. Наполняем кэш ролей (важно сделать ДО отрисовки)
-    allPlayers.forEach(p => { 
-        window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-    });
+        // 2. Наполняем кэш ролей (чтобы ники светились правильно)
+        allPlayers.forEach(p => { 
+            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
+        });
 
-    // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, чтобы logic.js успел «проснуться»
-    setTimeout(() => {
-        console.log("⏳ Задержка прошла, рисую рейтинг...");
-        renderPlayers(allPlayers);
-    }, 100); 
+        // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, когда ВСЕ данные уже в памяти
+        setTimeout(() => {
+            console.log("🚀 Данные готовы, запускаю отрисовку рейтинга...");
+            renderPlayers(allPlayers);
+        }, 150); // Увеличил до 150мс для надежности
+
+    } catch (err) {
+        console.error("Критическая ошибка в loadRating:", err);
+    }
 }
 
 function renderPlayers(list) {
