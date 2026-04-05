@@ -119,7 +119,6 @@ window.showMyProfile = () => {
     
     document.getElementById('my-profile-section').style.display = 'block';
     document.getElementById('rating-list').style.display = 'block';
-    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
