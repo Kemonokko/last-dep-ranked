@@ -25,10 +25,19 @@ async function loadRating() {
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
-    container.innerHTML = list.map((p) => {
-        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-        const rank = getRankByPercentile(globalPos, allPlayers.length);
-        const role = (p.role || 'Player').toString().trim();
+container.innerHTML = list.map((p, index) => {
+    const globalPos = index + 1;
+    const total = list.length;
+    
+    // МАЯЧОК 1: Проверяем, что пришло в функцию
+    console.log(`Проверка игрока ${p.nickname}: поз ${globalPos}, всего ${total}`);
+
+    const rank = getRankByPercentile(globalPos, total);
+
+    // МАЯЧОК 2: Какой ранг выдала функция
+    console.log(`Результат ранга для ${p.nickname}: ${rank}`);
+
+    const role = (p.role || 'Player').toString().trim();
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const currentColor = roleColors[role] || '#ffffff';
         const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
