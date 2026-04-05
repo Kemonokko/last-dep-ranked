@@ -9,20 +9,28 @@ window.roleCache = {};
 async function loadRating() {
     try {
         const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+        
         if (error) {
             alert("ОШИБКА БАЗЫ: " + error.message);
             return;
         }
+
         if (!players || players.length === 0) {
             alert("В БАЗЕ ПУСТО! Проверь таблицу profiles в Supabase.");
             return;
         }
-        window.allPlayers = players; 
+
+        // ЗАПИСЫВАЕМ В ОБЕ ПЕРЕМЕННЫЕ СРАЗУ
         allPlayers = players; 
+        window.allPlayers = players; 
+
         allPlayers.forEach(p => { 
             window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
         });
+
+        // Теперь рендер увидит заполненный список и сразу нарисует ранги
         renderPlayers(allPlayers);
+
     } catch (e) {
         alert("ОШИБКА КОДА: " + e.message);
     }
