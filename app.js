@@ -41,15 +41,13 @@ function renderPlayers(list) {
         const wrVal = p.win_rate || 0;
 
         return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white; margin-bottom: 12px;">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
-            
-            <div style="flex-grow: 1; text-align: left; color: white !important;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="color: white !important;">${p.nickname}</b><br>
-                <span class="badge rank-${rank}" style="background: #333 !important; color: white !important; display: inline-block !important; border: 1px solid white !important;">
-                    ${rank}
-                </span>
-            </div>
+<div style="flex-grow: 1; text-align: left;">
+    <!-- 1. НИК: Убрали белый стиль, теперь CSS (hover) сам решит: белый или цвет роли -->
+    <b class="nick-hover role-${role.toLowerCase()}">${p.nickname}</b><br>
+    
+    <!-- 2. РАНГ: Убрали белый цвет и белую рамку. Теперь работают твои .rank-S+, .rank-Дракон и т.д. -->
+    <span class="badge rank-${rank}">${rank}</span>
+</div>
 
             <!-- ЖЕЛЕЗОБЕТОННЫЙ БЛОК ЦИФР (ELO + WR) -->
             <div style="text-align: right; min-width: 95px; display: block !important;">
