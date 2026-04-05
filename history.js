@@ -50,6 +50,6 @@ container.innerHTML = matches.map(m => {
             </div>
 
         </div>
-    </div>`;
-}).join('');
+        </div>`;
+    }).join('');
 }
