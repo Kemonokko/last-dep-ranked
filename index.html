@@ -91,7 +91,9 @@
   width: 100%; 
   box-sizing: border-box;
 }
-  #my-profile-section ~ #rating-list .match-card .badge, 
+
+/* Скрываем лишнее в поиске при логине */
+#my-profile-section ~ #rating-list .match-card .badge, 
 #my-profile-section ~ #rating-list .match-card div:last-child {
     display: none !important;
 }
@@ -99,7 +101,8 @@
 #my-profile-section[style*="display: none"] ~ #rating-list .match-card div:last-child {
     display: block !important;
 }
-  3. Добавляем свечение в CSS (в index.html)Чтобы ники «загорались» при наведении на всю карточку боя, добавь эти стили в блок <style>:css
+
+/* СВЕЧЕНИЕ НИКОВ В ИСТОРИИ (Чистый код) */
 .history-item:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
 .history-item:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
 .history-item:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
