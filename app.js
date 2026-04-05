@@ -11,7 +11,7 @@ async function loadRating() {
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    allPlayers = players || [];
+    window.allPlayers = players || [];
     allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
     renderPlayers(allPlayers);
 }
