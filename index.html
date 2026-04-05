@@ -54,7 +54,17 @@
     .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
     .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
 
-.badge { display: inline-block !important; width: auto !important; font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
+.badge { 
+    display: inline-block !important; 
+    width: max-content !important; /* Сжаться максимально по тексту */
+    font-size: 0.85em; 
+    padding: 5px 12px; 
+    border-radius: 8px; 
+    border: 2px solid; 
+    margin-top: 8px; 
+    font-weight: 900;
+    box-sizing: border-box;
+}
     
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
     .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
