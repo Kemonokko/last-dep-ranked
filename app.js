@@ -52,8 +52,6 @@ container.innerHTML = list.map((p, index) => {
     
     const rank = getRankByPercentile(globalPos, total);
             
-            // Проверка функции ранга
-            rank = "Ошибка";
             try {
                 rank = getRankByPercentile(globalPos, list.length);
             } catch(rankErr) {
