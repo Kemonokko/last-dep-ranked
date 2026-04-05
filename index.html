@@ -141,17 +141,34 @@
 /* Bloodline - Красный */
 .match-card:hover .role-bloodline, .history-item:hover .role-bloodline { color: #ff4444 !important; text-shadow: 0 0 15px #ff4444 !important; }
 
-/* 3. УБИРАЕМ ПОЛУПРОЗРАЧНОСТЬ КАРТОЧКИ */
 .match-card {
-    background: #111111 !important; /* Плотный черный/серый фон без прозрачности */
-    border: 1.5px solid #222 !important; /* Четкая граница */
-    opacity: 1 !important; /* Никакой прозрачности самого блока */
-    box-shadow: none !important; /* Убираем лишние тени по краям, если мешают */
+    /* 1. Плотный темный фон (не прозрачный, чтобы не сливалось) */
+    background: #0d0d0d !important; 
+    
+    /* 2. Четкая темная граница */
+    border: 1px solid #1a1a1a !important; 
+    
+    /* 3. Отступы и скругления */
+    margin-bottom: 12px !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
+    
+    /* 4. Принудительно показываем как флекс-блок */
+    display: flex !important;
+    align-items: center;
+    gap: 15px;
+    
+    /* 5. Убираем любую прозрачность самого блока */
+    opacity: 1 !important;
+    transition: 0.3s ease;
 }
 
+/* Эффект при наведении (карточка чуть оживает) */
 .match-card:hover {
-    background: #161616 !important; /* Чуть светлее при наведении, но всё еще плотный */
-    border-color: #444 !important;
+    background: #121212 !important;
+    border-color: #333 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 </style>
 </head>
