@@ -249,23 +249,37 @@ async function loadAllPlayersForSearch() {
 window.filterPlayersForLogin = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const container = document.getElementById('rating-list');
+    
     if (!val) {
-        container.innerHTML = `<div style="text-align:center; padding:30px;"><h2>🔐 Вход</h2><p>Поиск</p></div>`;
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:#888;"><h2>🔐 ВХОД</h2><p>Начните вводить свой ник...</p></div>`;
         return;
     }
+
     const matches = window.allPlayers.filter(p => p.nickname.toLowerCase().includes(val));
+    
     if (matches.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; color:#888;">❌ Игрок не найден</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:20px; color:#ff4444;">❌ ИГРОК НЕ НАЙДЕН</div>`;
         return;
     }
+
     container.innerHTML = matches.map(p => {
-        const rank = getRankByPercentile(window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1, window.allPlayers.length);
-        return `<div class="match-card" style="justify-content: space-between;">
+        // Считаем ранг правильно (как в основном рейтинге)
+        const pos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+        const rank = getRankByPercentile(pos, window.allPlayers.length);
+        const role = (p.role || 'Player').toLowerCase();
+
+        return `
+        <div class="match-card" style="justify-content: space-between; align-items: center; background: #111 !important; border: 1.5px solid #222 !important;">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}');"></div>
-                <div><b style="color: white;">${p.nickname}</b><br><div class="badge rank-${rank}">${rank}</div></div>
+                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: #333;"></div>
+                <div style="text-align: left;">
+                    <b class="nick-hover role-${role}" style="color: white; font-size: 1.1em;">${p.nickname}</b><br>
+                    <span class="badge rank-${rank}">${rank}</span>
+                </div>
             </div>
-            <button onclick="window.loginWithEmail('${p.nickname}')" style="background:var(--blood); border:none; color:white; padding:8px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">ВОЙТИ</button>
+            <button onclick="window.loginWithEmail('${p.nickname}')" style="background: var(--blood); border: none; color: white; padding: 10px 25px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;">
+                ВОЙТИ
+            </div>
         </div>`;
     }).join('');
 };
