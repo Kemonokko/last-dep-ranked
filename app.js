@@ -358,4 +358,5 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
+document.addEventListener('DOMContentLoaded', () => {
     loadRating();
