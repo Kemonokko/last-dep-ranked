@@ -28,8 +28,8 @@ container.innerHTML = matches.map(m => {
             <!-- ПОБЕДИТЕЛЬ: Крупный шрифт и принудительный клик -->
             <div style="flex: 1; text-align: left; position: relative; z-index: 10;">
 <b class="nick-hover role-${winRole}" 
-   onclick="event.stopPropagation(); console.log('КЛИК ВЫПОЛНЕН!'); window.openProfile('${m.win}')" 
-   style="cursor:pointer; font-size: 1.15em; border: 3px solid red !important; position: relative; z-index: 9999; display: inline-block;">
+   onclick="event.stopPropagation(); console.log('КЛИК ПРОШЕЛ!'); window.openProfile('${m.win}')" 
+   style="cursor:pointer; font-size: 1.15em; border: 3px solid red !important; position: relative !important; z-index: 999999 !important; display: inline-block !important; pointer-events: auto !important;">
    ${m.win}
 </b>
                 <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
