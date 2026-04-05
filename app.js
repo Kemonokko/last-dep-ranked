@@ -2,28 +2,36 @@ import { supabase } from './config.js';
 import { getRankByPercentile } from './logic.js';
 import { handleAddMatch } from './admin.js';
 import { loadHistory } from './history.js';
+
 let allPlayers = []; 
 window.roleCache = {};
+
 function renderPlayers(list) {
     console.log("🎨 Начинаю рендер списка...");
     const container = document.getElementById('rating-list');
+    
     if (!container) {
         alert("❌ ОШИБКА: Элемент 'rating-list' не найден в HTML!");
         return;
     }
+
     try {
         container.innerHTML = list.map((p) => {
             const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
+            
+            // Проверка функции ранга
             let rank = "Ошибка";
             try {
                 rank = getRankByPercentile(globalPos, list.length);
             } catch(rankErr) {
                 console.error("Ошибка в getRankByPercentile:", rankErr);
             }
+
             const role = (p.role || 'Player').toString().trim();
             const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
             const currentColor = roleColors[role] || '#ffffff';
             const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+
             return `
             <div class="match-card" onclick="window.openProfile('${p.nickname}')">
                 <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
@@ -43,37 +51,14 @@ function renderPlayers(list) {
     }
 }
 
-window.openProfile = async (nick) => {
-    const modal = document.getElementById('profile-modal');
-    modal.style.display = 'flex';
-    
-    // 1. СНАЧАЛА СОЗДАЕМ 'p' (Берем данные из базы)
-    const { data: p, error } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
-    if (error || !p) return console.error("Игрок не найден");
-
-    // 2. ТЕПЕРЬ СЧИТАЕМ РАНГ (Используем p.nickname)
-    const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-    const rank = getRankByPercentile(globalPos, allPlayers.length);
-
-    // 3. ЗАПОЛНЯЕМ ПОЛЯ
-    document.getElementById('prof-nick').innerText = p.nickname;
-    document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
-    document.getElementById('prof-elo').innerText = p.elo;
-    document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
-    document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
-    
-    const rankText = document.getElementById('prof-rank-text');
-    if (rankText) {
-        rankText.innerText = rank;
-        rankText.className = `rank-${rank}`;
-    }
-
-    // 4. ТВОЯ СТРОКА С РОЛЬЮ (Теперь она видит 'p' и не тупит)
+async function loadRating() {
+}
+    // --- 4. ПЛАШКА РОЛИ (Скрываем для обычных игроков) ---
     const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
         if (role === 'Player') {
-            badge.style.display = 'none'; 
+            badge.style.display = 'none'; // Полностью убираем плашку, если игрок обычный
         } else {
             badge.style.display = 'inline-block';
             badge.innerText = role.toUpperCase();
@@ -95,89 +80,6 @@ window.openProfile = async (nick) => {
             return `
             <div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s;">
                 <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
-                <b class="nick-hover role-${oppRole}" onclick="event.stopPropagation(); window.openProfile('${oppNick}')" style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
-                <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
-            </div>`;
-        }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
-    }
-
-    // 6. МОДЕРАЦИЯ (Исправлено: используем nick вместо p.nickname)
-    const oldMod = document.getElementById('mod-tools');
-    if (oldMod) oldMod.remove();
-    const myRole = localStorage.getItem('user_role');
-    if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
-        const modDiv = document.createElement('div');
-        modDiv.id = 'mod-tools';
-        modDiv.style.marginTop = '20px';
-        modDiv.style.borderTop = '1px dashed #444';
-        modDiv.style.paddingTop = '15px';
-        modDiv.innerHTML = `
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button onclick="window.resetAvatar('${nick}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
-                <button onclick="window.resetBio('${nick}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍️ БИО</button>
-            </div>
-        `;
-        modal.querySelector('div').appendChild(modDiv);
-    }
-};
-
-async function loadRating() {
-    console.log("🚀 Шаг 1: Запуск loadRating...");
-    try {
-        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-        
-        if (error) {
-            console.error("❌ ОШИБКА БАЗЫ:", error.message);
-            alert("Ошибка базы: " + error.message);
-            return;
-        }
-        window.allPlayers = players || [];
-        allPlayers = players || []; 
-        console.log("✅ Шаг 2: Память заполнена игроками:", allPlayers.length);
-
-        if (allPlayers.length === 0) {
-            console.warn("⚠️ Внимание: Таблица profiles пуста!");
-            return;
-        }
-        allPlayers.forEach(p => { 
-            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-        });
-        const container = document.getElementById('rating-list');
-        if (container) {
-            container.style.display = 'block';
-            container.style.opacity = '1';
-        }
-        console.log("🏃 Шаг 4: Переходим к отрисовке...");
-        renderPlayers(allPlayers);
-    } catch (e) {
-        console.error("⛔ КРИТИЧЕСКАЯ ОШИБКА КОДА:", e.message);
-        alert("Ошибка в коде: " + e.message);
-    }
-}
-    const role = (p.role || 'Player').trim();
-    const badge = document.getElementById('prof-role-badge');
-    if (badge) {
-        if (role === 'Player') {
-            badge.style.display = 'none';
-        } else {
-            badge.style.display = 'inline-block';
-            badge.innerText = role.toUpperCase();
-            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000' };
-            badge.style.color = roleColors[role] || '#ffffff';
-            badge.style.borderColor = roleColors[role] || '#ffffff';
-        }
-    }
-    const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
-    const gamesContainer = document.getElementById('prof-recent-games');
-    if (gamesContainer) {
-        gamesContainer.innerHTML = matches && matches.length > 0 ? matches.map(m => {
-            const isWin = m.win === nick;
-            const oppNick = isWin ? m.loss : m.win;
-            const resColor = isWin ? '#00ff00' : '#ff0000';
-            const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
-            return `
-            <div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s;">
-                <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
                 <b class="nick-hover role-${oppRole}" 
                    onclick="event.stopPropagation(); window.openProfile('${oppNick}')" 
                    style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
@@ -185,10 +87,13 @@ async function loadRating() {
             </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
+    // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
     const oldMod = document.getElementById('mod-tools');
     if (oldMod) oldMod.remove();
+
     const myRole = localStorage.getItem('user_role');
     const isModerator = ['Founder', 'Overseer', 'Archivist'].includes(myRole);
+
     if (isModerator) {
         const modDiv = document.createElement('div');
         modDiv.id = 'mod-tools';
@@ -203,23 +108,32 @@ async function loadRating() {
             </div>
         `;
         modal.querySelector('div').appendChild(modDiv);
+    }
 };
+
+// 4. ЛИЧНЫЙ КАБИНЕТ И АДМИНКА
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
     const userRole = localStorage.getItem('user_role') || 'Player';
+    
     document.getElementById('my-profile-section').style.display = 'block';
     document.getElementById('rating-list').style.display = 'block';
+    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
+
     if (userNick) {
         if (searchInput) searchInput.style.display = 'none';
         document.getElementById('rating-list').style.display = 'none';
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
+        
+        // --- ЛОГИКА АДМИНКИ ---
         const adminBtn = document.getElementById('admin-btn');
         const adminPanel = document.getElementById('admin-panel');
+
         if (userRole === 'Founder' || userRole === 'Archivist') {
             if (adminBtn) {
                 adminBtn.style.display = 'block';
@@ -228,11 +142,13 @@ window.showMyProfile = () => {
                     adminPanel.style.display = isHidden ? 'block' : 'none';
                 };
             }
-            if (adminPanel) adminPanel.style.display = 'none';
+            if (adminPanel) adminPanel.style.display = 'none'; // По умолчанию скрыта
         } else {
             if (adminBtn) adminBtn.style.display = 'none';
             if (adminPanel) adminPanel.style.display = 'none';
         }
+
+        // --- ЦВЕТА И ТЕКСТ РОЛИ В КАБИНЕТЕ ---
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const roleBadge = document.getElementById('cabinet-role');
         if (roleBadge) {
@@ -241,6 +157,7 @@ window.showMyProfile = () => {
             roleBadge.style.borderColor = roleColors[userRole] || '#ffffff';
         }
     } else {
+        // Логика когда не залогинен (вход через поиск)
         if (searchInput) {
             searchInput.style.display = 'block';
             searchInput.value = "";
@@ -258,10 +175,13 @@ window.showMyProfile = () => {
         loadAllPlayersForSearch();
     }
 };
+
+// 5. ФИЛЬТРАЦИЯ (ПОИСК)
 window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
     const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
+    
     const players = document.querySelectorAll('.match-card');
     players.forEach(p => {
         const matches = p.innerText.toLowerCase().includes(val);
@@ -269,15 +189,19 @@ window.filterPlayers = () => {
         else if (isProfileTab) p.style.display = (val.length > 0 && matches) ? 'flex' : 'none';
         else p.style.display = matches ? 'flex' : 'none';
     });
+
     const matchesList = document.querySelectorAll('.history-item');
     matchesList.forEach(m => {
         const fits = m.innerText.toLowerCase().includes(val);
         m.style.display = (isHistoryTab && fits) ? 'flex' : 'none';
     });
 };
+
+// 6. СИСТЕМНЫЕ ФУНКЦИИ
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
+
 async function loadAllPlayersForSearch() {
     const { data: players } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (players) {
@@ -285,6 +209,7 @@ async function loadAllPlayersForSearch() {
         players.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
     }
 }
+
 window.filterPlayersForLogin = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const container = document.getElementById('rating-list');
@@ -308,6 +233,7 @@ window.filterPlayersForLogin = () => {
         </div>`;
     }).join('');
 };
+
 window.loginWithEmail = async (nickname) => {
     const { data: profile, error } = await supabase.from('profiles').select('email, role').eq('nickname', nickname).single();
     if (error || !profile || !profile.email) return alert("❌ У профиля не настроен вход через Email.");
@@ -319,11 +245,14 @@ window.loginWithEmail = async (nickname) => {
         return;
     }
     if (session.user.email !== profile.email) return alert(`❌ Ошибка доступа! Ваш Google-аккаунт не привязан к нику "${nickname}".`);
+    
     localStorage.setItem('user_nick', nickname);
     localStorage.setItem('user_role', profile.role || 'Player');
     alert(`✅ Добро пожаловать, ${nickname}!`);
     location.reload();
 };
+
+// 7. ОБНОВЛЕНИЕ ДАННЫХ ПРОФИЛЯ
 window.updateProfileData = async () => {
     const nick = localStorage.getItem('user_nick');
     const bio = document.getElementById('new-bio')?.value || "";
@@ -332,22 +261,29 @@ window.updateProfileData = async () => {
     alert("✅ Профиль обновлен!");
     location.reload();
 };
+
 window.updateAvatar = async () => {
     const nick = localStorage.getItem('user_nick');
     const url = document.getElementById('new-avatar-url').value.trim();
     if (!url) return alert("Вставь ссылку!");
+
     const { data: p } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
+
     if (p.role === 'Player' && (p.avatar_changes || 0) >= 1) {
         return alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз");
     }
+
     const { error } = await supabase.from('profiles').update({ 
         avatar_url: url, 
         avatar_changes: (p.avatar_changes || 0) + 1 
     }).eq('nickname', nick);
+
     if (error) return alert("Ошибка при смене авы");
     alert("✅ Аватарка успешно изменена!");
     location.reload();
 };
+
+// Навигация
 window.showRating = () => { 
     const s = document.getElementById('search'); if(s) s.style.display = 'block';
     document.getElementById('rating-list').style.display = 'block'; 
@@ -356,6 +292,7 @@ window.showRating = () => {
     document.getElementById('btn-rating').classList.add('active');
     loadRating(); 
 };
+
 window.showHistory = () => { 
     const s = document.getElementById('search'); if(s) s.style.display = 'block';
     document.getElementById('rating-list').style.display = 'block'; 
@@ -367,9 +304,12 @@ window.showHistory = () => {
 window.createNewPlayer = async () => {
     const nick = document.getElementById('reg-nick').value.trim();
     const email = document.getElementById('reg-email').value.trim().toLowerCase();
+
     if (!nick || !email) return alert("Заполни и ник, и почту!");
+
     const { data: existing } = await supabase.from('profiles').select('nickname').eq('nickname', nick).single();
     if (existing) return alert("❌ Игрок с таким ником уже есть!");
+
     const { error } = await supabase.from('profiles').insert([{ 
         nickname: nick, 
         email: email, 
@@ -378,6 +318,7 @@ window.createNewPlayer = async () => {
         avatar_changes: 0,
         bio: 'Пусто...'
     }]);
+
     if (error) {
         console.error(error);
         alert("Ошибка при создании: " + error.message);
@@ -385,6 +326,7 @@ window.createNewPlayer = async () => {
         alert(`✅ Игрок ${nick} успешно зарегистрирован!`);
         location.reload();}
 };
+// СБРОС АВАТАРКИ
 window.resetAvatar = async (nick) => {
     if (!confirm(`Сбросить аватар игрока ${nick}?`)) return;
     const { error } = await supabase.from('profiles').update({ avatar_url: '' }).eq('nickname', nick);
@@ -392,6 +334,8 @@ window.resetAvatar = async (nick) => {
     alert("Аватар удален.");
     location.reload();
 };
+
+// СБРОС БИО
 window.resetBio = async (nick) => {
     if (!confirm(`Очистить описание (био) игрока ${nick}?`)) return;
     const { error } = await supabase.from('profiles').update({ bio: '' }).eq('nickname', nick);
