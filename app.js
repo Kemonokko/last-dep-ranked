@@ -338,8 +338,7 @@ window.createNewPlayer = async () => {
         alert("Ошибка при создании: " + error.message);
     } else {
         alert(`✅ Игрок ${nick} успешно зарегистрирован!`);
-        location.reload();
-    }
+        location.reload();}
 };
 // СБРОС АВАТАРКИ
 window.resetAvatar = async (nick) => {
@@ -359,4 +358,3 @@ window.resetBio = async (nick) => {
     location.reload();
 };
     loadRating();
-});
