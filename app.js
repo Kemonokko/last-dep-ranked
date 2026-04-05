@@ -39,31 +39,37 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
-    // КОСТЫЛЬ №1: Принудительно включаем видимость контейнера
+    // ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ СПИСОК
     container.style.display = 'block';
-    container.style.visibility = 'visible';
     container.style.opacity = '1';
-
-    console.log("🎨 Начинаю рендер для", list.length, "игроков...");
 
     container.innerHTML = list.map((p, index) => {
         const globalPos = index + 1;
         const rank = getRankByPercentile(globalPos, list.length);
-        const role = (p.role || 'Player').toString().trim();
+        
+        // --- 1. ЦВЕТА РОЛЕЙ (Проверь, что эти переменные есть в CSS) ---
+        const role = (p.role || 'Player').trim();
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const currentColor = roleColors[role] || '#ffffff';
 
-        // КОСТЫЛЬ №2: Прописываем стили КАРТОЧКИ прямо в HTML, чтобы CSS не мог их скрыть
+        // --- 2. ДАННЫЕ ИЗ БАЗЫ (Проверь названия колонок!) ---
+        const eloValue = p.elo || 0;
+        const wrValue = p.win_rate || 0;
+
         return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; visibility: visible !important; opacity: 1 !important; margin-bottom: 10px;">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; display: block !important;"></div>
-            <div style="flex-grow: 1;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white !important; display: inline !important;">${p.nickname}</b><br>
-                <span class="badge rank-${rank}" style="display: inline-block !important; color: white !important; visibility: visible !important;">${rank}</span>
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; margin-bottom: 12px; border-color: ${currentColor}44;">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: 0 0 10px ${currentColor}44;"></div>
+            
+            <div style="flex-grow: 1; text-align: left;">
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white !important;">${p.nickname}</b><br>
+                <!-- РАНГ: Добавляем класс для цвета из logic.js -->
+                <span class="badge rank-${rank}" style="display: inline-block !important; color: white !important; font-weight: 900;">${rank}</span>
             </div>
-            <div style="text-align: right; min-width: 85px; color: white !important;">
-                <div class="elo-val" style="color: var(--gold) !important; display: block !important;">${p.elo}</div>
-                <div class="wr-val" style="display: block !important;">${p.win_rate || 0}% WR</div>
+
+            <div style="text-align: right; min-width: 90px;">
+                <!-- ЭЛО И ВИНРЕЙТ: Принудительно белый и золотой цвета -->
+                <div style="color: var(--gold); font-weight: 900; font-size: 1.1em;">${eloValue}</div>
+                <div style="color: #848e9c; font-size: 0.8em; font-weight: bold;">${wrValue}% WR</div>
             </div>
         </div>`;
     }).join('');
