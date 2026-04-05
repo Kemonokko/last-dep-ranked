@@ -26,7 +26,7 @@ async function loadRating() {
     setTimeout(() => {
         console.log("🔄 Контрольная перерисовка для проявления данных...");
         renderPlayers(allPlayers);
-    }, 50); 
+    }, 500); 
 }
 
 function renderPlayers(list) {
