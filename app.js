@@ -7,74 +7,40 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
-    try {
-        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-        
-        if (error || !players) {
-            console.error("Ошибка при получении игроков:", error);
-            return;
-        }
+    const container = document.getElementById('rating-list');
+    const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+    if (error) return;
 
-        // --- ТОТ САМЫЙ КОСТЫЛЬ: ПРИНУДИТЕЛЬНО НАПОЛНЯЕМ ПАМЯТЬ ---
-        window.allPlayers = players;
-        allPlayers = players;
-
-        // Наполняем кэш ролей (чтобы ники светились правильно)
-        allPlayers.forEach(p => { 
-            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
-        });
-
-        // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, когда ВСЕ данные уже в памяти
-        // Это имитирует время клика по кнопке профиля, чтобы JS успел "проснуться"
-        setTimeout(() => {
-            console.log("🚀 Данные готовы, запускаю отрисовку рейтинга...");
-            // Прокидываем именно window.allPlayers как в профиле
-            renderPlayers(window.allPlayers);
-        }, 150); 
-
-    } catch (err) {
-        console.error("Критическая ошибка в loadRating:", err);
-    }
+    window.allPlayers = players || []; // Сохраняем список сразу для расчетов
+    allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
+    renderPlayers(allPlayers);
 }
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
+    container.innerHTML = list.map((p) => {
+        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+        const rank = getRankByPercentile(globalPos, allPlayers.length);
+        const role = (p.role || 'Player').toString().trim();
+        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+        const currentColor = roleColors[role] || '#ffffff';
+        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
 
-    try {
-        container.innerHTML = list.map((p, index) => {
-            const globalPos = index + 1;
-            const total = list.length;
-            // 1. Считаем ранг ОДИН раз (используем let, чтобы не было ошибок)
-            let rank = "C"; 
-            try {
-                rank = getRankByPercentile(globalPos, total);
-            } catch(err) {
-                console.error("Ошибка в расчете ранга:", err);
-            }
-            const role = (p.role || 'Player').toString().trim();
-            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-            const currentColor = roleColors[role] || '#ffffff';
-            const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
-
-            return `
-            <div class="match-card" onclick="window.openProfile('${p.nickname}')">
-                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-                <div style="flex-grow: 1;">
-                    <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                    <span class="badge rank-${rank}">${rank}</span>
-                </div>
-                <div style="text-align: right; min-width: 85px;">
-                    <div class="elo-val">${p.elo || 0}</div>
-                    <div class="wr-val">${p.win_rate || 0}% WR</div>
-                </div>
-            </div>`;
-        }).join('');
-    } catch (e) {
-        alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
-    }
+        return `
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
+            <div style="flex-grow: 1;">
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
+                <div class="badge rank-${rank}">${rank}</div>
+            </div>
+            <div style="text-align: right; min-width: 85px;">
+                <div class="elo-val">${p.elo}</div>
+                <div class="wr-val">${p.win_rate || 0}% WR</div>
+            </div>
+        </div>`;
+    }).join('');
 }
-
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
@@ -83,8 +49,10 @@ window.openProfile = async (nick) => {
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
-const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+    // 2. СЧИТАЕМ РАНГ (используем общий список игроков)
+    const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
     const rank = getRankByPercentile(globalPos, window.allPlayers.length);
+
     // 3. ЗАПОЛНЯЕМ ДАННЫЕ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
@@ -329,13 +297,14 @@ window.updateAvatar = async () => {
     location.reload();
 };
 
+// Навигация
 window.showRating = () => { 
-    // Просто переключаем видимость, не перегружая базу данных
+    const s = document.getElementById('search'); if(s) s.style.display = 'block';
     document.getElementById('rating-list').style.display = 'block'; 
-    document.getElementById('my-profile-section').style.display = 'none'; 
-    // Если есть блок истории, его тоже скрыть
-    const hist = document.getElementById('history-section');
-    if (hist) hist.style.display = 'none';
+    document.getElementById('my-profile-section').style.display = 'none';
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-rating').classList.add('active');
+    loadRating(); 
 };
 
 window.showHistory = () => { 
@@ -369,7 +338,8 @@ window.createNewPlayer = async () => {
         alert("Ошибка при создании: " + error.message);
     } else {
         alert(`✅ Игрок ${nick} успешно зарегистрирован!`);
-        location.reload();}
+        location.reload();
+    }
 };
 // СБРОС АВАТАРКИ
 window.resetAvatar = async (nick) => {
@@ -388,4 +358,6 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
+document.addEventListener('DOMContentLoaded', () => {
     loadRating();
+});
