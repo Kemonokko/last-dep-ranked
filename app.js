@@ -26,27 +26,26 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
-    // ПРИНУДИТЕЛЬНО проявляем контейнер
-    container.style.display = 'block';
-    container.style.opacity = '1';
-
     container.innerHTML = list.map((p, index) => {
-        const pos = index + 1;
+        const globalPos = index + 1;
         const total = list.length;
-        const rank = getRankByPercentile(pos, total);
+        const rank = getRankByPercentile(globalPos, total);
 
-        // ДАННЫЕ (ELO и WR) - добавляем проверку и вывод голым текстом
-        const elo = p.elo || "1500";
-        const wr = p.win_rate || "0";
+        // 1. ОПРЕДЕЛЯЕМ РОЛЬ (чтобы не было ошибки в консоли)
+        const role = (p.role || 'Player').toString().trim();
+        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+        const currentColor = roleColors[role] || '#ffffff';
+
+        // 2. ОПРЕДЕЛЯЕМ ЦИФРЫ
+        const eloVal = p.elo || 0;
+        const wrVal = p.win_rate || 0;
 
         return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white;">
-            <!-- Аватар -->
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border: 1px solid white;"></div>
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white; margin-bottom: 12px;">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
             
-            <!-- Левая часть: Ник и Ранг -->
             <div style="flex-grow: 1; text-align: left; color: white !important;">
-                <!-- ВОЗВРАЩАЕМ ЦВЕТ НИКА: добавили класс role -->
+                <!-- Теперь роль определена и ник будет подсвечен -->
                 <b class="nick-hover role-${role.toLowerCase()}" style="color: white !important;">${p.nickname}</b><br>
                 
                 <span class="badge rank-${rank}" style="background: #333 !important; color: white !important; display: inline-block !important; border: 1px solid white !important;">
@@ -54,17 +53,16 @@ function renderPlayers(list) {
                 </span>
             </div>
 
-            <!-- Правая часть: ELO и WR (ОСТАВИЛИ ОДИН БЛОК) -->
-            <div style="text-align: right; min-width: 90px; display: block !important; visibility: visible !important; opacity: 1 !important;">
-                <div class="elo-val" style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em; display: block !important;">
-                    ${p.elo || 0}
+            <div style="text-align: right; min-width: 90px; display: block !important;">
+                <div style="color: #f3ba2f !important; font-weight: 900; font-size: 1.1em;">
+                    ${eloVal}
                 </div>
-                <div class="wr-val" style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; display: block !important; margin-top: 2px;">
-                    ${p.win_rate || 0}% WR
+                <div style="color: #ffffff !important; font-size: 0.85em; font-weight: bold; margin-top: 2px;">
+                    ${wrVal}% WR
                 </div>
             </div>
         </div>`;
-  }).join('');
+    }).join('');
 }
 
 window.openProfile = async (nick) => {
