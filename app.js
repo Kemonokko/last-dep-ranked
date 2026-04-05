@@ -32,28 +32,41 @@ async function loadRating() {
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
-    container.innerHTML = list.map((p) => {
-        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-        const rank = getRankByPercentile(globalPos, allPlayers.length);
-        const role = (p.role || 'Player').toString().trim();
-        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-        const currentColor = roleColors[role] || '#ffffff';
-        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+
+    // ПРИНУДИТЕЛЬНО проявляем контейнер
+    container.style.display = 'block';
+    container.style.opacity = '1';
+
+    container.innerHTML = list.map((p, index) => {
+        const pos = index + 1;
+        const total = list.length;
+        const rank = getRankByPercentile(pos, total);
+
+        // ДАННЫЕ (ELO и WR) - добавляем проверку и вывод голым текстом
+        const elo = p.elo || "1500";
+        const wr = p.win_rate || "0";
 
         return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-            <div style="flex-grow: 1;">
-                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                <div class="badge rank-${rank}">${rank}</div>
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; border: 1px solid white;">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border: 1px solid white;"></div>
+            
+            <div style="flex-grow: 1; text-align: left; color: white !important;">
+                <b class="nick-hover" style="color: white !important;">${p.nickname}</b><br>
+                <!-- РАНГ ГОЛЫМ ТЕКСТОМ -->
+                <span class="badge rank-${rank}" style="background: #333 !important; color: white !important; display: inline-block !important; border: 1px solid white !important;">
+                    ${rank}
+                </span>
             </div>
-            <div style="text-align: right; min-width: 85px;">
-                <div class="elo-val">${p.elo}</div>
-                <div class="wr-val">${p.win_rate || 0}% WR</div>
+
+            <div style="text-align: right; min-width: 90px; color: white !important;">
+                <!-- ЦИФРЫ ГОЛЫМ ТЕКСТОМ -->
+                <div style="font-weight: bold; color: #f3ba2f !important;">${elo}</div>
+                <div style="font-size: 0.8em; color: #848e9c !important;">${wr}% WR</div>
             </div>
         </div>`;
     }).join('');
 }
+
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
