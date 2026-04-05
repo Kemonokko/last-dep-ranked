@@ -324,23 +324,34 @@ window.updateAvatar = async () => {
     location.reload();
 };
 
-// Навигация
-window.showRating = () => { 
-    const s = document.getElementById('search'); if(s) s.style.display = 'block';
-    document.getElementById('rating-list').style.display = 'block'; 
+window.showRating = () => {
+    // Показываем поиск и рейтинг, скрываем всё остальное
+    if (document.getElementById('search')) document.getElementById('search').style.display = 'block';
+    document.getElementById('rating-list').style.display = 'block';
+    document.getElementById('history-list').style.display = 'none'; // Скрываем историю
     document.getElementById('my-profile-section').style.display = 'none';
+    
+    // Подсвечиваем кнопку
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-rating').classList.add('active');
+
+    // Отрисовываем рейтинг из памяти (без запроса к базе, чтобы не было петли)
+    if (window.allPlayers) renderPlayers(window.allPlayers);
 };
 
-window.showHistory = () => { 
-    const s = document.getElementById('search'); if(s) s.style.display = 'block';
-    document.getElementById('rating-list').style.display = 'block'; 
+window.showHistory = () => {
+    if (document.getElementById('search')) document.getElementById('search').style.display = 'none';
+    document.getElementById('rating-list').style.display = 'none'; // Скрываем рейтинг
+    document.getElementById('history-list').style.display = 'block'; // Показываем историю
     document.getElementById('my-profile-section').style.display = 'none';
+    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-history').classList.add('active');
-    loadHistory(); 
+
+    // Запускаем загрузку истории
+    loadHistory();
 };
+
 window.createNewPlayer = async () => {
     const nick = document.getElementById('reg-nick').value.trim();
     const email = document.getElementById('reg-email').value.trim().toLowerCase();
