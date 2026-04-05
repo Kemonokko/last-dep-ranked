@@ -358,5 +358,6 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
-// Запуск при старте
-loadRating();
+document.addEventListener('DOMContentLoaded', () => {
+    loadRating();
+});
