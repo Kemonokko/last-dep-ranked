@@ -213,7 +213,7 @@ window.loginWithEmail = async (nickname) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
         alert(`🔐 Для входа под ником "${nickname}" подтвердите личность через Google.`);
-        await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://vercel.app' } });
+        await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: 'https://last-dep-ranked.vercel.app' } });
         return;
     }
     if (session.user.email !== profile.email) return alert(`❌ Ошибка доступа! Ваш Google-аккаунт не привязан к нику "${nickname}".`);
