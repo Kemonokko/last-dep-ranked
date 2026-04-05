@@ -6,57 +6,73 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-function renderPlayers(list) {
-    console.log("🎨 Начинаю рендер списка...");
-    const container = document.getElementById('rating-list');
-    
-    if (!container) {
-        alert("❌ ОШИБКА: Элемент 'rating-list' не найден в HTML!");
-        return;
-    }
-
-    try {
-        container.innerHTML = list.map((p) => {
-            const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
-            
-            // Проверка функции ранга
-            let rank = "Ошибка";
-            try {
-                rank = getRankByPercentile(globalPos, list.length);
-            } catch(rankErr) {
-                console.error("Ошибка в getRankByPercentile:", rankErr);
-            }
-
-            const role = (p.role || 'Player').toString().trim();
-            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-            const currentColor = roleColors[role] || '#ffffff';
-            const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
-
-            return `
-            <div class="match-card" onclick="window.openProfile('${p.nickname}')">
-                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
-                <div style="flex-grow: 1;">
-                    <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
-                    <span class="badge rank-${rank}">${rank}</span>
-                </div>
-                <div style="text-align: right; min-width: 85px;">
-                    <div class="elo-val">${p.elo}</div>
-                    <div class="wr-val">${p.win_rate || 0}% WR</div>
-                </div>
-            </div>`;
-        }).join('');
-        console.log("🏁 Рендер завершен успешно!");
-    } catch (e) {
-        alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
-    }
-}
-
 async function loadRating() {
+    const container = document.getElementById('rating-list');
+    const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+    if (error) return;
+
+    allPlayers = players || [];
+    allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
+    renderPlayers(allPlayers);
 }
+
+function renderPlayers(list) {
+    const container = document.getElementById('rating-list');
+    if (!container) return;
+    container.innerHTML = list.map((p) => {
+        const globalPos = allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+        const rank = getRankByPercentile(globalPos, allPlayers.length);
+        const role = (p.role || 'Player').toString().trim();
+        const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
+        const currentColor = roleColors[role] || '#ffffff';
+        const hasGlow = role !== 'Player' ? `0 0 12px ${currentColor}88` : 'none';
+
+        return `
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: ${hasGlow};"></div>
+            <div style="flex-grow: 1;">
+                <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white;">${p.nickname}</b><br>
+                <div class="badge rank-${rank}">${rank}</div>
+            </div>
+            <div style="text-align: right; min-width: 85px;">
+                <div class="elo-val">${p.elo}</div>
+                <div class="wr-val">${p.win_rate || 0}% WR</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+window.openProfile = async (nick) => {
+    const modal = document.getElementById('profile-modal');
+    modal.style.display = 'flex';
+    
+    // 1. Берем данные игрока
+    const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
+    if (!p) return;
+
+    // 2. СЧИТАЕМ РАНГ (используем общий список игроков)
+    const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+    const rank = getRankByPercentile(globalPos, window.allPlayers.length);
+
+    // 3. ЗАПОЛНЯЕМ ДАННЫЕ
+    document.getElementById('prof-nick').innerText = p.nickname;
+    document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
+    document.getElementById('prof-elo').innerText = p.elo;
+    document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
+    document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
+    
+    // Вставляем ранг в новую колонку и красим его
+    const rankText = document.getElementById('prof-rank-text');
+    if (rankText) {
+        rankText.innerText = rank;
+        rankText.className = `rank-${rank}`; // Добавит цвет тексту ранга (например, фиолетовый для S+)
+    }
+
+    // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
+    const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
         if (role === 'Player') {
-            badge.style.display = 'none'; // Полностью убираем плашку, если игрок обычный
+            badge.style.display = 'none'; // Убираем плашку совсем
         } else {
             badge.style.display = 'inline-block';
             badge.innerText = role.toUpperCase();
@@ -106,7 +122,8 @@ async function loadRating() {
             </div>
         `;
         modal.querySelector('div').appendChild(modDiv);
-    };
+    }
+};
 
 // 4. ЛИЧНЫЙ КАБИНЕТ И АДМИНКА
 window.showMyProfile = () => {
@@ -116,6 +133,7 @@ window.showMyProfile = () => {
     
     document.getElementById('my-profile-section').style.display = 'block';
     document.getElementById('rating-list').style.display = 'block';
+    
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
