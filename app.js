@@ -242,7 +242,7 @@ window.updateAvatar = async () => {
     const { data: p } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
 
     if (p.role === 'Player' && (p.avatar_changes || 0) >= 1) {
-        return alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз. Обратитесь к Archivist!");
+        return alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз");
     }
 
     const { error } = await supabase.from('profiles').update({ 
@@ -273,6 +273,31 @@ window.showHistory = () => {
     document.getElementById('btn-history').classList.add('active');
     loadHistory(); 
 };
+window.createNewPlayer = async () => {
+    const nick = document.getElementById('reg-nick').value.trim();
+    const email = document.getElementById('reg-email').value.trim().toLowerCase();
 
+    if (!nick || !email) return alert("Заполни и ник, и почту!");
+
+    const { data: existing } = await supabase.from('profiles').select('nickname').eq('nickname', nick).single();
+    if (existing) return alert("❌ Игрок с таким ником уже есть!");
+
+    const { error } = await supabase.from('profiles').insert([{ 
+        nickname: nick, 
+        email: email, 
+        elo: 1500, 
+        role: 'Player',
+        avatar_changes: 0,
+        bio: 'Пусто...'
+    }]);
+
+    if (error) {
+        console.error(error);
+        alert("Ошибка при создании: " + error.message);
+    } else {
+        alert(`✅ Игрок ${nick} успешно зарегистрирован!`);
+        location.reload();
+    }
+};
 // Запуск при старте
 loadRating();
