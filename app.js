@@ -46,8 +46,11 @@ function renderPlayers(list) {
     }
 
     try {
-        container.innerHTML = list.map((p) => {
-            const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
+container.innerHTML = list.map((p, index) => {
+    const globalPos = index + 1;
+    const total = list.length; // Берем длину ПРЯМО ИЗ СПИСКА
+    
+    const rank = getRankByPercentile(globalPos, total);
             
             // Проверка функции ранга
             let rank = "Ошибка";
