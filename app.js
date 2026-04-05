@@ -6,18 +6,16 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-// 1. ЗАГРУЗКА РЕЙТИНГА
 async function loadRating() {
     const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    allPlayers = players || [];
+    window.allPlayers = players || []; // Сохраняем список сразу для расчетов
     allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
     renderPlayers(allPlayers);
 }
 
-// 2. ОТРИСОВКА КАРТОЧЕК ИГРОКОВ
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
@@ -43,27 +41,48 @@ function renderPlayers(list) {
         </div>`;
     }).join('');
 }
-
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
     
+    // 1. Берем данные игрока
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
+    // 2. СЧИТАЕМ РАНГ (используем общий список игроков)
+    const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+    const rank = getRankByPercentile(globalPos, window.allPlayers.length);
+
+    // 3. ЗАПОЛНЯЕМ ДАННЫЕ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
     document.getElementById('prof-elo').innerText = p.elo;
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
     document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
     
-    const role = (p.role || 'Player').trim();
-    const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
-    const badge = document.getElementById('prof-role-badge');
-    badge.innerText = role.toUpperCase();
-    badge.style.color = roleColors[role];
-    badge.style.borderColor = roleColors[role];
+    // Вставляем ранг в новую колонку и красим его
+    const rankText = document.getElementById('prof-rank-text');
+    if (rankText) {
+        rankText.innerText = rank;
+        rankText.className = `rank-${rank}`; // Добавит цвет тексту ранга (например, фиолетовый для S+)
+    }
 
+    // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
+    const role = (p.role || 'Player').trim();
+    const badge = document.getElementById('prof-role-badge');
+    if (badge) {
+        if (role === 'Player') {
+            badge.style.display = 'none'; // Убираем плашку совсем
+        } else {
+            badge.style.display = 'inline-block';
+            badge.innerText = role.toUpperCase();
+            const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000' };
+            badge.style.color = roleColors[role] || '#ffffff';
+            badge.style.borderColor = roleColors[role] || '#ffffff';
+        }
+    }
+
+    // 5. ПОСЛЕДНИЕ ИГРЫ
     const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
     const gamesContainer = document.getElementById('prof-recent-games');
     if (gamesContainer) {
@@ -75,17 +94,13 @@ window.openProfile = async (nick) => {
             return `
             <div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s;">
                 <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
-                
-                <!-- НИК: Светится и открывает профиль другого игрока -->
                 <b class="nick-hover role-${oppRole}" 
                    onclick="event.stopPropagation(); window.openProfile('${oppNick}')" 
                    style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
-                
                 <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
             </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
-
     // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
     const oldMod = document.getElementById('mod-tools');
     if (oldMod) oldMod.remove();
