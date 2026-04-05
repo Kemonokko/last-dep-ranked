@@ -83,24 +83,47 @@ function renderPlayers(list) {
         alert("⛔ ОШИБКА ВНУТРИ renderPlayers: " + e.message);
     }
 }
-window.openProfile = async (nick) => {
-    const modal = document.getElementById('profile-modal');
-    modal.style.display = 'flex';
-    const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
-    if (!p) return;
-    const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
-    const rank = getRankByPercentile(globalPos, window.allPlayers.length);
-    document.getElementById('prof-nick').innerText = p.nickname;
-    document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
-    document.getElementById('prof-elo').innerText = p.elo;
-    document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
-    document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
-    const rankText = document.getElementById('prof-rank-text');
-    if (rankText) {
-        rankText.innerText = rank;
-        rankText.className = `rank-${rank}`;
-    }
+async function loadRating() {
+    console.log("🚀 Шаг 1: Запуск loadRating...");
+    try {
+        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+        
+        if (error) {
+            console.error("❌ ОШИБКА БАЗЫ:", error.message);
+            alert("Ошибка базы: " + error.message);
+            return;
+        }
 
+        // --- КРИТИЧЕСКИЙ МОМЕНТ: Сначала наполняем память ---
+        window.allPlayers = players || [];
+        allPlayers = players || []; 
+        console.log("✅ Шаг 2: Память заполнена игроками:", allPlayers.length);
+
+        if (allPlayers.length === 0) {
+            console.warn("⚠️ Внимание: Таблица profiles пуста!");
+            return;
+        }
+
+        // Заполняем кэш ролей для быстрого поиска
+        allPlayers.forEach(p => { 
+            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
+        });
+
+        // --- ШАГ 3: Принудительно показываем список и рисуем ---
+        const container = document.getElementById('rating-list');
+        if (container) {
+            container.style.display = 'block'; // Гарантируем видимость
+            container.style.opacity = '1';
+        }
+
+        console.log("🏃 Шаг 4: Переходим к отрисовке...");
+        renderPlayers(allPlayers);
+
+    } catch (e) {
+        console.error("⛔ КРИТИЧЕСКАЯ ОШИБКА КОДА:", e.message);
+        alert("Ошибка в коде: " + e.message);
+    }
+}
     // --- 4. ПЛАШКА РОЛИ (Скрываем для обычных игроков) ---
     const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
