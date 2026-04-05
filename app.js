@@ -9,16 +9,27 @@ window.roleCache = {};
 async function loadRating() {
     const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-    if (error) return;
+    
+    if (error) {
+        console.error("❌ Ошибка получения данных из Supabase:", error);
+        return;
+    }
 
-    // ИСПРАВЛЕНО: Добавили window, чтобы функции рангов видели список сразу
+    // --- ПРОВЕРКА №1: Пришли ли данные из базы? ---
+    console.log("📡 База ответила, получено игроков:", players ? players.length : 0);
+
     window.allPlayers = players || []; 
     allPlayers = window.allPlayers; 
+
+    // --- ПРОВЕРКА №2: Записались ли данные в глобальную память? ---
+    console.log("🧠 В глобальной памяти (window.allPlayers) сейчас игроков:", window.allPlayers.length);
 
     allPlayers.forEach(p => { 
         window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
     });
 
+    // --- ПРОВЕРКА №3: Что мы отправляем на отрисовку? ---
+    console.log("🎨 Запускаю renderPlayers...");
     renderPlayers(allPlayers);
 }
 
