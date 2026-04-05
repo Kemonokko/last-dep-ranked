@@ -15,20 +15,22 @@ async function loadRating() {
             return;
         }
 
-        // 1. СНАЧАЛА жестко наполняем память
+        // --- ТОТ САМЫЙ КОСТЫЛЬ: ПРИНУДИТЕЛЬНО НАПОЛНЯЕМ ПАМЯТЬ ---
         window.allPlayers = players;
         allPlayers = players;
 
-        // 2. Наполняем кэш ролей (чтобы ники светились правильно)
+        // Наполняем кэш ролей (чтобы ники светились правильно)
         allPlayers.forEach(p => { 
             window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
         });
 
         // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, когда ВСЕ данные уже в памяти
+        // Это имитирует время клика по кнопке профиля, чтобы JS успел "проснуться"
         setTimeout(() => {
             console.log("🚀 Данные готовы, запускаю отрисовку рейтинга...");
-            renderPlayers(allPlayers);
-        }, 150); // Увеличил до 150мс для надежности
+            // Прокидываем именно window.allPlayers как в профиле
+            renderPlayers(window.allPlayers);
+        }, 150); 
 
     } catch (err) {
         console.error("Критическая ошибка в loadRating:", err);
