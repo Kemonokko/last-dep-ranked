@@ -1,4 +1,5 @@
 export function getRankByPercentile(position, total) {
+    if (!total || total === 0) return 'C'
     const p = (position / total) * 100;
     if (p <= 3) return 'Дракон';
     if (p <= 9) return 'S+';
