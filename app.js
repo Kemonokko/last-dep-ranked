@@ -11,7 +11,7 @@ async function loadRating() {
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
     if (error) return;
 
-    window.allPlayers = players || []; // Сохраняем список сразу для расчетов
+    allPlayers = players || [];
     allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); });
     renderPlayers(allPlayers);
 }
@@ -358,6 +358,5 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
-document.addEventListener('DOMContentLoaded', () => {
     loadRating();
 });
