@@ -6,13 +6,36 @@ import { loadHistory } from './history.js';
 let allPlayers = []; 
 window.roleCache = {};
 
-sync function loadRating() 
-{ try { const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false }); 
-       if (error || !players) { console.error("Ошибка при получении игроков:", error); return; }
-    window.allPlayers = players; allPlayers = players; 
-    allPlayers.forEach(p => { window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); }); 
-    setTimeout(() => { console.log("🚀 Данные готовы, запускаю отрисовку рейтинга..."); renderPlayers(allPlayers); }, 150); 
-    } catch (err) { console.error("Критическая ошибка в loadRating:", err); }}
+async function loadRating() {
+    try {
+        const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
+        
+        if (error || !players) {
+            console.error("Ошибка при получении игроков:", error);
+            return;
+        }
+
+        // --- ТОТ САМЫЙ КОСТЫЛЬ: ПРИНУДИТЕЛЬНО НАПОЛНЯЕМ ПАМЯТЬ ---
+        window.allPlayers = players;
+        allPlayers = players;
+
+        // Наполняем кэш ролей (чтобы ники светились правильно)
+        allPlayers.forEach(p => { 
+            window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
+        });
+
+        // 3. Рисуем рейтинг ОДИН РАЗ с задержкой, когда ВСЕ данные уже в памяти
+        // Это имитирует время клика по кнопке профиля, чтобы JS успел "проснуться"
+        setTimeout(() => {
+            console.log("🚀 Данные готовы, запускаю отрисовку рейтинга...");
+            // Прокидываем именно window.allPlayers как в профиле
+            renderPlayers(window.allPlayers);
+        }, 150); 
+
+    } catch (err) {
+        console.error("Критическая ошибка в loadRating:", err);
+    }
+}
 
 function renderPlayers(list) {
     const container = document.getElementById('rating-list');
