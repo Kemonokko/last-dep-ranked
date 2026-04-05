@@ -1,4 +1,3 @@
-alert("JS ЗАПУСТИЛСЯ!");
 import { supabase } from './config.js';
 import { getRankByPercentile } from './logic.js';
 import { handleAddMatch } from './admin.js';
