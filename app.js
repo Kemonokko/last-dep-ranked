@@ -39,7 +39,6 @@ function renderPlayers(list) {
     const container = document.getElementById('rating-list');
     if (!container) return;
 
-    // ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ СПИСОК
     container.style.display = 'block';
     container.style.opacity = '1';
 
@@ -47,29 +46,28 @@ function renderPlayers(list) {
         const globalPos = index + 1;
         const rank = getRankByPercentile(globalPos, list.length);
         
-        // --- 1. ЦВЕТА РОЛЕЙ (Проверь, что эти переменные есть в CSS) ---
         const role = (p.role || 'Player').trim();
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const currentColor = roleColors[role] || '#ffffff';
 
-        // --- 2. ДАННЫЕ ИЗ БАЗЫ (Проверь названия колонок!) ---
-        const eloValue = p.elo || 0;
-        const wrValue = p.win_rate || 0;
+        // ДАННЫЕ ИЗ БАЗЫ (ELO и Winrate)
+        const eloVal = p.elo || 0;
+        const wrVal = p.win_rate || 0;
 
         return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; margin-bottom: 12px; border-color: ${currentColor}44;">
-            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; box-shadow: 0 0 10px ${currentColor}44;"></div>
+        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; margin-bottom: 12px;">
+            <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
             
             <div style="flex-grow: 1; text-align: left;">
                 <b class="nick-hover role-${role.toLowerCase()}" style="font-size: 1.15em; color: white !important;">${p.nickname}</b><br>
-                <!-- РАНГ: Добавляем класс для цвета из logic.js -->
-                <span class="badge rank-${rank}" style="display: inline-block !important; color: white !important; font-weight: 900;">${rank}</span>
+                <!-- ТВОИ РАНГИ: Используем твои классы и названия из logic.js -->
+                <span class="badge rank-${rank}">${rank}</span>
             </div>
 
             <div style="text-align: right; min-width: 90px;">
-                <!-- ЭЛО И ВИНРЕЙТ: Принудительно белый и золотой цвета -->
-                <div style="color: var(--gold); font-weight: 900; font-size: 1.1em;">${eloValue}</div>
-                <div style="color: #848e9c; font-size: 0.8em; font-weight: bold;">${wrValue}% WR</div>
+                <!-- ЭЛО И ВИНРЕЙТ (Теперь они точно прогрузятся) -->
+                <div style="color: var(--gold); font-weight: 900; font-size: 1.1em; display: block !important;">${eloVal}</div>
+                <div style="color: #848e9c; font-size: 0.8em; font-weight: bold; display: block !important;">${wrVal}% WR</div>
             </div>
         </div>`;
     }).join('');
