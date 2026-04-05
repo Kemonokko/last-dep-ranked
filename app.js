@@ -20,15 +20,17 @@ async function loadRating() {
             return;
         }
 
-        // Сохраняем в обе переменные для надежности
-        allPlayers = players;
+        // КРИТИЧЕСКИ ВАЖНО: Заполняем список СРАЗУ для расчёта рангов
         window.allPlayers = players; 
+        allPlayers = players; 
 
         allPlayers.forEach(p => { 
             window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
         });
 
+        // Теперь renderPlayers точно увидит список и нарисует ранги (S+, A и т.д.)
         renderPlayers(allPlayers);
+        
     } catch (e) {
         alert("ОШИБКА КОДА: " + e.message);
     }
