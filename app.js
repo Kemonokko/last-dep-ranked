@@ -55,9 +55,8 @@ window.openProfile = async (nick) => {
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
-const globalPos = list.findIndex(player => player.nickname === p.nickname) + 1;
-const rank = getRankByPercentile(globalPos, list.length);
-
+const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
+    const rank = getRankByPercentile(globalPos, window.allPlayers.length);
     // 3. ЗАПОЛНЯЕМ ДАННЫЕ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
