@@ -359,4 +359,3 @@ window.resetBio = async (nick) => {
     location.reload();
 };
     loadRating();
-});
