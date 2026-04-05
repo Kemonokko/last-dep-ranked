@@ -7,30 +7,26 @@ let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
-    const container = document.getElementById('rating-list');
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-    
-    if (error) {
-        console.error("❌ Ошибка получения данных из Supabase:", error);
-        return;
-    }
+    if (error) return;
 
-    // --- ПРОВЕРКА №1: Пришли ли данные из базы? ---
-    console.log("📡 База ответила, получено игроков:", players ? players.length : 0);
-
-    window.allPlayers = players || []; 
-    allPlayers = window.allPlayers; 
-
-    // --- ПРОВЕРКА №2: Записались ли данные в глобальную память? ---
-    console.log("🧠 В глобальной памяти (window.allPlayers) сейчас игроков:", window.allPlayers.length);
+    // 1. СНАЧАЛА жестко наполняем память
+    window.allPlayers = players || [];
+    allPlayers = window.allPlayers;
 
     allPlayers.forEach(p => { 
         window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
     });
 
-    // --- ПРОВЕРКА №3: Что мы отправляем на отрисовку? ---
-    console.log("🎨 Запускаю renderPlayers...");
+    // 2. ПЕРВАЯ ОТРИСОВКА (создаем скелет)
     renderPlayers(allPlayers);
+
+    // 3. КОНТРОЛЬНЫЙ ВЫСТРЕЛ (через 50мс - это миг, но для браузера вечность)
+    // Это имитирует твой заход в профиль и обратно
+    setTimeout(() => {
+        console.log("🔄 Контрольная перерисовка для проявления данных...");
+        renderPlayers(allPlayers);
+    }, 50); 
 }
 
 function renderPlayers(list) {
