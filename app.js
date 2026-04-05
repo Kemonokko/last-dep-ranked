@@ -14,7 +14,10 @@ async function loadRating() {
     // ИСПРАВЛЕНО: Добавили window, чтобы функции рангов видели список сразу
     window.allPlayers = players || []; 
     allPlayers = window.allPlayers; 
-
+        setTimeout(() => {
+            console.log("⏳ Задержка прошла, рисую рейтинг...");
+            renderPlayers(allPlayers);
+        }, 100); 
     allPlayers.forEach(p => { 
         window.roleCache[p.nickname] = (p.role || 'Player').toString().trim(); 
     });
