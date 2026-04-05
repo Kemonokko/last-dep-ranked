@@ -38,7 +38,7 @@ container.innerHTML = matches.map(m => {
             </div>
 
             <!-- СЧЁТ И ДАТА (Двойной клик для удаления перенесен сюда, чтобы не мешал никам) -->
-            <div style="text-align: center; min-width: 90px; cursor: help;" ondblclick="window.deleteMatch('${m.id}')">
+            <div style="text-align: center; min-width: 90px; cursor: help;"
                 <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
                 <div style="font-size: 0.7em; color: #777; font-weight: bold; margin-top: 2px;">${dateStr}</div>
             </div>
