@@ -5,7 +5,7 @@ export async function loadHistory() {
     const container = document.getElementById('history-list'); 
     
     if (!container) return; // Защита, если блока нет в HTML
-    
+    console.log("Проверка функции openProfile:", typeof window.openProfile);
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
        
     const { data: profiles } = await supabase.from('profiles').select('nickname, role');
