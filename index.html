@@ -91,23 +91,15 @@
   width: 100%; 
   box-sizing: border-box;
 }
-
-/* Скрываем лишнее в поиске при логине */
-#my-profile-section ~ #rating-list .match-card .badge, 
+  #my-profile-section ~ #rating-list .match-card .badge, 
 #my-profile-section ~ #rating-list .match-card div:last-child {
     display: none !important;
 }
+/* Если секция профиля скрыта, возвращаем всё назад автоматически */
 #my-profile-section[style*="display: none"] ~ #rating-list .match-card .badge,
 #my-profile-section[style*="display: none"] ~ #rating-list .match-card div:last-child {
     display: block !important;
 }
-
-/* СВЕЧЕНИЕ НИКОВ В ИСТОРИИ (Чистый код) */
-.history-item:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-.history-item:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-.history-item:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
-.history-item:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-.history-item-mini:hover .nick-hover { text-shadow: 0 0 10px currentColor; }
 </style>
 </head>
 <body>
