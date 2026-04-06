@@ -7,6 +7,13 @@ export async function loadHistory() {
     if (!container) return; // Защита, если блока нет в HTML
     
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
+       
+      const { data: profiles } = await supabase.from('profiles').select('nickname, role');
+    if (profiles) {
+        profiles.forEach(p => {
+            window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase();
+        });
+    }
 
     const { data: matches, error } = await supabase
         .from('match_history')
