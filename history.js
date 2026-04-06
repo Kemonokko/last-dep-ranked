@@ -31,7 +31,7 @@ export async function loadHistory() {
 container.innerHTML = matches.map(m => {
     const d = new Date(m.date);
     const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getFullYear()).slice(-2)}`;
-
+console.log(`Игрок: ${m.win}, Роль в кэше: ${window.roleCache[m.win]}`);
     const winRole = (window.roleCache[m.win] || 'Player').toLowerCase();
     const lossRole = (window.roleCache[m.loss] || 'Player').toLowerCase();
 
