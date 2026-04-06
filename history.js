@@ -8,10 +8,13 @@ export async function loadHistory() {
     
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
        
-    const { data: allProfiles } = await supabase.from('profiles').select('nickname, role');
-    if (allProfiles) {
-        allProfiles.forEach(p => {
-            window.roleCache[p.nickname] = (p.role || 'Player').trim().toLowerCase();
+    const { data: profiles } = await supabase.from('profiles').select('nickname, role');
+    
+    // 2. Наполняем глобальный кэш
+    if (profiles) {
+        profiles.forEach(p => {
+            // Приводим к нижнему регистру для CSS (Founder -> role-founder)
+            window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
         });
     }
 
