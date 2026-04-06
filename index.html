@@ -79,13 +79,14 @@
     #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
     .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; }
     .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
+    
     .history-item-mini:hover .nick-hover { 
     color: #ffffff !important; 
     text-shadow: 0 0 12px #ffffff !important; 
     transition: 0.3s ease;
 }
 
-/* 2. ЦВЕТНЫЕ РОЛИ В МИНИ-МАТЧАХ (Перекрывают белый) */
+.history-item-mini:hover .role-player { color: var(--player) !important; text-shadow: 0 0 15px var(--player) !important; 
 .history-item-mini:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder) !important; }
 .history-item-mini:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer) !important; }
 .history-item-mini:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist) !important; }
