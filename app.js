@@ -108,13 +108,11 @@ if (rankText) {
             const resColor = isWin ? '#00ff00' : '#ff0000';
             const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
             return `
-            <div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s;">
-                <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
-                <b class="nick-hover role-${oppRole}" 
-                   onclick="event.stopPropagation(); window.openProfile('${oppNick}')" 
-                   style="cursor:pointer; flex:1; text-align:left; margin-left:10px; font-size:0.9em; color:white;">${oppNick}</b>
-                <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
-            </div>`;
+       <div class="history-item-mini" style="padding:8px 12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="window.openProfile('${oppNick}')">
+          <span style="color:${resColor}; font-weight:bold; font-size:0.8em;">${isWin ? 'WIN' : 'LOSS'}</span>
+          <b class="nick-hover role-${oppRole}" style="flex:1; text-align:left; margin-left:15px;">${oppNick}</b>
+          <span style="color:var(--gold); font-weight:bold;">${m.win_r}:${m.loss_r}</span>
+       </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
     // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
