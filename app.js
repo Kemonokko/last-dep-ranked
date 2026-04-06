@@ -401,4 +401,6 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
+window.openProfile = window.openProfile;
+};
     loadRating();
