@@ -402,5 +402,8 @@ window.resetBio = async (nick) => {
     location.reload();
 };
 window.openProfile = window.openProfile;
-}
+
+// 2. Инициализация (запуск рейтинга при входе на сайт)
+document.addEventListener('DOMContentLoaded', () => {
     loadRating();
+});
