@@ -37,28 +37,25 @@ function renderPlayers(list) {
 
         const eloVal = p.elo || 0;
         const wrVal = p.win_rate || 0;
+return `
+<div class="match-card" onclick="window.openProfile('${p.nickname}')">
+    <!-- Аватарка (Цвет рамки берем из JS) -->
+    <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor};"></div>
+    
+    <div style="flex-grow: 1; text-align: left;">
+        <!-- НИК: Только классы. Цвет и свечение теперь в CSS -->
+        <b class="nick-hover role-${role.toLowerCase()}">${p.nickname}</b><br>
+        
+        <!-- РАНГ: Только классы. Цвета и анимация Дракона — в CSS -->
+        <span class="badge rank-${rank}">${rank}</span>
+    </div>
 
-        return `
-        <div class="match-card" onclick="window.openProfile('${p.nickname}')" style="display: flex !important; background: linear-gradient(135deg, #0a0a0a, #1a0000) !important; border: 1.5px solid #2a0000 !important; padding: 15px !important; margin-bottom: 12px !important; border-radius: 12px !important; align-items: center !important; justify-content: space-between !important; box-shadow: 0 4px 15px rgba(0,0,0,0.6) !important;">
-            
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <!-- Аватар -->
-                <div class="avatar-circle" style="background-image: url('${p.avatar_url || ''}'); border-color: ${currentColor}; flex-shrink: 0;"></div>
-                
-                <!-- Ник и Ранг -->
-                <div style="text-align: left;">
-                    <b class="nick-hover role-${role.toLowerCase()}" style="color: white; font-size: 1.15em;">${p.nickname}</b><br>
-                    <span class="badge rank-${rank}">${rank}</span>
-                </div>
-            </div>
-
-            <!-- Цифры (Теперь они внутри "кровавого" фона) -->
-            <div style="text-align: right; min-width: 90px;">
-                <div style="color: #f3ba2f !important; font-weight: 900; font-size: 1.15em; text-shadow: 0 0 10px rgba(243, 186, 47, 0.3);">${eloVal}</div>
-                <div style="color: rgba(255,255,255,0.7) !important; font-size: 0.85em; font-weight: bold; margin-top: 4px;">${wrVal}% WR</div>
-            </div>
-
-        </div>`;
+    <!-- ЦИФРЫ: Используем твои переменные --gold из CSS -->
+    <div style="text-align: right; min-width: 90px;">
+        <div class="elo-val">${p.elo || 0}</div>
+        <div class="wr-val">${p.win_rate || 0}% WR</div>
+    </div>
+</div>`;
     }).join('');
 }
 
