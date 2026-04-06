@@ -34,38 +34,40 @@ container.innerHTML = matches.map(m => {
 console.log(`Игрок: ${m.win}, Роль в кэше: ${window.roleCache[m.win]}`);
     const winRole = (window.roleCache[m.win] || 'Player').toLowerCase();
     const lossRole = (window.roleCache[m.loss] || 'Player').toLowerCase();
+    
+return `
+<div class="history-item" style="padding: 15px 12px; border-color: #222; position: relative; background: var(--card) !important; border: 1.5px solid var(--border) !important; border-radius: 12px !important; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">          
+        
+        <!-- 1. ПОБЕДИТЕЛЬ -->
+        <div style="flex: 1; text-align: left;">
+            <b class="nick-hover role-${winRole}" 
+               onclick="window.openProfile('${m.win}')" 
+               style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block; pointer-events: auto !important;">
+               ${m.win}
+            </b>
+            <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
+                +${m["elo+"]}(${m.bonus || 0})
+            </div>
+        </div>   
 
-    return `
-        <div class="history-item" style="padding: 15px 12px; border-color: #222; position: relative; background: var(--card) !important; border: 1.5px solid var(--border) !important; border-radius: 12px !important; margin-bottom: 12px;">
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">          
-                
-                <!-- 1. ПОБЕДИТЕЛЬ (ВСТАВЛЯЙ СЮДА) -->
-                <div style="flex: 1; text-align: left;">
-                    <b class="nick-hover role-${winRole}" 
-                       onclick="window.openProfile('${m.win}')" 
-                       style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block;">
-                       ${m.win}
-                    </b>
-                    <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
-                        +${m["elo+"]}(${m.bonus || 0})
-                    </div>
-                </div>   
+        <!-- СЧЕТ -->
+        <div style="text-align: center; min-width: 90px; cursor: help;" 
+             title="Двойной клик для удаления" 
+             ondblclick="window.deleteMatch('${m.id}')">
+            <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
+            <div style="font-size: 0.7em; color: #777; font-weight: bold; margin-top: 2px;">${dateStr}</div>
+        </div>
 
-                <!-- СЧЕТ -->
-                <div style="text-align: center; min-width: 90px;" ondblclick="window.deleteMatch('${m.id}')">
-                    <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
-                    <div style="font-size: 0.7em; color: #777; font-weight: bold; margin-top: 2px;">${dateStr}</div>
-                </div>
-
-                <!-- 2. ПРОИГРАВШИЙ (ВСТАВЛЯЙ СЮДА) -->
-                <div style="flex: 1; text-align: right;">
-                    <b class="nick-hover role-${lossRole}" 
-                       onclick="window.openProfile('${m.loss}')" 
-                       style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block;">
-                       ${m.loss}
-                    </b>
-                    <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
-                </div>
+        <!-- 2. ПРОИГРАВШИЙ -->
+        <div style="flex: 1; text-align: right;">
+            <b class="nick-hover role-${lossRole}" 
+               onclick="window.openProfile('${m.loss}')" 
+               style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block; pointer-events: auto !important;">
+               ${m.loss}
+            </b>
+            <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
+        </div>
 
             </div>
         </div>`;
