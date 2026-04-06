@@ -402,5 +402,4 @@ window.resetBio = async (nick) => {
     location.reload();
 };
 window.openProfile = window.openProfile;
-};
     loadRating();
