@@ -6,7 +6,7 @@
   <title>Last Dep Ranked</title>
 <style>
     :root { 
-      --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
+      --bg: #050000; --card: #0d0d0d; --border: #1a1a1a; --text: #ffffff; 
       --gold: #f0b90b; --blood: #ff0000;
       /* Цвета Ролей */
       --founder: #b64dff; --bloodline: #880000; --overseer: #00ff00; --archivist: #00ffff;
@@ -16,160 +16,65 @@
 
     body { 
       background-color: var(--bg) !important;
-      background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('bg.jpg');
+      background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('bg.jpg');
       background-size: cover; background-position: center; background-attachment: fixed;
       color: var(--text); font-family: sans-serif; margin: 0; padding: 0 10px 100px 10px;
       display: flex; flex-direction: column; align-items: center; min-height: 100vh;
     }
 
-    /* ЗАГОЛОВОК СЛЕВА */
+    /* ЗАГОЛОВОК */
     header { width: 100%; padding: 15px 25px; text-align: left; box-sizing: border-box; }
-    h1 { 
-      color: #ff0000 !important; font-size: 2.6em; text-transform: capitalize; 
-      text-shadow: 0 0 15px #ff0000; margin: 0; cursor: pointer; display: inline-block; 
+    h1 { color: #ff0000 !important; font-size: 2.6em; text-transform: capitalize; text-shadow: 0 0 15px #ff0000; margin: 0; cursor: pointer; }
+
+    /* КАРТОЧКИ (Рейтинг, История, Мини-матчи) */
+    .match-card, .history-item, .history-item-mini { 
+      background: var(--card) !important; 
+      border: 1.5px solid var(--border) !important; 
+      border-radius: 12px !important; 
+      margin-top: 10px; padding: 15px !important; 
+      display: flex; align-items: center; gap: 15px; 
+      width: 100%; box-sizing: border-box; 
+      transition: 0.3s ease; cursor: pointer;
+    }
+    .history-item-mini { padding: 8px 12px !important; } /* Компактнее для профиля */
+
+    .match-card:hover, .history-item:hover, .history-item-mini:hover {
+      background: #121212 !important;
+      border-color: #333 !important;
+      transform: translateY(-2px);
     }
 
-    .container { width: 95%; max-width: 500px; }
+    .avatar-circle { width: 50px; height: 50px; border-radius: 50%; background-size: cover; border: 2.5px solid; flex-shrink: 0; }
 
-    /* КНОПКИ ПЕРЕКЛЮЧЕНИЯ */
-    .nav-btns { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
-    .nav-btn { flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .nav-btn.active {
-    background: var(--blood) !important;
-    border-color: var(--blood) !important;
-}
+    /* НИКИ И СВЕЧЕНИЕ (РАБОТАЕТ ВЕЗДЕ) */
+    .nick-hover { color: #ffffff; font-size: 1.1em; font-weight: bold; transition: 0.3s ease; }
 
-    /* КАРТОЧКА ИГРОКА (Чистый код без дублей) */
-    .match-card { 
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
-      width: 100%; box-sizing: border-box; min-height: 80px; cursor: pointer; transition: 0.2s;
-    }
-    
-    .avatar-circle { 
-      width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
-      border: 2.5px solid; flex-shrink: 0; transition: 0.3s; 
+    /* 1. Белое свечение по умолчанию для всех при наведении на ЛЮБУЮ карточку */
+    .match-card:hover .nick-hover, 
+    .history-item:hover .nick-hover, 
+    .history-item-mini:hover .nick-hover { 
+        color: #ffffff !important; text-shadow: 0 0 12px #ffffff !important; 
     }
 
-    .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
-    .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
+    /* 2. Цветное свечение ролей (перекрывает белый) */
+    .match-card:hover .role-founder, .history-item:hover .role-founder, .history-item-mini:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder) !important; }
+    .match-card:hover .role-overseer, .history-item:hover .role-overseer, .history-item-mini:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer) !important; }
+    .match-card:hover .role-archivist, .history-item:hover .role-archivist, .history-item-mini:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist) !important; }
+    .match-card:hover .role-bloodline, .history-item:hover .role-bloodline, .history-item-mini:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline) !important; }
 
-    /* РАНГИ */
-    .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
-    
+    /* РАНГИ (ЦВЕТА И ПОДСВЕТКИ) */
+    .badge { font-size: 0.8em; padding: 4px 10px; border-radius: 6px; border: 2px solid; margin-top: 5px; display: inline-block; font-weight: 900; }
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
-    .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
-    
     .rank-S\+, .rank-A\+, .rank-B\+ { box-shadow: 0 0 15px currentColor; text-shadow: 0 0 5px currentColor; }
     .rank-S\+, .rank-S { color: var(--color-s); border-color: var(--color-s); }
     .rank-A\+, .rank-A { color: var(--color-a); border-color: var(--color-a); }
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
-    /* УМНЫЙ ХОВЕР: Навел на карту -> загорелся ник */
- .nick-hover { 
-    transition: 0.3s; 
-    pointer-events: auto !important; 
-    color: white; 
-    font-size: 1.15em; 
-    text-decoration: none; 
-    cursor: pointer; 
-}
-    
-    .match-card:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
-    .match-card:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
-    .match-card:hover .role-overseer { color: var(--overseer) !important; text-shadow: 0 0 15px var(--overseer); }
-    .match-card:hover .role-archivist { color: var(--archivist) !important; text-shadow: 0 0 15px var(--archivist); }
-
-    /* ПОИСК И АДМИНКА */
-    #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; outline: none; }
-    #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-    .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; }
+    /* МОДАЛКА И АДМИНКА */
+    #profile-modal > div { width: 95% !important; max-width: 480px !important; background: var(--card); border: 1px solid var(--border); border-radius: 25px; }
+    #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; outline: none; }
     .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
-
-.history-item { 
-  background: var(--card) !important; 
-  border: 1.5px solid var(--border); 
-  border-radius: 20px; 
-  margin-top: 12px; 
-  padding: 15px 12px;
-  display: flex; 
-  flex-direction: column; 
-  width: 100%; 
-  box-sizing: border-box;
-}
-
-/* Скрываем лишнее в поиске при логине */
-#my-profile-section ~ #rating-list .match-card .badge, 
-#my-profile-section ~ #rating-list .match-card div:last-child {
-    display: none !important;
-}
-#my-profile-section[style*="display: none"] ~ #rating-list .match-card .badge,
-#my-profile-section[style*="display: none"] ~ #rating-list .match-card div:last-child {
-    display: block !important;
-}
-    /* 1. Расширяем модалку до 480px, чтобы убрать ползунок */
-    #profile-modal > div {
-        width: 95% !important;
-        max-width: 480px !important; 
-        overflow-x: hidden !important; 
-    }
-
-    /* 2. Общее белое свечение для ВСЕХ (включая обычных игроков) */
-    .match-card:hover .nick-hover,
-    .history-item:hover .nick-hover,
-    .history-item-mini:hover .nick-hover { 
-        text-shadow: 0 0 10px #ffffff !important; 
-        color: #ffffff !important; 
-    }
-  /* 1. БАЗОВОЕ СВЕЧЕНИЕ ДЛЯ ВСЕХ (Белый по дефолту) */
-.match-card:hover .nick-hover,
-.history-item:hover .nick-hover,
-.history-item-mini:hover .nick-hover { 
-    color: #ffffff !important; 
-    text-shadow: 0 0 12px #ffffff !important; 
-    transition: 0.3s ease;
-}
-
-/* 2. ЦВЕТНЫЕ РОЛИ (Перебивают белый, если роль назначена) */
-/* Founder - Фиолетовый */
-.match-card:hover .role-founder, .history-item:hover .role-founder { color: #b64dff !important; text-shadow: 0 0 15px #b64dff !important; }
-/* Overseer - Зеленый */
-.match-card:hover .role-overseer, .history-item:hover .role-overseer { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00 !important; }
-/* Archivist - Циан */
-.match-card:hover .role-archivist, .history-item:hover .role-archivist { color: #00ffff !important; text-shadow: 0 0 15px #00ffff !important; }
-/* Bloodline - Красный */
-.match-card:hover .role-bloodline, .history-item:hover .role-bloodline { color: #ff4444 !important; text-shadow: 0 0 15px #ff4444 !important; }
-
-.match-card {
-    /* 1. Плотный темный фон (не прозрачный, чтобы не сливалось) */
-    background: #0d0d0d !important; 
-    
-    /* 2. Четкая темная граница */
-    border: 1px solid #1a1a1a !important; 
-    
-    /* 3. Отступы и скругления */
-    margin-bottom: 12px !important;
-    padding: 15px !important;
-    border-radius: 12px !important;
-    
-    /* 4. Принудительно показываем как флекс-блок */
-    display: flex !important;
-    align-items: center;
-    gap: 15px;
-    
-    /* 5. Убираем любую прозрачность самого блока */
-    opacity: 1 !important;
-    transition: 0.3s ease;
-}
-
-/* Эффект при наведении (карточка чуть оживает) */
-.match-card:hover {
-    background: #121212 !important;
-    border-color: #333 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-}
 </style>
 </head>
 <body>
