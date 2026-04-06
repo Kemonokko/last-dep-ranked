@@ -1,13 +1,12 @@
 import { supabase } from './config.js';
 
 export async function loadHistory() {
-    // МЕНЯЕМ ID: теперь история ищет свой собственный блок 'history-list'
-    const container = document.getElementById('history-list'); 
-    
-    if (!container) return; // Защита, если блока нет в HTML
+    const container = document.getElementById('history-list');
+    if (!container) return;
     
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
-       
+
+    // 1. ЗАПОЛНЯЕМ КЭШ ВСЕМИ ИГРОКАМИ (Чтобы цвета ролей были у всех, а не только у тебя)
     const { data: allProfiles } = await supabase.from('profiles').select('nickname, role');
     if (allProfiles) {
         allProfiles.forEach(p => {
@@ -21,50 +20,47 @@ export async function loadHistory() {
         .order('date', { ascending: false })
         .limit(50);
 
-    if (error) {
-        container.innerHTML = `<div style="color:red">Ошибка истории: ${error.message}</div>`;
-        return;
-    }
-container.innerHTML = matches.map(m => {
-    const d = new Date(m.date);
-    const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getFullYear()).slice(-2)}`;
+    if (error || !matches) return;
 
-    const winRole = (window.roleCache[m.win] || 'Player').toLowerCase();
-    const lossRole = (window.roleCache[m.loss] || 'Player').toLowerCase();
+    container.innerHTML = matches.map(m => {
+        const dateStr = new Date(m.date).toLocaleDateString();
+        
+        // Достаем роли из нашего свежего кэша
+        const winRole = window.roleCache[m.win] || 'player';
+        const lossRole = window.roleCache[m.loss] || 'player';
 
-    return `
-<div class="history-item" style="padding: 15px 12px; border-color: #222; position: relative; background: var(--card) !important; border: 1.5px solid var(--border) !important; border-radius: 12px !important; margin-bottom: 12px;">
-    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">          
-        <!-- ПОБЕДИТЕЛЬ -->
-        <div style="flex: 1; text-align: left;">
-            <b class="nick-hover role-${winRole}" 
-               onclick="event.stopPropagation(); window.openProfile('${m.win}')" 
-               style="cursor:pointer; font-size: 1.15em; display: inline-block; position: relative; z-index: 100;">
-               ${m.win}
-            </b>
-            <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
-                +${m["elo+"]}(${m.bonus || 0})
+        return `
+        <div class="history-item" style="padding: 15px 12px; border-color: #222; position: relative; background: var(--card) !important; border: 1.5px solid var(--border) !important; border-radius: 12px !important; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">          
+                
+                <!-- ПОБЕДИТЕЛЬ -->
+                <div style="flex: 1; text-align: left;">
+                    <b class="nick-hover role-${winRole}" 
+                       onclick="window.openProfile('${m.win}')" 
+                       style="cursor:pointer; font-size: 1.15em; display: inline-block;">
+                       ${m.win}
+                    </b>
+                    <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
+                        +${m["elo+"]}(${m.bonus || 0})
+                    </div>
+                </div>   
+
+                <!-- СЧЕТ -->
+                <div style="text-align: center; min-width: 90px;" ondblclick="window.deleteMatch('${m.id}')">
+                    <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
+                    <div style="font-size: 0.7em; color: #777; font-weight: bold; margin-top: 2px;">${dateStr}</div>
+                </div>
+
+                <!-- ПРОИГРАВШИЙ -->
+                <div style="flex: 1; text-align: right;">
+                    <b class="nick-hover role-${lossRole}" 
+                       onclick="window.openProfile('${m.loss}')" 
+                       style="cursor:pointer; font-size: 1.15em; display: inline-block;">
+                       ${m.loss}
+                    </b>
+                    <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
+                </div>
             </div>
-        </div>   
-
-        <!-- СЧЕТ И УДАЛЕНИЕ -->
-        <div style="text-align: center; min-width: 90px; cursor: help; position: relative; z-index: 50;" 
-             title="Двойной клик для удаления" 
-             ondblclick="event.stopPropagation(); window.deleteMatch('${m.id}')">
-            <div style="font-size: 1.2em; font-weight: 900; color: var(--gold);">${m.win_r}:${m.loss_r}</div>
-            <div style="font-size: 0.7em; color: #777; font-weight: bold; margin-top: 2px;">${dateStr}</div>
-        </div>
-
-        <!-- ПРОИГРАВШИЙ -->
-        <div style="flex: 1; text-align: right;">
-            <b class="nick-hover role-${lossRole}" 
-               onclick="event.stopPropagation(); window.openProfile('${m.loss}')" 
-               style="cursor:pointer; font-size: 1.15em; display: inline-block; position: relative; z-index: 100;">
-               ${m.loss}
-            </b>
-            <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
-        </div>
-    </div>
-</div>`;
-}).join('');
+        </div>`;
+    }).join('');
 }
