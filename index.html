@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Last Dep Ranked</title>
-<style>
+  <style>
     :root { 
       --bg: #050000; --card: #120303; --border: #3d0000; --text: #ffffff; 
       --gold: #f0b90b; --blood: #ff0000;
@@ -39,12 +39,17 @@
     border-color: var(--blood) !important;
 }
 
-    /* КАРТОЧКА ИГРОКА (Чистый код без дублей) */
-    .match-card { 
-      background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; 
-      margin-top: 12px; padding: 12px 18px; display: flex; align-items: center; gap: 15px; 
-      width: 100%; box-sizing: border-box; min-height: 80px; cursor: pointer; transition: 0.2s;
-    }
+.badge { 
+    display: inline-block !important; 
+    width: max-content !important; /* Сжаться максимально по тексту */
+    font-size: 0.85em; 
+    padding: 5px 12px; 
+    border-radius: 8px; 
+    border: 2px solid; 
+    margin-top: 8px; 
+    font-weight: 900;
+    box-sizing: border-box;
+}
     
     .avatar-circle { 
       width: 50px; height: 50px; border-radius: 50%; background-size: cover; 
@@ -53,9 +58,6 @@
 
     .elo-val { color: var(--gold); font-weight: 900; font-size: 1.4em; line-height: 1; }
     .wr-val { font-size: 0.7em; color: #848e9c; font-weight: bold; margin-top: 4px; }
-
-    /* РАНГИ */
-    .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
     
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
     .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
@@ -67,7 +69,14 @@
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
     /* УМНЫЙ ХОВЕР: Навел на карту -> загорелся ник */
-    .nick-hover { transition: 0.3s; pointer-events: none; color: white; font-size: 1.15em; text-decoration: none; }
+ .nick-hover { 
+    transition: 0.3s; 
+    pointer-events: auto !important; 
+    color: white; 
+    font-size: 1.15em; 
+    text-decoration: none; 
+    cursor: pointer; 
+}
     
     .match-card:hover .role-founder { color: var(--founder) !important; text-shadow: 0 0 15px var(--founder); }
     .match-card:hover .role-bloodline { color: var(--bloodline) !important; text-shadow: 0 0 15px var(--bloodline); }
@@ -91,14 +100,59 @@
   width: 100%; 
   box-sizing: border-box;
 }
-  #my-profile-section ~ #rating-list .match-card .badge, 
+
+/* Скрываем лишнее в поиске при логине */
+#my-profile-section ~ #rating-list .match-card .badge, 
 #my-profile-section ~ #rating-list .match-card div:last-child {
     display: none !important;
 }
-/* Если секция профиля скрыта, возвращаем всё назад автоматически */
 #my-profile-section[style*="display: none"] ~ #rating-list .match-card .badge,
 #my-profile-section[style*="display: none"] ~ #rating-list .match-card div:last-child {
     display: block !important;
+}
+    /* 1. Расширяем модалку до 480px, чтобы убрать ползунок */
+    #profile-modal > div {
+        width: 95% !important;
+        max-width: 480px !important; 
+        overflow-x: hidden !important; 
+    }
+
+    /* 2. Общее белое свечение для ВСЕХ (включая обычных игроков) */
+    .match-card:hover .nick-hover,
+    .history-item:hover .nick-hover,
+    .history-item-mini:hover .nick-hover { 
+        text-shadow: 0 0 10px #ffffff !important; 
+        color: #ffffff !important; 
+    }
+
+    /* 3. Цветное свечение ролей (оно перебьет белое) */
+    .history-item:hover .role-founder, .match-card:hover .role-founder { color: #b64dff !important; text-shadow: 0 0 15px #b64dff !important; }
+    .history-item:hover .role-overseer, .match-card:hover .role-overseer { color: #00ff00 !important; text-shadow: 0 0 15px #00ff00 !important; }
+    .history-item:hover .role-archivist, .match-card:hover .role-archivist { color: #00ffff !important; text-shadow: 0 0 15px #00ffff !important; }
+    .history-item:hover .role-bloodline, .match-card:hover .role-bloodline { color: #880000 !important; text-shadow: 0 0 15px #880000 !important; }
+  .match-card {
+    background: rgba(20, 0, 0, 0.6) !important; /* Делаем чуть светлее фона, чтобы видеть */
+    border: 1.5px solid #330000;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    padding: 15px;
+    display: flex !important; /* ПРИНУДИТЕЛЬНО ПОКАЗЫВАЕМ */
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 80px; /* Чтобы не были плоскими */
+}
+.badge { 
+    display: inline-block !important; 
+    width: max-content !important; /* Сжаться максимально по тексту */
+    font-size: 0.85em; 
+    padding: 5px 12px; 
+    border-radius: 8px; 
+    border: 2px solid; 
+    margin-top: 8px; 
+    font-weight: 900;
+    box-sizing: border-box;
 }
 </style>
 </head>
