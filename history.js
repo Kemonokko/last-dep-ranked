@@ -43,7 +43,7 @@ return `
                 <div style="flex: 1; text-align: left;">
                     <b class="nick-hover role-${winRole}" 
                        onclick="window.openProfile('${m.win}')" 
-                       style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block;">
+                       style="cursor:pointer; position:relative; z-index:9 !important; display:inline-block;">
                        ${m.win}
                     </b>
                     <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
@@ -61,7 +61,7 @@ return `
                 <div style="flex: 1; text-align: right;">
                     <b class="nick-hover role-${lossRole}" 
                        onclick="window.openProfile('${m.loss}')" 
-                       style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block;">
+                       style="cursor:pointer; position:relative; z-index:9 !important; display:inline-block;">
                        ${m.loss}
                     </b>
                     <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
