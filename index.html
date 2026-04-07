@@ -216,21 +216,25 @@
         <!-- Описание -->
         <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Пусто...</p>
 
-        <!-- Статистика: ТРИ колонки (Rank, ELO, Winrate) -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:20px;">
-            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
-                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">Rank</div>
-                <div id="prof-rank-text" style="font-weight:900; font-size:0.9em; margin-top:3px; color: white;">-</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
-                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">ELO</div>
-                <div id="prof-elo" style="color:var(--gold); font-weight:900; font-size:0.9em; margin-top:3px;">0</div>
-            </div>
-            <div style="background:rgba(255,255,255,0.03); padding:10px 5px; border-radius:10px; border: 1px solid var(--border);">
-                <div style="font-size:0.55em; color:#848e9c; text-transform: uppercase;">Winrate</div>
-                <div id="prof-wr" style="color:white; font-weight:900; font-size:0.9em; margin-top:3px;">0%</div>
-            </div>
-        </div>
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+    <!-- RANK (Квадратный блок) -->
+    <div style="background: rgba(255, 255, 255, 0.08); padding: 25px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 110px;">
+        <small style="color: #aaa; font-size: 0.7em; text-transform: uppercase; margin-bottom: 8px;">Rank</small>
+        <div id="prof-rank-text"></div>
+    </div>
+    
+    <!-- ELO (Огромные цифры) -->
+    <div style="background: rgba(255, 255, 255, 0.08); padding: 25px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; min-height: 110px; display: flex; flex-direction: column; justify-content: center;">
+        <small style="color: #aaa; font-size: 0.7em; text-transform: uppercase; margin-bottom: 5px;">Elo</small>
+        <b id="prof-elo" style="color: var(--gold); font-size: 2.2em; font-weight: 900; line-height: 1;">0</b>
+    </div>
+    
+    <!-- WINRATE (Огромные цифры) -->
+    <div style="background: rgba(255, 255, 255, 0.08); padding: 25px 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; min-height: 110px; display: flex; flex-direction: column; justify-content: center;">
+        <small style="color: #aaa; font-size: 0.7em; text-transform: uppercase; margin-bottom: 5px;">Winrate</small>
+        <b id="prof-wr" style="color: white; font-size: 2.2em; font-weight: 900; line-height: 1;">0%</b>
+    </div>
+</div>
 
         <!-- ПОСЛЕДНИЕ 3 БОЯ -->
         <div style="text-align:left; margin-bottom:20px;">
