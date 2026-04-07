@@ -138,18 +138,6 @@ const rankText = document.getElementById('prof-rank-text');
                     <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
                 </div>
             </div>`;
-    
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="color: ${resColor}; font-weight: 900; font-size: 0.75em; text-transform: uppercase;">
-            ${isWin ? 'WIN' : 'LOSS'}
-        </span>
-        <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
-    </div>
-
-    <div style="font-weight: 900; color: var(--gold); font-size: 1em;">
-        ${m.win_r}:${m.loss_r}
-    </div>
-</div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
     // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
