@@ -121,7 +121,18 @@ const rankText = document.getElementById('prof-rank-text');
 return `
 <div class="history-item-mini" 
      onclick="window.openProfile('${oppNick}')"
-     style="background: rgba(10, 0, 0, 0.6); /* Темно-красный полупрозрачный фон */
+     
+style="background: #3d0606 !important; /* Твой новый светлый кровавый фон */
+       padding: 10px 12px;
+       border-radius: 12px;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       margin-bottom: 8px;
+       border: 1.5px solid #5a0a0a !important; /* Чуть более яркая рамка */
+       transition: 0.3s;
+       cursor: pointer;
+       
             padding: 10px 12px; 
             border-radius: 10px; 
             display: flex; 
