@@ -332,18 +332,28 @@ window.updateAvatar = async () => {
 };
 
 window.showRating = () => {
-    // Показываем поиск и рейтинг, скрываем всё остальное
-    if (document.getElementById('search')) document.getElementById('search').style.display = 'block';
+    // 1. СБРОС ПОИСКА: Очищаем поле, чтобы поиск не "зависал"
+    const searchInput = document.getElementById('search');
+    if (searchInput) {
+        searchInput.value = ''; // Стираем текст
+        searchInput.style.display = 'block';
+    }
+
+    // 2. ПЕРЕКЛЮЧЕНИЕ ВИДИМОСТИ (твой код)
     document.getElementById('rating-list').style.display = 'block';
-    document.getElementById('history-list').style.display = 'none'; // Скрываем историю
+    document.getElementById('history-list').style.display = 'none'; 
     document.getElementById('my-profile-section').style.display = 'none';
     
-    // Подсвечиваем кнопку
+    // Подсвечиваем кнопку (твой код)
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-rating').classList.add('active');
+    if (document.getElementById('btn-rating')) {
+        document.getElementById('btn-rating').classList.add('active');
+    }
 
-    // Отрисовываем рейтинг из памяти (без запроса к базе, чтобы не было петли)
-    if (window.allPlayers) renderPlayers(window.allPlayers);
+    // 3. ПРИНУДИТЕЛЬНЫЙ РЕНДЕР: Рисуем чистый список игроков без кнопок "Войти"
+    if (window.allPlayers) {
+        renderPlayers(window.allPlayers);
+    }
 };
 
 window.showHistory = () => {
