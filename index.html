@@ -85,9 +85,15 @@
   .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
   align-items: center; justify-content: center; }
   .history-item-mini:hover {
-    background: rgba(255, 255, 255, 0.1) !important; /* Становится еще светлее */
+    background: rgba(255, 255, 255, 0.5) !important; /* Становится еще светлее */
     border-color: rgba(255, 255, 255, 0.2) !important;
     transform: translateX(3px); /* Легкий сдвиг вправо для динамики */
+}
+  .history-item-mini:hover {
+    background: rgba(40, 0, 0, 0.8) !important; /* Фон краснеет при наведении */
+    border-color: var(--blood) !important; /* Обводка становится ярко-красной */
+    transform: translateY(-3px); /* Тот самый "прыжок" вверх */
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Легкое красное свечение снизу */
 }
 </style>
 </head>
