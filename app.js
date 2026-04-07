@@ -118,7 +118,7 @@ return `
     
     <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
 </div>`;
-        }).join('')
+        }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
     // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
     const oldMod = document.getElementById('mod-tools');
@@ -439,4 +439,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadRating();
     const savedNick = localStorage.getItem('user_nick');
 });
-
