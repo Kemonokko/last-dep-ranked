@@ -401,6 +401,28 @@ window.resetBio = async (nick) => {
     alert("Описание очищено.");
     location.reload();
 };
+window.handleSearch = () => {
+    const val = document.getElementById('search').value.toLowerCase().trim();
+    const isProfileSection = document.getElementById('my-profile-section').style.display === 'block';
+
+    // Если поле пустое - просто показываем весь рейтинг и выходим
+    if (!val) {
+        renderPlayers(window.allPlayers);
+        return;
+    }
+
+    // ЛОГИКА: Если мы в профиле И не залогинены — фильтруем для входа
+    if (isProfileSection && !localStorage.getItem('user_nick')) {
+        window.filterPlayersForLogin(); 
+    } 
+    // Иначе — просто ищем в рейтинге
+    else {
+        const filtered = window.allPlayers.filter(p => 
+            p.nickname.toLowerCase().includes(val)
+        );
+        renderPlayers(filtered);
+    }
+};
 window.openProfile = window.openProfile;
 
 document.addEventListener('DOMContentLoaded', async () => {
