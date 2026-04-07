@@ -403,7 +403,18 @@ window.resetBio = async (nick) => {
 };
 window.openProfile = window.openProfile;
 
-// 2. Инициализация (запуск рейтинга при входе на сайт)
-document.addEventListener('DOMContentLoaded', () => {
-    loadRating();
+document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Сначала грузим основной рейтинг
+    await loadRating();
+
+    // 2. Проверяем, есть ли сохраненный ник
+    const savedNick = localStorage.getItem('user_nick');
+    
+    if (savedNick) {
+        console.log("🤖 Вижу старого друга, открываю профиль:", savedNick);
+        // Открываем профиль игрока
+        await window.openProfile(savedNick);
+        // Переключаем вкладку на профиль
+        if (window.showMyProfile) window.showMyProfile();
+    }
 });
