@@ -46,6 +46,7 @@ return `
                style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block; pointer-events: auto !important;">
                ${m.win}
             </b>
+            <div style="color: #00ff00; font-size: 0.9em; font-weight: 800; margin-top: 2px;">
                 +${m["elo+"]}(${m.bonus || 0})
             </div>
         </div>   
@@ -65,6 +66,7 @@ return `
                style="cursor:pointer; position:relative; z-index:9999 !important; display:inline-block; pointer-events: auto !important;">
                ${m.loss}
             </b>
+            <div style="color: var(--blood); font-size: 0.95em; font-weight: 800; margin-top: 2px;">-${m["elo-"]}</div>
         </div>
 
     </div>
