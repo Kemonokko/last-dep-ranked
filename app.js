@@ -108,15 +108,29 @@ if (rankText) {
             const resColor = isWin ? '#00ff00' : '#ff0000';
             const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
 return `
-<div class="history-item-mini" style="background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-left: 3px solid ${resColor}; transition: 0.2s; cursor:pointer;" onclick="window.openProfile('${oppNick}')">
-    <span style="color:${resColor}; font-weight:bold; font-size:0.7em; width:35px;">${isWin ? 'WIN' : 'LOSS'}</span>
+<div class="history-item-mini" 
+     onclick="window.openProfile('${oppNick}')"
+     style="background: rgba(255, 255, 255, 0.05); /* Фон чуть светлее */
+            padding: 10px 12px; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 8px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая рамка */
+            transition: 0.2s; 
+            cursor: pointer;">
     
-    <!-- НИК: Убрали жесткий белый цвет, теперь он будет светиться белым или цветом роли -->
-    <b class="nick-hover role-${oppRole}" style="flex:1; text-align:left; margin-left:10px; font-size:0.9em;">
-        ${oppNick}
-    </b>
-    
-    <span style="font-weight:bold; color:var(--gold); font-size:0.9em;">${m.win_r}:${m.loss_r}</span>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="color: ${resColor}; font-weight: bold; font-size: 0.75em; text-transform: uppercase;">
+            ${isWin ? 'WIN' : 'LOSS'}
+        </span>
+        <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
+    </div>
+
+    <div style="font-weight: bold; color: var(--gold); font-size: 0.95em;">
+        ${m.win_r}:${m.loss_r}
+    </div>
 </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
