@@ -118,21 +118,26 @@ const rankText = document.getElementById('prof-rank-text');
             const oppNick = isWin ? m.loss : m.win;
             const resColor = isWin ? '#00ff00' : '#ff0000';
             const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
-return `
-<div class="history-item-mini" 
-     onclick="window.openProfile('${oppNick}')"
-     
-style="background: rgba(255, 255, 255, 0.08) !important; /* "Призрачный" белый в тени */
-       padding: 10px 12px;
-       border-radius: 12px;
-       display: flex;
-       justify-content: space-between;
-       align-items: center;
-       margin-bottom: 8px;
-       border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Тонкая светлая грань */
-       transition: 0.3s;
-       cursor: pointer;
-       backdrop-filter: blur(4px);
+            
+            return `
+            <div class="history-item-mini" onclick="window.openProfile('${oppNick}')" 
+                 style="background: rgba(255, 255, 255, 0.08); padding: 8px; border-radius: 15px; display: flex; align-items: center; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; cursor: pointer;">
+                
+                <!-- 1. WIN/LOSS в полукруге -->
+                <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
+                    ${isWin ? 'WIN' : 'LOSS'}
+                </div>
+
+                <!-- 2. Счёт (золотой) -->
+                <div style="margin: 0 15px; font-weight: 900; color: var(--gold); font-size: 1.1em; min-width: 35px; text-align: center;">
+                    ${m.win_r}:${m.loss_r}
+                </div>
+
+                <!-- 3. Ник (всё остальное место) -->
+                <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
+                </div>
+            </div>`;
        
             padding: 10px 12px; 
             border-radius: 10px; 
