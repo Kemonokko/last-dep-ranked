@@ -404,17 +404,23 @@ window.resetBio = async (nick) => {
 window.openProfile = window.openProfile;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Сначала грузим основной рейтинг
+    // 1. Грузим основной рейтинг
     await loadRating();
 
-    // 2. Проверяем, есть ли сохраненный ник
+    // 2. Проверяем, залогинен ли кто-то
     const savedNick = localStorage.getItem('user_nick');
     
     if (savedNick) {
-        console.log("🤖 Вижу старого друга, открываю профиль:", savedNick);
-        // Открываем профиль игрока
-        await window.openProfile(savedNick);
-        // Переключаем вкладку на профиль
-        if (window.showMyProfile) window.showMyProfile();
+        console.log("🤖 Система узнала игрока:", savedNick);
+        
+        // --- ТИХИЙ ВХОД ---
+        // Просто запускаем логику профиля, но ЗАКРЫВАЕМ модалку сразу после вызова
+        await window.openProfile(savedNick); 
+        
+        const modal = document.getElementById('profile-modal');
+        if (modal) modal.style.display = 'none'; // Мгновенно прячем всплывающее окно
+        
+        // Теперь кнопка админа появится, ник подгрузится, 
+        // но карточка игрока не будет мешать!
     }
 });
