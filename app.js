@@ -121,21 +121,21 @@ const rankText = document.getElementById('prof-rank-text');
             
             return `
             <div class="history-item-mini" onclick="window.openProfile('${oppNick}')" 
-                 style="background: rgba(255, 255, 255, 0.08); padding: 8px; border-radius: 15px; display: flex; align-items: center; margin-bottom: 8px; border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; cursor: pointer;">
+                 style="background: #3d0606 !important; padding: 8px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 8px; border: 1.5px solid #5a0a0a !important; transition: 0.3s; cursor: pointer;">
                 
-                <!-- 1. WIN/LOSS в полукруге -->
-                <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
+                <!-- 1. WIN/LOSS в капсуле -->
+                <div style="background: ${resColor}33; color: ${resColor}; padding: 5px 10px; border-radius: 20px; font-weight: 900; font-size: 0.65em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
                     ${isWin ? 'WIN' : 'LOSS'}
                 </div>
 
                 <!-- 2. Счёт (золотой) -->
-                <div style="margin: 0 15px; font-weight: 900; color: var(--gold); font-size: 1.1em; min-width: 35px; text-align: center;">
+                <div style="margin: 0 12px; font-weight: 900; color: var(--gold); font-size: 1em; min-width: 30px; text-align: center;">
                     ${m.win_r}:${m.loss_r}
                 </div>
 
                 <!-- 3. Ник (всё остальное место) -->
                 <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
+                    <b class="nick-hover role-${oppRole}" style="font-size: 0.9em;">${oppNick}</b>
                 </div>
             </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
