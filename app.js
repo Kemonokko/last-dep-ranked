@@ -403,7 +403,8 @@ window.resetBio = async (nick) => {
 };
 window.openProfile = window.openProfile;
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadRating();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadRating();
+    const savedNick = localStorage.getItem('user_nick');
 });
 
