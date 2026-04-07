@@ -110,7 +110,7 @@ if (rankText) {
 return `
 <div class="history-item-mini" 
      onclick="window.openProfile('${oppNick}')"
-     style="background: rgba(255, 255, 255, 0.05); /* Фон чуть светлее */
+     style="background: rgba(255, 255, 255, 0.35); /* Фон чуть светлее */
             padding: 10px 12px; 
             border-radius: 10px; 
             display: flex; 
