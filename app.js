@@ -110,25 +110,25 @@ if (rankText) {
 return `
 <div class="history-item-mini" 
      onclick="window.openProfile('${oppNick}')"
-     style="background: rgba(255, 255, 255, 0.35); /* Фон чуть светлее */
+     style="background: rgba(10, 0, 0, 0.6); /* Темно-красный полупрозрачный фон */
             padding: 10px 12px; 
             border-radius: 10px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             margin-bottom: 8px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Тонкая рамка */
-            transition: 0.2s; 
+            border: 1.5px solid #3d0000; /* Твоя кровавая обводка */
+            transition: 0.3s; 
             cursor: pointer;">
     
     <div style="display: flex; align-items: center; gap: 10px;">
-        <span style="color: ${resColor}; font-weight: bold; font-size: 0.75em; text-transform: uppercase;">
+        <span style="color: ${resColor}; font-weight: 900; font-size: 0.75em; text-transform: uppercase;">
             ${isWin ? 'WIN' : 'LOSS'}
         </span>
         <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
     </div>
 
-    <div style="font-weight: bold; color: var(--gold); font-size: 0.95em;">
+    <div style="font-weight: 900; color: var(--gold); font-size: 1em;">
         ${m.win_r}:${m.loss_r}
     </div>
 </div>`;
