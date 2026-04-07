@@ -8,17 +8,27 @@ window.roleCache = {};
 
 async function loadRating() {
     const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-    if (error) return;
+    if (error) {
+        console.error("Ошибка загрузки профилей:", error);
+        return;
+    }
 
+    // 1. Сохраняем игроков в глобальный список
     window.allPlayers = players || [];
     
-    // Сначала рисуем
+    // 2. !!! ВАЖНО: Наполняем кэш ролей ПЕРЕД отрисовкой !!!
+    // Без этого ники будут белыми до первого перехода в профиль
+    window.allPlayers.forEach(p => {
+        window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
+    });
+
+    // 3. Теперь, когда сайт "знает" все роли, рисуем список
     renderPlayers(window.allPlayers);
 
-    // Потом ПРИНУДИТЕЛЬНО вызываем навигацию, которая "чинит" всё при клике
-    // Но убедись, что внутри showRating() НЕТ вызова loadRating()!
+    // 4. Показываем список (твой код)
     if (window.showRating) {
-        document.getElementById('rating-list').style.display = 'block';
+        const ratingList = document.getElementById('rating-list');
+        if (ratingList) ratingList.style.display = 'block';
     }
 }
 
