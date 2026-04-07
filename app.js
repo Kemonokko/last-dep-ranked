@@ -87,11 +87,12 @@ const globalPos = window.allPlayers.findIndex(player => player.nickname === p.ni
     document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
     
 const rankText = document.getElementById('prof-rank-text');
-if (rankText) {
-    rankText.innerText = rank;
-    // Это добавит класс (например, rank-S+), и CSS его покрасит
-    rankText.className = `rank-${rank}`; 
-}
+        if (rankText) {
+            // Очищаем старый текст и вставляем HTML с твоими стилями
+            rankText.innerHTML = `<span class="badge rank-${rank}" style="font-size: 0.7em !important; padding: 2px 8px !important; line-height: 1.2;">${rank}</span>`;
+            // Убираем старый класс, чтобы не было конфликтов
+            rankText.className = ""; 
+        }
 
     // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
     const role = (p.role || 'Player').trim();
