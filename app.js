@@ -122,16 +122,17 @@ return `
 <div class="history-item-mini" 
      onclick="window.openProfile('${oppNick}')"
      
-style="background: #3d0606 !important; /* Твой новый светлый кровавый фон */
+style="background: rgba(255, 255, 255, 0.08) !important; /* "Призрачный" белый в тени */
        padding: 10px 12px;
        border-radius: 12px;
        display: flex;
        justify-content: space-between;
        align-items: center;
        margin-bottom: 8px;
-       border: 1.5px solid #5a0a0a !important; /* Чуть более яркая рамка */
+       border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Тонкая светлая грань */
        transition: 0.3s;
        cursor: pointer;
+       backdrop-filter: blur(4px);
        
             padding: 10px 12px; 
             border-radius: 10px; 
