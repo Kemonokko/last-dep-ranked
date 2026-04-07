@@ -138,16 +138,6 @@ const rankText = document.getElementById('prof-rank-text');
                     <b class="nick-hover role-${oppRole}" style="font-size: 0.95em;">${oppNick}</b>
                 </div>
             </div>`;
-       
-            padding: 10px 12px; 
-            border-radius: 10px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 8px; 
-            border: 1.5px solid #3d0000; /* Твоя кровавая обводка */
-            transition: 0.3s; 
-            cursor: pointer;">
     
     <div style="display: flex; align-items: center; gap: 10px;">
         <span style="color: ${resColor}; font-weight: 900; font-size: 0.75em; text-transform: uppercase;">
