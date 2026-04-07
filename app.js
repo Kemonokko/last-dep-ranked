@@ -403,24 +403,7 @@ window.resetBio = async (nick) => {
 };
 window.openProfile = window.openProfile;
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Грузим основной рейтинг
-    await loadRating();
-
-    // 2. Проверяем, залогинен ли кто-то
-    const savedNick = localStorage.getItem('user_nick');
-    
-    if (savedNick) {
-        console.log("🤖 Система узнала игрока:", savedNick);
-        
-        // --- ТИХИЙ ВХОД ---
-        // Просто запускаем логику профиля, но ЗАКРЫВАЕМ модалку сразу после вызова
-        await window.openProfile(savedNick); 
-        
-        const modal = document.getElementById('profile-modal');
-        if (modal) modal.style.display = 'none'; // Мгновенно прячем всплывающее окно
-        
-        // Теперь кнопка админа появится, ник подгрузится, 
-        // но карточка игрока не будет мешать!
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    loadRating();
 });
+
