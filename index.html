@@ -8,7 +8,7 @@
     :root { 
       --bg: #050000; --card: #0d0303; --border: #3d0000; --text: #ffffff; 
       --gold: #f0b90b; --blood: #ff0000;
-      --founder: #b64dff; --bloodline: #880000; --overseer: #00ff00; --archivist: #00ffff;
+      --founder: #b64dff; --bloodline: #880000; --overseer: #00ff00; --archivist: #00ffff; --player: #ffffff;
       --color-s: #b64dff; --color-a: #ff4d4d; --color-b: #0088ff; --color-c: #00ff00;
     }
     body { 
@@ -55,7 +55,7 @@
     .role-player { color: #ffffff !important; }
 
     /* ХОВЕР: ЗАЖИГАЕМ СВЕТ (Работает во всех вкладках сразу) */
-    .match-card:hover .nick-hover, .history-item:hover .nick-hover, .history-item-mini:hover .nick-hover { text-shadow: 0 0 12px #fff; }
+    .match-card:hover .nick-hover, .history-item:hover .nick-hover, .history-item-mini:hover .nick-player { text-shadow: 0 0 15px var(--player) !important; }
     .match-card:hover .role-founder, .history-item:hover .role-founder, .history-item-mini:hover .role-founder { text-shadow: 0 0 15px var(--founder) !important; }
     .match-card:hover .role-overseer, .history-item:hover .role-overseer, .history-item-mini:hover .role-overseer { text-shadow: 0 0 15px var(--overseer) !important; }
     .match-card:hover .role-archivist, .history-item:hover .role-archivist, .history-item-mini:hover .role-archivist { text-shadow: 0 0 15px var(--archivist) !important; }
