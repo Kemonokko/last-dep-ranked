@@ -5,17 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Last Dep Ranked</title>
 <style>
-  html, body {
-    max-width: 100%;
-    overflow-x: hidden; /* Запрещает листать вправо-влево */
-    position: relative;
-}
-
-.container {
-    width: 100%;
-    max-width: 500px;
-    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
-
     :root { 
       --bg: #050000; --card: #0d0303; --border: #3d0000; --text: #ffffff; 
       --gold: #f0b90b; --blood: #ff0000;
@@ -106,7 +95,17 @@
     transform: translateY(-5px) !important; /* Прыжок вверх на 5 пикселей */
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); /* Легкое белое свечение */
 }
-  
+    html, body {
+    max-width: 100%;
+    overflow-x: hidden; /* Запрещает листать вправо-влево */
+    position: relative;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
 </style>
 </head>
 <body>
