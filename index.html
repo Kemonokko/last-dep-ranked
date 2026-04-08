@@ -84,18 +84,18 @@
   .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; } 
   .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
   align-items: center; justify-content: center; }
-
-  .history-item-mini {
-    transition: all 0.3s ease-out !important; /* Чтобы прыжок был плавным */
+  .history-item-mini:hover {
+    background: rgba(255, 255, 255, 1) !important; /* Становится еще светлее */
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    transform: translateX(3px); /* Легкий сдвиг вправо для динамики */
 }
-
-.history-item-mini:hover {
-    background: #201717 !important; /* Твой любимый цвет */
-    border-color: #ffffff !important; /* Белая обводка, как просил */
-    transform: translateY(-5px) !important; /* Прыжок вверх на 5 пикселей */
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); /* Легкое белое свечение */
+  .history-item-mini:hover {
+    background: rgba(40, 0, 0, 0.8) !important; /* Фон краснеет при наведении */
+    border-color: var(--blood) !important; /* Обводка становится ярко-красной */
+    transform: translateY(-3px); /* Тот самый "прыжок" вверх */
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Легкое красное свечение снизу */
 }
-    html, body {
+      html, body {
     max-width: 100%;
     overflow-x: hidden; /* Запрещает листать вправо-влево */
     position: relative;
@@ -105,28 +105,6 @@
     width: 100%;
     max-width: 500px;
     box-sizing: border-box; /* Чтобы padding не раздувал ширину */
-}
-  /* ЕДИНЫЙ ЦВЕТ ДЛЯ ВСЕХ ПЛАШЕК */
-.match-card, .history-item, .history-item-mini, .stat-box { 
-    background: #201717 !important; 
-    border: 1.5px solid #3d0000 !important; 
-    border-radius: 15px !important;
-    transition: 0.3s ease;
-}
-
-/* ХОВЕР ДЛЯ ВСЕХ (Прыжок и белая обводка) */
-.match-card:hover, .history-item:hover, .history-item-mini:hover {
-    border-color: #ffffff !important;
-    transform: translateY(-5px) !important;
-    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1) !important;
-}
-
-/* МОДАЛКА ПРОФИЛЯ (Фон описания и авы) */
-#profile-modal > div {
-    background: #150f0f !important; /* Чуть темнее основного, чтобы выделить окно */
-    border: 2px solid #201717;
-    border-radius: 25px;
-    padding: 25px;
 }
 </style>
 </head>
