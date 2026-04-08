@@ -106,6 +106,28 @@
     max-width: 500px;
     box-sizing: border-box; /* Чтобы padding не раздувал ширину */
 }
+  /* ЕДИНЫЙ ЦВЕТ ДЛЯ ВСЕХ ПЛАШЕК */
+.match-card, .history-item, .history-item-mini, .stat-box { 
+    background: #201717 !important; 
+    border: 1.5px solid #3d0000 !important; 
+    border-radius: 15px !important;
+    transition: 0.3s ease;
+}
+
+/* ХОВЕР ДЛЯ ВСЕХ (Прыжок и белая обводка) */
+.match-card:hover, .history-item:hover, .history-item-mini:hover {
+    border-color: #ffffff !important;
+    transform: translateY(-5px) !important;
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* МОДАЛКА ПРОФИЛЯ (Фон описания и авы) */
+#profile-modal > div {
+    background: #150f0f !important; /* Чуть темнее основного, чтобы выделить окно */
+    border: 2px solid #201717;
+    border-radius: 25px;
+    padding: 25px;
+}
 </style>
 </head>
 <body>
