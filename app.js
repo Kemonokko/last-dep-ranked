@@ -123,7 +123,7 @@ return `
 <div class="history-item-mini" onclick="window.openProfile('${oppNick}')" 
      style="background: #201717 !important; /* ТВОЙ НОВЫЙ ЦВЕТ */
             padding: 10px; border-radius: 15px; display: flex; align-items: center; 
-            margin-bottom: 8px; border: 1.5px solid #3d0000 !important; 
+            margin-bottom: 8px; border: 1.5px solid #ffffff !important; 
             transition: 0.3s; cursor: pointer;">
     
     <!-- Статус (WIN/LOSS) -->
