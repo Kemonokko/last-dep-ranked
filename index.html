@@ -84,16 +84,12 @@
   .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; } 
   .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
   align-items: center; justify-content: center; }
-  .history-item-mini:hover {
-    background: rgba(255, 255, 255, 1) !important; /* Становится еще светлее */
-    border-color: rgba(255, 255, 255, 0.2) !important;
-    transform: translateX(3px); /* Легкий сдвиг вправо для динамики */
-}
-  .history-item-mini:hover {
-    background: rgba(40, 0, 0, 0.8) !important; /* Фон краснеет при наведении */
-    border-color: var(--blood) !important; /* Обводка становится ярко-красной */
-    transform: translateY(-3px); /* Тот самый "прыжок" вверх */
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Легкое красное свечение снизу */
+.history-item-mini:hover {
+    background: #201717 !important; 
+    border-color: var(--blood) !important; /* Ярко-красная обводка */
+    transform: translateY(-3px); /* Прыжок вверх */
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); /* Красное свечение снизу */
+    transition: 0.3s ease;
 }
 </style>
 </head>
