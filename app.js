@@ -45,8 +45,8 @@ function renderPlayers(list) {
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const currentColor = roleColors[role] || '#ffffff';
 
-        const eloVal = p.elo || 0; background: #272222;
-        const wrVal = p.win_rate || 0; background: #272222;
+        const eloVal = p.elo || 0;
+        const wrVal = p.win_rate || 0;
 return `
 <div class="match-card" onclick="window.openProfile('${p.nickname}')">
     <!-- Аватарка (Цвет рамки берем из JS) -->
