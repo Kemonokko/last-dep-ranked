@@ -84,13 +84,18 @@
   .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; } 
   .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
   align-items: center; justify-content: center; }
-.history-item-mini:hover {
-    background: #201717 !important; 
-    border-color: var(--blood) !important; /* Ярко-красная обводка */
-    transform: translateY(-6px); /* Прыжок вверх */
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3); /* Красное свечение снизу */
-    transition: 0.3s ease;
+
+  .history-item-mini {
+    transition: all 0.3s ease-out !important; /* Чтобы прыжок был плавным */
 }
+
+.history-item-mini:hover {
+    background: #201717 !important; /* Твой любимый цвет */
+    border-color: #ffffff !important; /* Белая обводка, как просил */
+    transform: translateY(-5px) !important; /* Прыжок вверх на 5 пикселей */
+    box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1); /* Легкое белое свечение */
+}
+  
 </style>
 </head>
 <body>
