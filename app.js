@@ -147,20 +147,23 @@ window.showMyProfile = () => {
   const searchInput = document.getElementById('search');
   const userNick = localStorage.getItem('user_nick');
   const userRole = localStorage.getItem('user_role') || 'Player';
-
+  
   document.getElementById('my-profile-section').style.display = 'block';
   document.getElementById('rating-list').style.display = 'none';
   document.getElementById('history-list').style.display = 'none';
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('btn-profile').classList.add('active');
-
+  
   if (userNick) {
     if (searchInput) searchInput.style.display = 'none';
     document.getElementById('rating-list').style.display = 'none';
     document.getElementById('auth-ui').style.display = 'none';
     document.getElementById('cabinet-ui').style.display = 'block';
     document.getElementById('cabinet-nick').innerText = userNick;
-
+    
+    const bioField = document.getElementById('new-bio');
+    if (bioField) bioField.value = localStorage.getItem('user_bio') || "";
+    
     const adminBtn = document.getElementById('admin-btn');
     const adminPanel = document.getElementById('admin-panel');
     if (userRole === 'Founder' || userRole === 'Archivist') {
@@ -176,7 +179,7 @@ window.showMyProfile = () => {
       if (adminBtn) adminBtn.style.display = 'none';
       if (adminPanel) adminPanel.style.display = 'none';
     }
-
+    
     const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
     const roleBadge = document.getElementById('cabinet-role');
     if (roleBadge) {
