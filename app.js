@@ -456,7 +456,8 @@ window.uploadAvatarFile = async () => {
   }
 
   const fileExt = file.name.split('.').pop();
-  const filePath = `${nick}-${Date.now()}.${fileExt}`;
+const safeNick = nick.replace(/[^a-zA-Z0-9а-яА-ЯёЁ]/g, '');
+const filePath = `user-${safeNick}-${Date.now()}.${fileExt}`;
   
   const { error: uploadError } = await supabase.storage
     .from('avatars')
