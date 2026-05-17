@@ -425,6 +425,66 @@ window.handleSearch = () => {
   }
 };
 
+window.handleFileSelected = (input) => {
+  const text = document.getElementById('file-name-text');
+  const btn = document.getElementById('ava-btn');
+  if (input.files && input.files[0]) {
+    text.innerText = `Выбран: ${input.files[0].name}`;
+    btn.style.display = 'block';
+  } else {
+    text.innerText = "Файл не выбран";
+    btn.style.display = 'none';
+  }
+};
+
+window.uploadAvatarFile = async () => {
+  const nick = localStorage.getItem('user_nick');
+  const fileInput = document.getElementById('avatar-file-input');
+  
+  if (!nick) return alert("❌ Вы не авторизованы!");
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    return alert("❌ Сначала выберите файл!");
+  }
+  
+  const file = fileInput.files[0];
+  
+  const { data: p, error: fetchError } = await supabase.from('profiles').select('role, avatar_changes').eq('nickname', nick).single();
+  if (fetchError || !p) return alert("❌ Ошибка: Профиль игрока не найден в базе.");
+  
+  if (p.role === 'Player' && (p.avatar_changes || 0) >= 1) {
+    return alert("❌ Ошибка: Обычные игроки могут менять аватарку только 1 раз");
+  }
+
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${nick}-${Date.now()}.${fileExt}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('avatars')
+    .upload(filePath, file);
+    
+  if (uploadError) {
+    console.error(uploadError);
+    return alert("❌ Ошибка хранилища при загрузке: " + uploadError.message);
+  }
+  
+  const { data: { publicUrl } } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(filePath);
+    
+  const { error: updateError } = await supabase.from('profiles').update({
+    avatar_url: publicUrl,
+    avatar_changes: (p.avatar_changes || 0) + 1
+  }).eq('nickname', nick);
+  
+  if (updateError) {
+    console.error(updateError);
+    return alert("❌ Ошибка привязки ссылки к профилю: " + updateError.message);
+  }
+  
+  alert("✅ Новая аватарка успешно загружена!");
+  location.reload();
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
   await loadRating();
 });
