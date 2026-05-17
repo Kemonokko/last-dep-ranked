@@ -6,11 +6,10 @@ import { loadHistory } from './history.js';
 let allPlayers = [];
 window.roleCache = {};
 
-// Глобальный флаг-предохранитель, который намертво блокирует повторные спам-запросы к базе
 let isRatingLoading = false;
 
 async function loadRating() {
-  if (isRatingLoading) return; // Если запрос уже идет, второй раз не пускаем!
+  if (isRatingLoading) return; 
   isRatingLoading = true;
 
   const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
@@ -32,7 +31,7 @@ async function loadRating() {
     if (ratingList) ratingList.style.display = 'block';
   }
   
-  isRatingLoading = false; // Открываем замок только после полной отрисовки
+  isRatingLoading = false; 
 }
 
 function renderPlayers(list) {
@@ -61,7 +60,6 @@ function renderPlayers(list) {
   }).join('');
 }
 
-// Открытие профиля с защитой от задержек сети
 window.openProfile = async (nick) => {
   const modal = document.getElementById('profile-modal');
   modal.style.display = 'flex';
@@ -71,6 +69,11 @@ window.openProfile = async (nick) => {
   document.getElementById('prof-elo').innerText = "-";
   document.getElementById('prof-wr').innerText = "-%";
   document.getElementById('prof-bio').innerText = "...";
+  
+  const gamesContainer = document.getElementById('prof-recent-games');
+  if (gamesContainer) {
+    gamesContainer.innerHTML = '<div style="color:#666; font-size:0.8em; text-align:center; padding:10px;">Загрузка игр...</div>';
+  }
   
   const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
   if (!p) return;
@@ -102,8 +105,66 @@ window.openProfile = async (nick) => {
       badge.style.borderColor = roleColors[role] || '#ffffff';
     }
   }
+
+  supabase.from('match_history')
+    .select('*')
+    .or(`win.eq.${nick},loss.eq.${nick}`)
+    .order('date', { ascending: false })
+    .limit(3)
+    .then(({ data: matches }) => {
+      if (gamesContainer) {
+        gamesContainer.innerHTML = matches && matches.length > 0 ? matches.map(m => {
+          const isWin = m.win === nick;
+          const oppNick = isWin ? m.loss : m.win;
+          const resColor = isWin ? '#00ff00' : '#ff0000';
+          const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
+          
+          const clickAction = oppNick === nick ? '' : `onclick="window.openProfile('${oppNick}')"`;
+          const cursorStyle = oppNick === nick ? 'default' : 'pointer';
+          
+          return `
+          <div class="history-item-mini" ${clickAction}
+               style="background: #201717 !important; padding: 10px; border-radius: 15px; display: flex; align-items: center; margin-bottom: 8px; border: 1.5px solid #3d0000 !important; transition: 0.3s; cursor: ${cursorStyle};">
+            <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
+              ${isWin ? 'WIN' : 'LOSS'}
+            </div>
+            <div style="margin: 0 15px; font-weight: 900; color: var(--gold); font-size: 1.1em; min-width: 35px; text-align: center;">
+              ${m.win_r}:${m.loss_r}
+            </div>
+            <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <b class="nick-hover role-${oppRole}" style="font-size: 1.1em !important;">${oppNick}</b>
+            </div>
+          </div>`;
+        }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+      }
+    })
+    .catch((err) => {
+      console.error("Ошибка загрузки истории:", err);
+      if (gamesContainer) {
+        gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+      }
+    });
+
+  const oldMod = document.getElementById('mod-tools');
+  if (oldMod) oldMod.remove();
   
-  // Последние игры выводим статично, так как база пока пустая
+  const myRole = localStorage.getItem('user_role');
+  if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
+    const modDiv = document.createElement('div');
+    modDiv.id = 'mod-tools';
+    modDiv.style.marginTop = '20px';
+    modDiv.style.borderTop = '1px dashed #444';
+    modDiv.style.paddingTop = '15px';
+    modDiv.innerHTML = `
+      <div style="font-size:0.6em; color:#555; margin-bottom:10px; font-weight:bold; text-align:center;">MOD TOOLS</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button onclick="window.resetAvatar('${p.nickname}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
+        <button onclick="window.resetBio('${p.nickname}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍ БИО</button>
+      </div>`;
+    modal.querySelector('div').appendChild(modDiv);
+  }
+};
+  
   const gamesContainer = document.getElementById('prof-recent-games');
   if (gamesContainer) {
     gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
