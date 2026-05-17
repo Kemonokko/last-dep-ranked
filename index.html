@@ -19,7 +19,6 @@
       display: flex; flex-direction: column; align-items: center; min-height: 100vh;
     }
 
-    /* ЗАГОЛОВОК СЛЕВА */
     header { width: 100%; padding: 15px 25px; text-align: left; box-sizing: border-box; }
     h1 { 
       color: #ff0000 !important; font-size: 2.6em; text-transform: capitalize; 
@@ -28,7 +27,6 @@
 
     .container { width: 95%; max-width: 500px; box-sizing: border-box; }
 
-    /* КНОПКИ ПЕРЕКЛЮЧЕНИЯ */
     .nav-btns { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; }
     .nav-btn { flex: 1; background: var(--card); color: white; border: 1px solid var(--border); padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .nav-btn.active {
@@ -36,7 +34,6 @@
       border-color: var(--blood) !important;
     }
     
-    /* КАРТОЧКА (Плотная и сочная) */
     .match-card, .history-item, .history-item-mini { 
       background: var(--card) !important; border: 1.5px solid var(--border) !important; 
       border-radius: 20px !important; margin-top: 12px; padding: 15px !important; 
@@ -47,7 +44,6 @@
 
     .avatar-circle { width: 50px; height: 50px; border-radius: 50%; background-size: cover; border: 2.5px solid; flex-shrink: 0; }
 
-    /* НИКИ: ВСЕГДА ЦВЕТНЫЕ */
     .nick-hover { transition: 0.3s; font-size: 1.15em; font-weight: bold; }
     .role-founder { color: var(--founder) !important; }
     .role-overseer { color: var(--overseer) !important; }
@@ -55,14 +51,12 @@
     .role-bloodline { color: var(--bloodline) !important; }
     .role-player { color: #ffffff !important; }
 
-    /* ХОВЕР: ЗАЖИГАЕМ СВЕТ (Работает во всех вкладках сразу) */
     .match-card:hover .nick-hover, .history-item:hover .nick-hover, .history-item-mini:hover .nick-player { text-shadow: 0 0 15px var(--player) !important; }
     .match-card:hover .role-founder, .history-item:hover .role-founder, .history-item-mini:hover .role-founder { text-shadow: 0 0 15px var(--founder) !important; }
     .match-card:hover .role-overseer, .history-item:hover .role-overseer, .history-item-mini:hover .role-overseer { text-shadow: 0 0 15px var(--overseer) !important; }
     .match-card:hover .role-archivist, .history-item:hover .role-archivist, .history-item-mini:hover .role-archivist { text-shadow: 0 0 15px var(--archivist) !important; }
     .match-card:hover .role-bloodline, .history-item:hover .role-bloodline, .history-item-mini:hover .role-bloodline { text-shadow: 0 0 15px var(--bloodline) !important; }
 
-    /* РАНГИ (Твои сочные стили) */
     .badge { font-size: 0.85em; padding: 5px 12px; border-radius: 8px; border: 2px solid; margin-top: 8px; display: inline-block; font-weight: 900; }
     @keyframes dragon-glow { 0%, 100% { box-shadow: 0 0 10px #fff; } 50% { box-shadow: 0 0 25px #fff; } }
     .rank-Дракон { background: #000 !important; color: #fff !important; border-color: #fff !important; animation: dragon-glow 3s infinite; }
@@ -72,17 +66,16 @@
     .rank-B\+, .rank-B { color: var(--color-b); border-color: var(--color-b); }
     .rank-C { color: var(--color-c); border-color: var(--color-c); }
 
-    /* ПОИСК И АДМИНКА */ 
     #search { width: 100%; padding: 14px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--card); color: white; margin-bottom: 20px; box-sizing: border-box; outline: none; } 
     #admin-panel { background: var(--card); border: 2px solid var(--gold); border-radius: 20px; padding: 20px; margin-bottom: 20px; } 
     .admin-input { width: 100%; padding: 12px; border-radius: 10px; background: #000; color: white; border: 1px solid var(--border); margin-bottom: 10px; box-sizing: border-box; } 
     .admin-btn-submit { background: var(--blood); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; cursor: pointer; width: 100%; }
 
     .history-item-mini:hover {
-      background: rgba(40, 0, 0, 0.8) !important; /* Фон краснеет при наведении */
-      border-color: var(--blood) !important; /* Обводка становится ярко-красной */
-      transform: translateY(-3px); /* Тот самый "прыжок" вверх */
-      box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Легкое красное свечение снизу */
+      background: rgba(40, 0, 0, 0.8) !important;
+      border-color: var(--blood) !important; 
+      transform: translateY(-3px); 
+      box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); 
     }
     
     .elo-val { color: var(--gold); font-weight: 900; font-size: 1.25em; line-height: 1; }
@@ -93,25 +86,20 @@
   <header><h1>Last Dep Ranked</h1></header>
 
   <div class="container">
-    <!-- 1. АДМИНКА (КНОПКА ВКЛЮЧЕНИЯ) -->
     <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'" 
             style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold;">
       ⚙️ АДМИН ПАНЕЛЬ
     </button>
 
-    <!-- 2. КНОПКИ НАВИГАЦИИ -->
     <div class="nav-btns">
       <button onclick="window.showRating ? window.showRating() : null" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
       <button onclick="window.showHistory ? window.showHistory() : null" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
       <button onclick="window.showMyProfile ? window.showMyProfile() : null" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
     </div>
 
-    <!-- 3. ПОИСК -->
     <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.handleSearch ? window.handleSearch() : null">
 
-    <!-- СЕКЦИЯ ЛИЧНОГО КАБИНЕТА -->
     <div id="my-profile-section" style="display:none; text-align:center; margin-top:20px;">
-        <!-- Форма Входа (Подсказка) -->
         <div id="auth-ui">
             <div id="login-tip" style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; display:inline-block; width:100%; box-sizing:border-box;">
                 <h2 style="color:var(--gold); margin-top:0;">Вход в аккаунт</h2>
@@ -121,19 +109,16 @@
             </div>
         </div>
 
-        <!-- Кабинет Игрока (Блок объединен, дубли стилей убраны) -->
         <div id="cabinet-ui" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; text-align:center; box-sizing: border-box;">
             <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
             <div id="cabinet-role" style="font-size:0.7em; font-weight:900; padding:3px 10px; border-radius:5px; border: 1.5px solid; display:inline-block;">PLAYER</div>
 
             <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
 
-            <!-- ПОЛЕ БИО -->
             <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Твое описание (Био):</p>
             <textarea id="new-bio" class="admin-input" style="height:60px; resize:none;" placeholder="Расскажи о себе..."></textarea>
             <button onclick="window.updateProfileData()" class="admin-btn-submit" style="margin-bottom:15px; background:var(--gold); color:black;">ОБНОВИТЬ ПРОФИЛЬ</button>
 
-            <!-- СМЕНА АВАТАРКИ -->
             <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Смена аватарки:</p>
             <input type="text" id="new-avatar-url" class="admin-input" placeholder="Вставь ссылку на фото (jpg/png)">
             <button id="ava-btn" onclick="window.updateAvatar()" class="admin-btn-submit" style="background:#222; border:1px solid #444;">СМЕНИТЬ АВАТАР</button>
@@ -142,9 +127,7 @@
         </div>
     </div>
 
-    <!-- АДМИН-ПАНЕЛЬ -->
     <div id="admin-panel" style="display:none; margin-bottom: 20px;">
-        <!-- СЕКЦИЯ ЗАПИСИ МАТЧА -->
         <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔️ ЗАПИСАТЬ МАТЧ</h2>
         <input type="date" id="match-date" class="admin-input">
         <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
@@ -158,10 +141,8 @@
         <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
         <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ В БАЗУ</button>
 
-        <!-- РАЗДЕЛИТЕЛЬ -->
         <hr style="border:0; border-top:1px solid var(--border); margin:25px 0;">
 
-        <!-- СЕКЦИЯ РЕГИСТРАЦИИ НОВОГО ИГРОКА -->
         <h2 style="color: #00ff00; text-align: center; margin-top: 0; font-size: 1.1em;">👤 РЕГИСТРАЦИЯ ИГРОКА</h2>
         <p style="font-size:0.7em; color:#848e9c; text-align:center; margin-bottom:10px;">Ник и почта должны быть точными!</p>
 
@@ -171,53 +152,42 @@
         <button class="admin-btn-submit" onclick="window.createNewPlayer ? window.createNewPlayer() : null" style="background:#111; border:1px solid #00ff00; color:#00ff00;">СОЗДАТЬ АККАУНТ</button>
     </div>
 
-    <!-- 6. ВЫВОД РЕЙТИНГА ИЛИ ИСТОРИИ -->
     <div id="rating-list">Загрузка...</div>
     <div id="history-list" style="display: none;">Загрузка истории...</div>
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ПРОФИЛЯ -->
   <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
     <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:480px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box;">
 
         <div id="close-profile" style="position:absolute; top:15px; right:20px; color:#555; cursor:pointer; font-size:1.5em;" onclick="document.getElementById('profile-modal').style.display='none'">✕</div>
 
-        <!-- Верхняя часть -->
         <div id="prof-avatar" style="width:90px; height:90px; border-radius:50%; border:3px solid #fff; margin:0 auto 10px; background-size:cover; background-position:center;"></div>
         <h2 id="prof-nick" style="margin:0; color:white; font-size:1.6em;">Никнейм</h2>
 
-        <!-- Плашка роли -->
         <div id="prof-role-badge" style="display:inline-block; margin-top:5px; font-weight:900; font-size:0.65em; padding:3px 10px; border-radius:5px; border: 1.5px solid;">РОЛЬ</div>
 
-        <!-- Описание -->
         <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Пусто...</p>
 
-        <!-- Сетка статистики (Исправлена разметка, теперь блоки компактные и стоят в один ряд 1fr 1fr 1fr) -->
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
-            <!-- RANK -->
             <div style="background: rgba(255, 255, 255, 0.08); padding: 12px 5px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 75px; box-sizing: border-box;">
                 <small style="color: #aaa; font-size: 0.65em; text-transform: uppercase; margin-bottom: 4px;">Rank</small>
                 <div id="prof-rank-text" style="transform: scale(1.1); font-weight: 900;"></div>
             </div>
 
-            <!-- ELO -->
             <div style="background: rgba(255, 255, 255, 0.08); padding: 12px 5px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; min-height: 75px; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;">
                 <small style="color: #aaa; font-size: 0.65em; text-transform: uppercase; margin-bottom: 2px;">Elo</small>
                 <b id="prof-elo" style="color: var(--gold); font-size: 1.6em; font-weight: 900; line-height: 1;">0</b>
             </div>
 
-            <!-- WINRATE -->
             <div style="background: rgba(255, 255, 255, 0.08); padding: 12px 5px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; min-height: 75px; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;">
                 <small style="color: #aaa; font-size: 0.65em; text-transform: uppercase; margin-bottom: 2px;">Winrate</small>
                 <b id="prof-wr" style="color: white; font-size: 1.6em; font-weight: 900; line-height: 1;">0%</b>
             </div>
         </div>
 
-        <!-- ПОСЛЕДНИЕ 3 БОЯ -->
         <div style="text-align:left; margin-bottom:20px;">
             <div style="font-size:0.7em; color:#848e9c; margin-bottom:8px; font-weight:bold;">ПОСЛЕДНИЕ ИГРЫ</div>
             <div id="prof-recent-games" style="display:flex; flex-direction:column; gap:5px;">
-                <!-- Тут будут игры -->
             </div>
         </div>
     </div>
