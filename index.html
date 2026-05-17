@@ -119,9 +119,17 @@
             <textarea id="new-bio" class="admin-input" style="height:60px; resize:none;" placeholder="Расскажи о себе..."></textarea>
             <button onclick="window.updateProfileData()" class="admin-btn-submit" style="margin-bottom:15px; background:var(--gold); color:black;">ОБНОВИТЬ ПРОФИЛЬ</button>
 
-            <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Смена аватарки:</p>
-            <input type="text" id="new-avatar-url" class="admin-input" placeholder="Вставь ссылку на фото (jpg/png)">
-            <button id="ava-btn" onclick="window.updateAvatar()" class="admin-btn-submit" style="background:#222; border:1px solid #444;">СМЕНИТЬ АВАТАР</button>
+<p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Смена аватарки (через файл):</p>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+  <input type="file" id="avatar-file-input" accept="image/*" style="display: none;" onchange="window.handleFileSelected(this)">
+  <button type="button" onclick="document.getElementById('avatar-file-input').click()" class="admin-btn-submit" style="background:#222; border:1px solid #444; margin: 0; padding: 12px; width: 100%;">
+    📁 ВЫБРАТЬ ИЗОБРАЖЕНИЕ
+  </button>
+  <span id="file-name-text" style="font-size: 0.75em; color: #848e9c; text-align: left; display: block;">Файл не выбран</span>
+  <button type="button" id="ava-btn" onclick="window.uploadAvatarFile()" class="admin-btn-submit" style="background:var(--gold); color: black; display: none; margin-top: 5px; padding: 12px; width: 100%;">
+    🚀 ЗАГРУЗИТЬ АВАТАР
+  </button>
+</div>
 
             <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
         </div>
