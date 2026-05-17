@@ -288,17 +288,13 @@ window.loginWithEmail = async (nickname) => {
 
 window.updateProfileData = async () => {
   const nick = localStorage.getItem('user_nick');
-  const bio = document.getElementById('new-bio')?.value || "";
-  const { error } = await supabase.from('profiles').update({ bio: bio }).eq('nickname', nick);
-  if (error) return alert("Ошибка сохранения био");
-  alert("✅ Профиль обновлен!");
   const bioInput = document.getElementById('new-bio');
   
   if (!bioInput) {
     return alert("❌ Ошибка: Текстовое поле ввода био не найдено в HTML!");
   }
   
-  const bio = bioInput.value.trim();
+  const bioText = bioInput.value.trim();
   
   if (!nick) {
     return alert("❌ Ошибка: Сайт не знает твой ник! Попробуй перезайти в аккаунт.");
@@ -306,7 +302,7 @@ window.updateProfileData = async () => {
 
   const { data, error } = await supabase
     .from('profiles')
-    .update({ bio: bio })
+    .update({ bio: bioText })
     .eq('nickname', nick)
     .select();
   
@@ -316,13 +312,13 @@ window.updateProfileData = async () => {
   }
   
   if (!data || data.length === 0) {
-    return alert("⚠️ База вернула пустой ответ. Проверь, совпадает ли твой ник в localStorage с ником в таблице профилей!");
+    return alert("⚠️ База вернула пустой ответ. Проверь совпадение ников!");
   }
   
+  localStorage.setItem('user_bio', bioText);
   alert("✅ Био успешно сохранено в базу данных!");
   location.reload();
 };
-
 
 window.updateAvatar = async () => {
   const nick = localStorage.getItem('user_nick');
