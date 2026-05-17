@@ -1,19 +1,16 @@
 import { supabase } from './config.js';
 
 export async function loadHistory() {
-    // МЕНЯЕМ ID: теперь история ищет свой собственный блок 'history-list'
     const container = document.getElementById('history-list'); 
     
-    if (!container) return; // Защита, если блока нет в HTML
+    if (!container) return;
     console.log("Проверка функции openProfile:", typeof window.openProfile);
     container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка истории...</div>';
        
     const { data: profiles } = await supabase.from('profiles').select('nickname, role');
     
-    // 2. Наполняем глобальный кэш
     if (profiles) {
         profiles.forEach(p => {
-            // Приводим к нижнему регистру для CSS (Founder -> role-founder)
             window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
         });
     }
