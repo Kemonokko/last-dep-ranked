@@ -4,7 +4,6 @@ import { handleAddMatch } from './admin.js';
 import { loadHistory } from './history.js';
 
 let allPlayers = []; 
-let allPlayers = [];
 window.roleCache = {};
 
 async function loadRating() {
@@ -14,19 +13,14 @@ async function loadRating() {
         return;
     }
 
-    // 1. Сохраняем игроков в глобальный список
     window.allPlayers = players || [];
 
-    // 2. !!! ВАЖНО: Наполняем кэш ролей ПЕРЕД отрисовкой !!!
-    // Без этого ники будут белыми до первого перехода в профиль
     window.allPlayers.forEach(p => {
         window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
     });
 
-    // 3. Теперь, когда сайт "знает" все роли, рисуем список
     renderPlayers(window.allPlayers);
 
-    // 4. Показываем список (твой код)
     if (window.showRating) {
         const ratingList = document.getElementById('rating-list');
         if (ratingList) ratingList.style.display = 'block';
@@ -36,18 +30,14 @@ async function loadRating() {
     console.error("Ошибка загрузки профилей:", error);
     return;
   }
-  // 1. Сохраняем игроков в глобальный список
   window.allPlayers = players || [];
   
-  // 2. Наполняем кэш ролей ПЕРЕД отрисовкой
   window.allPlayers.forEach(p => {
     window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
   });
   
-  // 3. Теперь, когда сайт "знает" все роли, рисуем список
   renderPlayers(window.allPlayers);
   
-  // 4. Показываем список
   if (window.showRating) {
     const ratingList = document.getElementById('rating-list');
     if (ratingList) ratingList.style.display = 'block';
@@ -115,13 +105,11 @@ window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
 
-    // 1. Берем данные игрока
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
 
 const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
     const rank = getRankByPercentile(globalPos, window.allPlayers.length);
-    // 3. ЗАПОЛНЯЕМ ДАННЫЕ
     document.getElementById('prof-nick').innerText = p.nickname;
     document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
     document.getElementById('prof-elo').innerText = p.elo;
@@ -130,18 +118,15 @@ const globalPos = window.allPlayers.findIndex(player => player.nickname === p.ni
 
 const rankText = document.getElementById('prof-rank-text');
         if (rankText) {
-            // Очищаем старый текст и вставляем HTML с твоими стилями
             rankText.innerHTML = `<span class="badge rank-${rank}" style="font-size: 0.7em !important; padding: 2px 8px !important; line-height: 1.2;">${rank}</span>`;
-            // Убираем старый класс, чтобы не было конфликтов
             rankText.className = ""; 
         }
-
-    // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
+    
     const role = (p.role || 'Player').trim();
     const badge = document.getElementById('prof-role-badge');
     if (badge) {
         if (role === 'Player') {
-            badge.style.display = 'none'; // Убираем плашку совсем
+            badge.style.display = 'none';
         } else {
             badge.style.display = 'inline-block';
             badge.innerText = role.toUpperCase();
@@ -151,7 +136,6 @@ const rankText = document.getElementById('prof-rank-text');
         }
     }
 
-    // 5. ПОСЛЕДНИЕ ИГРЫ
     const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
     const gamesContainer = document.getElementById('prof-recent-games');
     if (gamesContainer) {
@@ -202,7 +186,7 @@ return `
 </div>`;
         }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
-    // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
+
     const oldMod = document.getElementById('mod-tools');
     if (oldMod) oldMod.remove();
 
@@ -226,14 +210,12 @@ return `
   const modal = document.getElementById('profile-modal');
   modal.style.display = 'flex';
   
-  // 1. Берем данные игрока
   const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
   if (!p) return;
   
   const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
   const rank = getRankByPercentile(globalPos, window.allPlayers.length);
   
-  // 3. ЗАПОЛНЯЕМ ДАННЫЕ
   document.getElementById('prof-nick').innerText = p.nickname;
   document.getElementById('prof-avatar').style.backgroundImage = `url('${p.avatar_url || ''}')`;
   document.getElementById('prof-elo').innerText = p.elo;
@@ -246,7 +228,6 @@ return `
     rankText.className = "";
   }
   
-  // 4. ПЛАШКА РОЛИ: Скрываем для обычных игроков
   const role = (p.role || 'Player').trim();
   const badge = document.getElementById('prof-role-badge');
   if (badge) {
@@ -261,7 +242,6 @@ return `
     }
   }
   
-  // 5. ПОСЛЕДНИЕ ИГРЫ (ОШИБКА ДУБЛИРОВАНИЯ И РАЗОРВАННЫХ ТЕГОВ ТУТ ПОЛНОСТЬЮ ИСПРАВЛЕНА)
   const { data: matches } = await supabase.from('match_history').select('*').or(`win.eq."${nick}",loss.eq."${nick}"`).order('date', { ascending: false }).limit(3);
   const gamesContainer = document.getElementById('prof-recent-games');
   
@@ -291,12 +271,11 @@ return `
     }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
   }
   
-  // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
   const oldMod = document.getElementById('mod-tools');
   if (oldMod) oldMod.remove();
   
   const myRole = localStorage.getItem('user_role');
-  const isModerator = ['Founder', 'Overseer', 'Archivist'].includes(myRole);
+  const isModerator = ['Founder'].includes(myRole);
   if (isModerator) {
     const modDiv = document.createElement('div');
     modDiv.id = 'mod-tools';
@@ -314,7 +293,6 @@ return `
   }
 };
 
-// 4. ЛИЧНЫЙ КАБИНЕТ И АДМИНКА
 window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
@@ -334,11 +312,10 @@ window.showMyProfile = () => {
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
 
-        // --- ЛОГИКА АДМИНКИ ---
         const adminBtn = document.getElementById('admin-btn');
         const adminPanel = document.getElementById('admin-panel');
 
-        if (userRole === 'Founder' || userRole === 'Archivist') {
+        if (userRole === 'Founder') {
             if (adminBtn) {
                 adminBtn.style.display = 'block';
                 adminBtn.onclick = () => {
@@ -346,13 +323,12 @@ window.showMyProfile = () => {
                     adminPanel.style.display = isHidden ? 'block' : 'none';
                 };
             }
-            if (adminPanel) adminPanel.style.display = 'none'; // По умолчанию скрыта
+            if (adminPanel) adminPanel.style.display = 'none'; 
         } else {
             if (adminBtn) adminBtn.style.display = 'none';
             if (adminPanel) adminPanel.style.display = 'none';
         }
 
-        // --- ЦВЕТА И ТЕКСТ РОЛИ В КАБИНЕТЕ ---
         const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
         const roleBadge = document.getElementById('cabinet-role');
         if (roleBadge) {
@@ -377,7 +353,6 @@ window.showMyProfile = () => {
     document.getElementById('cabinet-ui').style.display = 'block';
     document.getElementById('cabinet-nick').innerText = userNick;
     
-    // --- ЛОГИКА АДМИНКИ ---
     const adminBtn = document.getElementById('admin-btn');
     const adminPanel = document.getElementById('admin-panel');
     if (userRole === 'Founder' || userRole === 'Archivist') {
@@ -390,7 +365,6 @@ window.showMyProfile = () => {
       }
       if (adminPanel) adminPanel.style.display = 'none';
     } else {
-        // Логика когда не залогинен (вход через поиск)
         if (searchInput) {
             searchInput.style.display = 'block';
             searchInput.value = "";
@@ -410,7 +384,6 @@ window.showMyProfile = () => {
       if (adminPanel) adminPanel.style.display = 'none';
     }
     
-    // --- ЦВЕТА И ТЕКСТ РОЛИ В КАБИНЕТЕ ---
     const roleColors = { 'Founder': '#b64dff', 'Overseer': '#00ff00', 'Archivist': '#00ffff', 'Bloodline': '#880000', 'Player': '#ffffff' };
     const roleBadge = document.getElementById('cabinet-role');
     if (roleBadge) {
@@ -437,7 +410,6 @@ window.showMyProfile = () => {
   }
 };
 
-// 5. ФИЛЬТРАЦИЯ (ПОИСК)
 window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
@@ -475,7 +447,6 @@ window.filterPlayers = () => {
   });
 };
 
-// 6. СИСТЕМНЫЕ ФУНКЦИИ
 window.handleLogout = () => { localStorage.clear(); location.reload(); };
 window.handleAddMatch = handleAddMatch;
 
@@ -511,7 +482,6 @@ window.filterPlayersForLogin = () => {
     }
 
     container.innerHTML = matches.map(p => {
-        // Считаем ранг правильно (как в основном рейтинге)
         const pos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
         const rank = getRankByPercentile(pos, window.allPlayers.length);
         const role = (p.role || 'Player').toLowerCase();
@@ -594,7 +564,6 @@ window.loginWithEmail = async (nickname) => {
   location.reload();
 };
 
-// 7. ОБНОВЛЕНИЕ ДАННЫХ ПРОФИЛЯ
 window.updateProfileData = async () => {
     const nick = localStorage.getItem('user_nick');
     const bio = document.getElementById('new-bio')?.value || "";
@@ -648,25 +617,21 @@ window.updateAvatar = async () => {
 };
 
 window.showRating = () => {
-    // 1. СБРОС ПОИСКА: Очищаем поле, чтобы поиск не "зависал"
     const searchInput = document.getElementById('search');
     if (searchInput) {
-        searchInput.value = ''; // Стираем текст
+        searchInput.value = ''; 
         searchInput.style.display = 'block';
     }
 
-    // 2. ПЕРЕКЛЮЧЕНИЕ ВИДИМОСТИ (твой код)
     document.getElementById('rating-list').style.display = 'block';
     document.getElementById('history-list').style.display = 'none'; 
     document.getElementById('my-profile-section').style.display = 'none';
 
-    // Подсвечиваем кнопку (твой код)
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     if (document.getElementById('btn-rating')) {
         document.getElementById('btn-rating').classList.add('active');
     }
 
-    // 3. ПРИНУДИТЕЛЬНЫЙ РЕНДЕР: Рисуем чистый список игроков без кнопок "Войти"
     if (window.allPlayers) {
         renderPlayers(window.allPlayers);
     }
@@ -690,14 +655,13 @@ window.showRating = () => {
 
 window.showHistory = () => {
     if (document.getElementById('search')) document.getElementById('search').style.display = 'none';
-    document.getElementById('rating-list').style.display = 'none'; // Скрываем рейтинг
-    document.getElementById('history-list').style.display = 'block'; // Показываем историю
+    document.getElementById('rating-list').style.display = 'none'; 
+    document.getElementById('history-list').style.display = 'block'; 
     document.getElementById('my-profile-section').style.display = 'none';
 
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-history').classList.add('active');
 
-    // Запускаем загрузку истории
     loadHistory();
   if (document.getElementById('search')) document.getElementById('search').style.display = 'none';
   document.getElementById('rating-list').style.display = 'none';
@@ -756,7 +720,6 @@ window.createNewPlayer = async () => {
   }
 };
 
-// СБРОС АВАТАРКИ
 window.resetAvatar = async (nick) => {
     if (!confirm(`Сбросить аватар игрока ${nick}?`)) return;
     const { error } = await supabase.from('profiles').update({ avatar_url: '' }).eq('nickname', nick);
@@ -770,7 +733,6 @@ window.resetAvatar = async (nick) => {
   location.reload();
 };
 
-// СБРОС БИО
 window.resetBio = async (nick) => {
     if (!confirm(`Очистить описание (био) игрока ${nick}?`)) return;
     const { error } = await supabase.from('profiles').update({ bio: '' }).eq('nickname', nick);
@@ -787,17 +749,14 @@ window.handleSearch = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const isProfileSection = document.getElementById('my-profile-section').style.display === 'block';
 
-    // Если поле пустое - просто показываем весь рейтинг и выходим
     if (!val) {
         renderPlayers(window.allPlayers);
         return;
     }
 
-    // ЛОГИКА: Если мы в профиле И не залогинены — фильтруем для входа
     if (isProfileSection && !localStorage.getItem('user_nick')) {
         window.filterPlayersForLogin(); 
     } 
-    // Иначе — просто ищем в рейтинге
     else {
         const filtered = window.allPlayers.filter(p => 
             p.nickname.toLowerCase().includes(val)
