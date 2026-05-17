@@ -15,7 +15,7 @@ async function loadRating() {
 
     // 1. Сохраняем игроков в глобальный список
     window.allPlayers = players || [];
-    
+
     // 2. !!! ВАЖНО: Наполняем кэш ролей ПЕРЕД отрисовкой !!!
     // Без этого ники будут белыми до первого перехода в профиль
     window.allPlayers.forEach(p => {
@@ -72,7 +72,7 @@ return `
 window.openProfile = async (nick) => {
     const modal = document.getElementById('profile-modal');
     modal.style.display = 'flex';
-    
+
     // 1. Берем данные игрока
     const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
     if (!p) return;
@@ -85,7 +85,7 @@ const globalPos = window.allPlayers.findIndex(player => player.nickname === p.ni
     document.getElementById('prof-elo').innerText = p.elo;
     document.getElementById('prof-wr').innerText = (p.win_rate || 0) + '%';
     document.getElementById('prof-bio').innerText = p.bio || "Пусто...";
-    
+
 const rankText = document.getElementById('prof-rank-text');
         if (rankText) {
             // Очищаем старый текст и вставляем HTML с твоими стилями
@@ -118,26 +118,47 @@ const rankText = document.getElementById('prof-rank-text');
             const oppNick = isWin ? m.loss : m.win;
             const resColor = isWin ? '#00ff00' : '#ff0000';
             const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
-// 3. Последние 3 боя (в цикле matches.map)
+
+            return `
+            <div class="history-item-mini" onclick="window.openProfile('${oppNick}')" 
+                 style="background: #3d0606 !important; padding: 8px; border-radius: 12px; display: flex; align-items: center; margin-bottom: 8px; border: 1.5px solid #5a0a0a !important; transition: 0.3s; cursor: pointer;">
+                
+                <!-- 1. WIN/LOSS в капсуле -->
+                <div style="background: ${resColor}33; color: ${resColor}; padding: 5px 10px; border-radius: 20px; font-weight: 900; font-size: 0.65em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
+                    ${isWin ? 'WIN' : 'LOSS'}
+                </div>
 return `
 <div class="history-item-mini" onclick="window.openProfile('${oppNick}')" 
-     style="background: #272222 !important; /* Твой цвет */
+     style="background: #201717 !important; /* ТВОЙ НОВЫЙ ЦВЕТ */
             padding: 10px; border-radius: 15px; display: flex; align-items: center; 
-            margin-bottom: 8px; border: 1.5px solid #3d0000; transition: 0.3s; cursor: pointer;">
+            margin-bottom: 8px; border: 1.5px solid #3d0000 !important; 
+            transition: 0.3s; cursor: pointer;">
     
-    <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; min-width: 45px; border: 1px solid ${resColor}66;">
+    <!-- Статус (WIN/LOSS) -->
+    <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
         ${isWin ? 'WIN' : 'LOSS'}
     </div>
 
+                <!-- 2. Счёт (золотой) -->
+                <div style="margin: 0 12px; font-weight: 900; color: var(--gold); font-size: 1em; min-width: 30px; text-align: center;">
+                    ${m.win_r}:${m.loss_r}
+                </div>
+    <!-- Счёт -->
     <div style="margin: 0 15px; font-weight: 900; color: var(--gold); font-size: 1.1em; min-width: 35px; text-align: center;">
         ${m.win_r}:${m.loss_r}
     </div>
 
-    <div style="flex-grow: 1; text-align: left;">
+                <!-- 3. Ник (всё остальное место) -->
+                <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    <b class="nick-hover role-${oppRole}" style="font-size: 0.9em;">${oppNick}</b>
+                </div>
+            </div>`;
+    <!-- НИК (Увеличили шрифт) -->
+    <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
         <b class="nick-hover role-${oppRole}" style="font-size: 1.1em !important;">${oppNick}</b>
-      </div>
-   </div>`;
-}).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+    </div>
+</div>`;
+        }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
     }
     // --- БЛОК МОДЕРАЦИИ (FOUNDER, OVERSEER, ARCHIVIST) ---
     const oldMod = document.getElementById('mod-tools');
@@ -168,11 +189,11 @@ window.showMyProfile = () => {
     const searchInput = document.getElementById('search');
     const userNick = localStorage.getItem('user_nick');
     const userRole = localStorage.getItem('user_role') || 'Player';
-    
+
     document.getElementById('my-profile-section').style.display = 'block'; 
     document.getElementById('rating-list').style.display = 'none'; 
     document.getElementById('history-list').style.display = 'none';
-    
+
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-profile').classList.add('active');
 
@@ -182,7 +203,7 @@ window.showMyProfile = () => {
         document.getElementById('auth-ui').style.display = 'none';
         document.getElementById('cabinet-ui').style.display = 'block';
         document.getElementById('cabinet-nick').innerText = userNick;
-        
+
         // --- ЛОГИКА АДМИНКИ ---
         const adminBtn = document.getElementById('admin-btn');
         const adminPanel = document.getElementById('admin-panel');
@@ -234,7 +255,7 @@ window.filterPlayers = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const isProfileTab = document.getElementById('my-profile-section').style.display === 'block';
     const isHistoryTab = document.getElementById('btn-history').classList.contains('active');
-    
+
     const players = document.querySelectorAll('.match-card');
     players.forEach(p => {
         const matches = p.innerText.toLowerCase().includes(val);
@@ -266,14 +287,14 @@ async function loadAllPlayersForSearch() {
 window.filterPlayersForLogin = () => {
     const val = document.getElementById('search').value.toLowerCase().trim();
     const container = document.getElementById('rating-list');
-    
+
     if (!val) {
         container.innerHTML = `<div style="text-align:center; padding:30px; color:#888;"><h2>🔐 ВХОД</h2><p>Начните вводить свой ник...</p></div>`;
         return;
     }
 
     const matches = window.allPlayers.filter(p => p.nickname.toLowerCase().includes(val));
-    
+
     if (matches.length === 0) {
         container.innerHTML = `<div style="text-align:center; padding:20px; color:#ff4444;">❌ ИГРОК НЕ НАЙДЕН</div>`;
         return;
@@ -304,7 +325,7 @@ window.filterPlayersForLogin = () => {
 window.loginWithEmail = async (nickname) => {
     const { data: profile, error } = await supabase.from('profiles').select('email, role').eq('nickname', nickname).single();
     if (error || !profile || !profile.email) return alert("❌ У профиля не настроен вход через Email.");
-    
+
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
         alert(`🔐 Для входа под ником "${nickname}" подтвердите личность через Google.`);
@@ -312,7 +333,7 @@ window.loginWithEmail = async (nickname) => {
         return;
     }
     if (session.user.email !== profile.email) return alert(`❌ Ошибка доступа! Ваш Google-аккаунт не привязан к нику "${nickname}".`);
-    
+
     localStorage.setItem('user_nick', nickname);
     localStorage.setItem('user_role', profile.role || 'Player');
     alert(`✅ Добро пожаловать, ${nickname}!`);
@@ -362,7 +383,7 @@ window.showRating = () => {
     document.getElementById('rating-list').style.display = 'block';
     document.getElementById('history-list').style.display = 'none'; 
     document.getElementById('my-profile-section').style.display = 'none';
-    
+
     // Подсвечиваем кнопку (твой код)
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     if (document.getElementById('btn-rating')) {
@@ -380,7 +401,7 @@ window.showHistory = () => {
     document.getElementById('rating-list').style.display = 'none'; // Скрываем рейтинг
     document.getElementById('history-list').style.display = 'block'; // Показываем историю
     document.getElementById('my-profile-section').style.display = 'none';
-    
+
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('btn-history').classList.add('active');
 
