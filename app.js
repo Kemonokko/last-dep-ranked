@@ -104,7 +104,65 @@ window.openProfile = async (nick) => {
     }
   }
 
-  // Загрузка матчей с исправленными кавычками под ники с пробелами
+  supabase.from('match_history')
+    .select('*')
+    .or(`win.eq.\"${nick}\",loss.eq.\"${nick}\"`)
+    .order('date', { ascending: false })
+    .limit(3)
+    .then(({ data: matches }) => {
+      if (gamesContainer) {
+        gamesContainer.innerHTML = matches && matches.length > 0 ? matches.map(m => {
+          const isWin = m.win === nick;
+          const oppNick = isWin ? m.loss : m.win;
+          const resColor = isWin ? '#00ff00' : '#ff0000';
+          const oppRole = (window.roleCache[oppNick] || 'Player').toLowerCase();
+          
+          const clickAction = oppNick === nick ? '' : `onclick="window.openProfile('${oppNick}')"`;
+          const cursorStyle = oppNick === nick ? 'default' : 'pointer';
+          
+          return `
+          <div class="history-item-mini" ${clickAction}
+               style="background: #201717 !important; padding: 10px; border-radius: 15px; display: flex; align-items: center; margin-bottom: 8px; border: 1.5px solid #3d0000 !important; transition: 0.3s; cursor: ${cursorStyle};">
+            <div style="background: ${resColor}33; color: ${resColor}; padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 0.7em; text-align: center; min-width: 45px; border: 1px solid ${resColor}66;">
+              ${isWin ? 'WIN' : 'LOSS'}
+            </div>
+            <div style="margin: 0 15px; font-weight: 900; color: var(--gold); font-size: 1.1em; min-width: 35px; text-align: center;">
+              ${m.win_r}:${m.loss_r}
+            </div>
+            <div style="flex-grow: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <b class="nick-hover role-${oppRole}" style="font-size: 1.1em !important;">${oppNick}</b>
+            </div>
+          </div>`;
+        }).join('') : '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+      }
+    })
+    .catch((err) => {
+      console.error("Ошибка загрузки истории в модалке:", err);
+      if (gamesContainer) {
+        gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
+      }
+    });
+
+  const oldMod = document.getElementById('mod-tools');
+  if (oldMod) oldMod.remove();
+  
+  const myRole = localStorage.getItem('user_role');
+  if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
+    const modDiv = document.createElement('div');
+    modDiv.id = 'mod-tools';
+    modDiv.style.marginTop = '20px';
+    modDiv.style.borderTop = '1px dashed #444';
+    modDiv.style.paddingTop = '15px';
+    modDiv.innerHTML = `
+      <div style="font-size:0.6em; color:#555; margin-bottom:10px; font-weight:bold; text-align:center;">MOD TOOLS</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <button onclick="window.resetAvatar('${p.nickname}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
+        <button onclick="window.resetBio('${p.nickname}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍ БИО</button>
+      </div>`;
+    modal.querySelector('div').appendChild(modDiv);
+  }
+};
+
   supabase.from('match_history')
     .select('*')
     .or(`win.eq."${nick}",loss.eq."${nick}"`)
