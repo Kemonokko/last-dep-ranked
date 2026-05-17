@@ -25,11 +25,8 @@ async function loadRating() {
         const ratingList = document.getElementById('rating-list');
         if (ratingList) ratingList.style.display = 'block';
     }
-  const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-  if (error) {
-    console.error("Ошибка загрузки профилей:", error);
-    return;
-  }
+
+    
   window.allPlayers = players || [];
   
   window.allPlayers.forEach(p => {
