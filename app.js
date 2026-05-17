@@ -5,11 +5,10 @@ import { loadHistory } from './history.js';
 
 let allPlayers = [];
 window.roleCache = {};
-
 let isRatingLoading = false;
 
 async function loadRating() {
-  if (isRatingLoading) return; 
+  if (isRatingLoading) return;
   isRatingLoading = true;
 
   const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
@@ -30,8 +29,7 @@ async function loadRating() {
     const ratingList = document.getElementById('rating-list');
     if (ratingList) ratingList.style.display = 'block';
   }
-  
-  isRatingLoading = false; 
+  isRatingLoading = false;
 }
 
 function renderPlayers(list) {
@@ -106,9 +104,10 @@ window.openProfile = async (nick) => {
     }
   }
 
+  // Загрузка матчей с исправленными кавычками под ники с пробелами
   supabase.from('match_history')
     .select('*')
-    .or(`win.eq.${nick},loss.eq.${nick}`)
+    .or(`win.eq."${nick}",loss.eq."${nick}"`)
     .order('date', { ascending: false })
     .limit(3)
     .then(({ data: matches }) => {
@@ -164,30 +163,6 @@ window.openProfile = async (nick) => {
     modal.querySelector('div').appendChild(modDiv);
   }
 };
-  
-  const gamesContainer = document.getElementById('prof-recent-games');
-  if (gamesContainer) {
-    gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
-  }
-  
-  const oldMod = document.getElementById('mod-tools');
-  if (oldMod) oldMod.remove();
-  
-  const myRole = localStorage.getItem('user_role');
-  if (['Founder', 'Overseer', 'Archivist'].includes(myRole)) {
-    const modDiv = document.createElement('div');
-    modDiv.id = 'mod-tools';
-    modDiv.style.marginTop = '20px';
-    modDiv.style.borderTop = '1px dashed #444';
-    modDiv.style.paddingTop = '15px';
-    modDiv.innerHTML = `
-      <div style="font-size:0.6em; color:#555; margin-bottom:10px; font-weight:bold; text-align:center;">MOD TOOLS</div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <button onclick="window.resetAvatar('${p.nickname}')" style="background:#111; color:#ff4444; border:1px solid #ff4444; padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">❌ АВА</button>
-        <button onclick="window.resetBio('${p.nickname}')" style="background:#111; color:var(--gold); border:1px solid var(--gold); padding:8px; border-radius:8px; font-size:0.7em; cursor:pointer; font-weight:bold;">✍ БИО</button>
-      </div>`;
-    modal.querySelector('div').appendChild(modDiv);
-  }
 
 window.showMyProfile = () => {
   const searchInput = document.getElementById('search');
