@@ -188,7 +188,6 @@ window.openProfile = async (nick) => {
       </div>`;
     modal.querySelector('div').appendChild(modDiv);
   }
-};
 
 window.showMyProfile = () => {
   const searchInput = document.getElementById('search');
