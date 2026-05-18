@@ -9,53 +9,57 @@
 <body>
     <header><h1>Last Dep Ranked</h1></header>
     
-    <div class="main-layout">
+    <!-- Главная обёртка интерфейса -->
+    <div class="app-layout">
         
-        <div class="left-column">
-            <div id="rating-list">Загрузка рейтинга...</div>
-            <div id="history-list" style="display: none;">Загрузка истории...</div>
+        <!-- АДМИНКА: теперь она позиционируется абсолютно слева и не двигает центр -->
+        <div id="admin-panel" style="display:none;">
+            <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔ ЗАПИСАТЬ МАТЧ</h2>
+            <input type="date" id="match-date" class="admin-input">
+            <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
+            <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
+            <datalist id="players-list"></datalist>
+            <select id="score-select" class="admin-input" onchange="window.updateMatchPreview ? window.updateMatchPreview() : null">
+                <option value="3:0">Счёт 3:0 (x1.3)</option>
+                <option value="3:1">Счёт 3:1 (x1.0)</option>
+                <option value="3:2">Счёт 3:2 (x0.7)</option>
+            </select>
+            <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
+            <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ В БАЗУ</button>
         </div>
-      
-        <div class="center-column">
+
+        <!-- ЦЕНТРАЛЬНЫЙ БЛОК: он всегда стоит по центру экрана мёртвой хваткой -->
+        <div class="container">
+            <!-- Кнопка админки -->
             <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'"
-                style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:10px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold; width: 100%;">
+                style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold; width: 100%;">
                 ⚙ АДМИН ПАНЕЛЬ
             </button>
 
+            <!-- Главные навигационные кнопки -->
             <div class="nav-btns">
                 <button onclick="window.showRating ? window.showRating() : null" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
                 <button onclick="window.showHistory ? window.showHistory() : null" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
-                <button onclick="const p = document.querySelector('.right-column'); p.style.display = p.style.display === 'none' ? 'block' : 'none'" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
+                <button onclick="window.showMyProfile ? window.showMyProfile() : null" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
             </div>
 
             <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.handleSearch ? window.handleSearch() : null">
-            <div id="admin-panel" style="display:none; margin-bottom: 20px;">
-                <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔ ЗАПИСАТЬ МАТЧ</h2>
-                <input type="date" id="match-date" class="admin-input">
-                <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
-                <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
-                <datalist id="players-list"></datalist>
-                <select id="score-select" class="admin-input" onchange="window.updateMatchPreview ? window.updateMatchPreview() : null">
-                    <option value="3:0">Счёт 3:0</option>
-                    <option value="3:1">Счёт 3:1</option>
-                    <option value="3:2">Счёт 3:2</option>
-                </select>
-                <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
-                <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ В БАЗУ</button>
-            </div>
-        </div>
 
-        <div class="right-column">
-            <div id="my-profile-section" style="display:block; text-align:center;">
+            <!-- Списки рейтинга и истории строго по центру -->
+            <div id="rating-list">Загрузка...</div>
+            <div id="history-list" style="display: none;">Загрузка истории...</div>
+
+            <!-- Секция личного кабинета (Профиль) -->
+            <div id="my-profile-section" style="display:none; text-align:center; margin-top:20px;">
                 <div id="auth-ui">
                     <div id="login-tip" style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; display:inline-block; width:100%; box-sizing:border-box;">
                         <h2 style="color:var(--gold); margin-top:0;">Вход в аккаунт</h2>
-                        <p style="color:#848e9c; font-size:0.9em; line-height:1.5;">Чтобы войти, найди свой ник в поиске</p>
+                        <p style="color:#848e9c; font-size:0.9em; line-height:1.5;">Чтобы войти, найди свой ник в поиске.</p>
                     </div>
                 </div>
                 <div id="cabinet-ui" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; text-align:center; box-sizing: border-box;">
                     <h2 id="cabinet-nick" style="color:white; margin-top:0;">Твой Ник</h2>
-                    <div id="cabinet-role" style="font-size:0.7em; font-weight:900; padding:3px 10px; border-radius:5px; border: 1.5px solid; display:inline-block;">PLAYER</div>
+                    <div id="cabinet-role" style="display:none; font-size:0.7em; font-weight:900; padding:3px 10px; border-radius:5px; border: 1.5px solid;"></div>
                     <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
                     <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Твое описание (Био):</p>
                     <textarea id="new-bio" class="admin-input" style="height:60px; resize:none;" placeholder="Расскажи о себе..."></textarea>
@@ -69,6 +73,7 @@
         </div>
     </div>
 
+    <!-- Модалка чужого профиля -->
     <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
         <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:480px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box;">
             <div id="close-profile" style="position:absolute; top:15px; right:20px; color:#555; cursor:pointer; font-size:1.5em;" onclick="document.getElementById('profile-modal').style.display='none'">✕</div>
