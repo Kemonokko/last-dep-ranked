@@ -9,10 +9,8 @@
 <body>
     <header><h1>Last Dep Ranked</h1></header>
     
-    <!-- Главная обёртка интерфейса -->
     <div class="app-layout">
         
-        <!-- АДМИНКА: теперь она позиционируется абсолютно слева и не двигает центр -->
         <div id="admin-panel" style="display:none;">
             <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔ ЗАПИСАТЬ МАТЧ</h2>
             <input type="date" id="match-date" class="admin-input">
@@ -20,23 +18,20 @@
             <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
             <datalist id="players-list"></datalist>
             <select id="score-select" class="admin-input" onchange="window.updateMatchPreview ? window.updateMatchPreview() : null">
-                <option value="3:0">Счёт 3:0 (x1.3)</option>
-                <option value="3:1">Счёт 3:1 (x1.0)</option>
-                <option value="3:2">Счёт 3:2 (x0.7)</option>
+                <option value="3:0">Счёт 3:0</option>
+                <option value="3:1">Счёт 3:1</option>
+                <option value="3:2">Счёт 3:2</option>
             </select>
             <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
             <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ В БАЗУ</button>
         </div>
 
-        <!-- ЦЕНТРАЛЬНЫЙ БЛОК: он всегда стоит по центру экрана мёртвой хваткой -->
         <div class="container">
-            <!-- Кнопка админки -->
             <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'"
                 style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold; width: 100%;">
                 ⚙ АДМИН ПАНЕЛЬ
             </button>
 
-            <!-- Главные навигационные кнопки -->
             <div class="nav-btns">
                 <button onclick="window.showRating ? window.showRating() : null" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
                 <button onclick="window.showHistory ? window.showHistory() : null" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
@@ -45,16 +40,14 @@
 
             <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.handleSearch ? window.handleSearch() : null">
 
-            <!-- Списки рейтинга и истории строго по центру -->
-            <div id="rating-list">Загрузка...</div>
+            <div id="rating-list">Загрузка рейтинга...</div>
             <div id="history-list" style="display: none;">Загрузка истории...</div>
 
-            <!-- Секция личного кабинета (Профиль) -->
             <div id="my-profile-section" style="display:none; text-align:center; margin-top:20px;">
                 <div id="auth-ui">
                     <div id="login-tip" style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; display:inline-block; width:100%; box-sizing:border-box;">
                         <h2 style="color:var(--gold); margin-top:0;">Вход в аккаунт</h2>
-                        <p style="color:#848e9c; font-size:0.9em; line-height:1.5;">Чтобы войти, найди свой ник в поиске.</p>
+                        <p style="color:#848e9c; font-size:0.9em; line-height:1.5;">Чтобы войти, найди свой ник в поиске</p>
                     </div>
                 </div>
                 <div id="cabinet-ui" style="display:none; background:var(--card); border:2px solid var(--border); border-radius:20px; padding:25px; text-align:center; box-sizing: border-box;">
@@ -63,23 +56,22 @@
                     <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
                     <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Твое описание (Био):</p>
                     <textarea id="new-bio" class="admin-input" style="height:60px; resize:none;" placeholder="Расскажи о себе..."></textarea>
-                    <button onclick="window.updateProfileData()" class="admin-btn-submit" style="margin-bottom:15px; background:var(--gold); color:black;">ОБНОВИТЬ ПРОФИЛЬ</button>
+                    <button onclick="window.updateProfileData()" class="admin-btn-submit" style="margin-bottom:15px; background:var(--gold); color:black;">Обновить профиль</button>
                     <p style="font-size:0.8em; color:#848e9c; margin-bottom:5px; text-align:left;">Смена аватарки:</p>
                     <input type="text" id="new-avatar-url" class="admin-input" placeholder="Вставь ссылку на фото (jpg/png)">
-                    <button id="ava-btn" onclick="window.updateAvatar()" class="admin-btn-submit" style="background:#222; border:1px solid #444;">СМЕНИТЬ АВАТАР</button>
+                    <button id="ava-btn" onclick="window.updateAvatar()" class="admin-btn-submit" style="background:#222; border:1px solid #444;">Сменить аватарку:</button>
                     <button onclick="window.handleLogout()" style="background:none; border:none; color:#555; margin-top:25px; cursor:pointer; font-size:0.8em; text-decoration:underline;">Выйти из системы</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Модалка чужого профиля -->
     <div id="profile-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; align-items:center; justify-content:center; backdrop-filter: blur(5px);">
         <div style="background:var(--card); border:2px solid var(--border); width:95%; max-width:480px; padding:25px; border-radius:20px; position:relative; text-align:center; max-height: 90vh; overflow-y: auto; overflow-x: hidden; box-sizing: border-box;">
             <div id="close-profile" style="position:absolute; top:15px; right:20px; color:#555; cursor:pointer; font-size:1.5em;" onclick="document.getElementById('profile-modal').style.display='none'">✕</div>
             <div id="prof-avatar" style="width:90px; height:90px; border-radius:50%; border:3px solid #fff; margin:0 auto 10px; background-size:cover; background-position:center;"></div>
             <h2 id="prof-nick" style="margin:0; color:white; font-size:1.6em;">Никнейм</h2>
-            <div id="prof-role-badge" style="display:inline-block; margin-top:5px; font-weight:900; font-size:0.65em; padding:3px 10px; border-radius:5px; border: 1.5px solid;">РОЛЬ</div>
+            <div id="prof-role-badge" style="display:inline-block; margin-top:5px; font-weight:900; font-size:0.65em; padding:3px 10px; border-radius:5px; border: 1.5px solid;">Роль</div>
             <p id="prof-bio" style="font-size:0.85em; color:#bbb; margin:15px 0; font-style:italic; line-height:1.4;">Пусто...</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 15px;">
                 <div style="background: rgba(255, 255, 255, 0.08); padding: 12px 5px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 75px; box-sizing: border-box;">
@@ -96,7 +88,7 @@
                 </div>
             </div>
             <div style="text-align:left; margin-bottom:20px;">
-                <div style="font-size:0.7em; color:#848e9c; margin-bottom:8px; font-weight:bold;">ПОСЛЕДНИЕ ИГРЫ</div>
+                <div style="font-size:0.7em; color:#848e9c; margin-bottom:8px; font-weight:bold;">ПОСЛЕДНИЕ МАТЧИ</div>
                 <div id="prof-recent-games" style="display:flex; flex-direction:column; gap:5px;"></div>
             </div>
         </div>
