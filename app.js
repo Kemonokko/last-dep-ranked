@@ -218,8 +218,13 @@ window.handleAddMatch = handleAddMatch;
 document.getElementById('close-profile').onclick = () => { document.getElementById('profile-modal').style.display = 'none'; };
 
 async function loadAllPlayersForSearch() {
-  const { data: searchPlayers, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-  if (!error && searchPlayers) window.allPlayers = searchPlayers;
+  if (window.allPlayers && window.allPlayers.length > 0) return;
+  try {
+    const response = await fetch('/api/get-profiles');
+    if (response.ok) window.allPlayers = await response.json();
+  } catch (err) {
+    console.error("Ошибка предзагрузки для поиска:", err);
+  }
 }
 
 window.filterPlayersForLogin = () => {
