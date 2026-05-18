@@ -11,39 +11,43 @@
     
     <div class="app-layout">
         
-        <div id="admin-panel" style="display:none;">
-            <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔ ЗАПИСАТЬ МАТЧ</h2>
-            <input type="date" id="match-date" class="admin-input">
-            <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
-            <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
-            <datalist id="players-list"></datalist>
-            <select id="score-select" class="admin-input" onchange="window.updateMatchPreview ? window.updateMatchPreview() : null">
-                <option value="3:0">Счёт 3:0</option>
-                <option value="3:1">Счёт 3:1</option>
-                <option value="3:2">Счёт 3:2</option>
-            </select>
-            <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
-            <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ МАТЧ</button>
-        </div>
-
-        <div class="container">
-            <button id="admin-btn" onclick="document.getElementById('admin-panel').style.display = document.getElementById('admin-panel').style.display === 'none' ? 'block' : 'none'"
-                style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:5px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold; width: 100%;">
+        <div class="left-sidebar">
+            <button id="admin-btn" onclick="const panel = document.getElementById('admin-panel'); panel.style.display = panel.style.display === 'none' ? 'block' : 'none'"
+                style="display:block; background:none; border:1px solid var(--gold); color:var(--gold); padding:10px 15px; border-radius:10px; cursor:pointer; margin-bottom:15px; font-weight:bold; width: 100%;">
                 ⚙ АДМИН ПАНЕЛЬ
             </button>
 
+            <div id="admin-panel" style="display:none; width: 100%;">
+                <h2 style="color: var(--gold); text-align: center; margin-top: 0; font-size: 1.2em;">⚔ ЗАПИСАТЬ МАТЧ</h2>
+                <input type="date" id="match-date" class="admin-input">
+                <input type="text" id="win-input" class="admin-input" list="players-list" placeholder="Ник победителя" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
+                <input type="text" id="loss-input" class="admin-input" list="players-list" placeholder="Ник проигравшего" oninput="window.updateMatchPreview ? window.updateMatchPreview() : null">
+                <datalist id="players-list"></datalist>
+                <select id="score-select" class="admin-input" onchange="window.updateMatchPreview ? window.updateMatchPreview() : null">
+                    <option value="3:0">Счёт 3:0</option>
+                    <option value="3:1">Счёт 3:1</option>
+                    <option value="3:2">Счёт 3:2</option>
+                </select>
+                <div id="match-preview" style="color:var(--gold); font-size:0.85em; text-align:center; margin-bottom:10px; display:none;"></div>
+                <button class="admin-btn-submit" onclick="typeof handleAddMatch !== 'undefined' ? handleAddMatch() : null">ЗАПИСАТЬ МАТЧ</button>
+            </div>
+        </div>
+
+        <div class="container">
             <div class="nav-btns">
                 <button onclick="window.showRating ? window.showRating() : null" id="btn-rating" class="nav-btn active">🏆 РЕЙТИНГ</button>
                 <button onclick="window.showHistory ? window.showHistory() : null" id="btn-history" class="nav-btn">📜 ИСТОРИЯ</button>
-                <button onclick="window.showMyProfile ? window.showMyProfile() : null" id="btn-profile" class="nav-btn">👤 ПРОФИЛЬ</button>
+                <button onclick="const p = document.querySelector('.right-sidebar'); p.classList.toggle('mobile-show')" id="btn-profile" class="nav-btn mobile-only-btn">👤 ПРОФИЛЬ</button>
             </div>
 
-            <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.handleSearch ? window.handleSearch() : null">
+            <input type="text" id="search" placeholder="Поиск игрока..." oninput="window.handleGlobalSearch ? window.handleGlobalSearch() : (window.handleSearch ? window.handleSearch() : null)">
 
             <div id="rating-list">Загрузка рейтинга...</div>
             <div id="history-list" style="display: none;">Загрузка истории...</div>
+        </div>
 
-            <div id="my-profile-section" style="display:none; text-align:center; margin-top:20px;">
+        <div class="right-sidebar">
+            <div id="my-profile-section" style="text-align:center; width: 100%;">
                 <div id="auth-ui">
                     <div id="login-tip" style="background:var(--card); border:2px solid var(--border); border-radius:20px; padding:30px; display:inline-block; width:100%; box-sizing:border-box;">
                         <h2 style="color:var(--gold); margin-top:0;">Вход в аккаунт</h2>
