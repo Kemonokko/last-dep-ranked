@@ -7,22 +7,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { username } = req.query
-
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' })
-  }
-
-  const { data, error } = await supabase
+  const { data: matches, error } = await supabase
     .from('match_history')
     .select('*')
-    .or(`win.eq."${username}",loss.eq."${username}"`)
     .order('date', { ascending: false })
-    .limit(3)
+    .limit(50)
 
   if (error) {
     return res.status(500).json({ error: error.message })
   }
 
-  return res.status(200).json(data)
+  return res.status(200).json(matches)
 }
