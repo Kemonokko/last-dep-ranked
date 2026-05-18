@@ -113,3 +113,39 @@
         display: none;
     }
 }
+.app-layout {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+#admin-panel {
+    position: absolute;
+    left: 20px;
+    top: 0;
+    width: 300px;
+    background: var(--card);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+@media (max-width: 1100px) {
+    .app-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+    #admin-panel {
+        position: relative;
+        left: 0;
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+}
