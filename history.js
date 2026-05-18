@@ -15,15 +15,14 @@ export async function loadHistory() {
         });
     }
 
-const { data: matches, error } = await supabase
-. from('match_history')
-. select('*')
-. order('date', { ascending: false })
-. limit( 50);
-
-if ( error) {
-container. innerHTML = `<div style="color:red">Ошибка истории: ${ error. message}</div>`;
-return;
+let matches;
+try {
+  const response = await fetch('/api/match-history');
+  if (!response.ok) throw new Error('Ошибка сервера');
+  matches = await response.json();
+} catch (err) {
+  container.innerHTML = `<div style="color:red">Ошибка истории: ${err.message}</div>`;
+  return;
 }
     
 container.innerHTML = matches.map(m => {
