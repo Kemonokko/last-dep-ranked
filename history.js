@@ -15,16 +15,17 @@ export async function loadHistory() {
         });
     }
 
-    const { data: matches, error } = await supabase
-        .from('match_history')
-        .select('*')
-        .order('date', { ascending: false })
-        .limit(50);
+const { data: matches, error } = await supabase
+. from('match_history')
+. select('*')
+. order('date', { ascending: false })
+. limit( 50);
 
-    if (error) {
-        container.innerHTML = `<div style="color:red">Ошибка истории: ${error.message}</div>`;
-        return;
-    }
+if ( error) {
+container. innerHTML = `<div style="color:red">Ошибка истории: ${ error. message}</div>`;
+return;
+}
+    
 container.innerHTML = matches.map(m => {
     const d = new Date(m.date);
     const dateStr = `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getFullYear()).slice(-2)}`;
