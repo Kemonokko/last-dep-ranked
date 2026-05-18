@@ -6,26 +6,26 @@ module.exports = async function handler(req, res) {
   }
 
   const { username } = req.query;
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
-  }
 
   try {
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
-    const { data, error } = await supabase
-      .from('match_history')
-      .select('*')
-      .or(`win.eq."${username}",loss.eq."${username}"`)
-      .order('date', { ascending: false })
-      .limit(3);
+    let query = supabase.from('match_history').select('*').order('date', { ascending: false });
+
+    if (username && username !== "Загрузка..." && username.trim() !== "") {
+      query = query.or(`win.eq."${username}",loss.eq."${username}"`).limit(3);
+    } else {
+      query = query.limit(50);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
-      return res.status(500).json({ error: error.message, location: "Supabase history error" });
+      return res.status(500).json({ error: error.message });
     }
 
     return res.status(200).json(data);
   } catch (err) {
-    return res.status(500).json({ error: err.message, location: "Catch backend history error" });
+    return res.status(500).json({ error: err.message });
   }
 };
