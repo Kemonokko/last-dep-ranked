@@ -105,12 +105,12 @@ window.openProfile = async (nick) => {
     }
   }
 
-  supabase.from('match_history')
-    .select('*')
-    .or(`win.eq.\"${nick}\",loss.eq.\"${nick}\"`)
-    .order('date', { ascending: false })
-    .limit(3)
-    .then(({ data: matches }) => {
+  fetch(`/api/match-history?username=${encodeURIComponent(nick)}`)
+    .then(response => {
+      if (!response.ok) throw new Error('Ошибка сервера');
+      return response.json();
+    })
+    .then((matches) => {
       if (gamesContainer) {
         gamesContainer.innerHTML = matches && matches.length > 0 ? matches.map(m => {
           const isWin = m.win === nick;
@@ -138,7 +138,7 @@ window.openProfile = async (nick) => {
       }
     })
     .catch((err) => {
-      console.error("Ошибка загрузки истории:", err);
+      console.error("Ошибка загрузки истории через Vercel API:", err);
       if (gamesContainer) {
         gamesContainer.innerHTML = '<div style="color:#444; font-size:0.8em; text-align:center; padding:10px;">Матчей еще не было</div>';
       }
