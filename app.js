@@ -74,7 +74,7 @@ window.openProfile = async (nick) => {
     gamesContainer.innerHTML = '<div style="color:#666; font-size:0.8em; text-align:center; padding:10px;">Загрузка игр...</div>';
   }
 
-  const { data: p } = await supabase.from('profiles').select('*').eq('nickname', nick).single();
+const p = window.allPlayers.find(player => player.nickname === nick);
   if (!p) return;
 
   const globalPos = window.allPlayers.findIndex(player => player.nickname === p.nickname) + 1;
