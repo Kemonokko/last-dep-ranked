@@ -331,6 +331,20 @@ window.handleSearch = () => {
   if (!val) return renderPlayers(window.allPlayers);
   renderPlayers(window.allPlayers.filter(p => p.nickname.toLowerCase().includes(val)));
 };
+window.handleGlobalSearch = () => {
+  const query = document.getElementById('search').value.toLowerCase().trim();
+  const isHistoryOpen = document.getElementById('history-list').style.display === 'block';
+
+  if (isHistoryOpen) {
+    const items = document.querySelectorAll('#history-list .history-item');
+    items.forEach(item => {
+      const text = item.innerText.toLowerCase();
+      item.style.display = text.includes(query) ? 'flex' : 'none';
+    });
+  } else {
+    if (window.handleSearch) window.handleSearch();
+  }
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadRating();
