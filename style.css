@@ -73,3 +73,43 @@
     
     .elo-val { color: var(--gold); font-weight: 900; font-size: 1.25em; line-height: 1; }
     .wr-val { font-size: 0.8em; color: #848e9c; font-weight: bold; margin-top: 4px; }
+.main-layout {
+    display: flex;
+    gap: 25px;
+    width: 98%;
+    max-width: 1400px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
+.left-column {
+    flex: 1.2;
+    min-width: 320px;
+}
+
+.center-column {
+    flex: 1;
+    min-width: 320px;
+    max-width: 480px;
+}
+
+.right-column {
+    flex: 1.1;
+    min-width: 320px;
+    max-width: 440px;
+}
+
+@media (max-width: 1024px) {
+    .main-layout {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .left-column, .center-column, .right-column {
+        width: 100%;
+        max-width: 500px;
+    }
+    .right-column {
+        display: none;
+    }
+}
