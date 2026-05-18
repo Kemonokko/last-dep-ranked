@@ -11,26 +11,29 @@ async function loadRating() {
   if (isRatingLoading) return;
   isRatingLoading = true;
 
-  const { data: players, error } = await supabase.from('profiles').select('*').order('elo', { ascending: false });
-  if (error) {
-    console.error("Ошибка загрузки профилей:", error);
+  try {
+    const response = await fetch('/api/get-profiles');
+    if (!response.ok) throw new Error('Ошибка сервера при загрузке профилей');
+    
+    const players = await response.json();
+
+    window.allPlayers = players || [];
+    window.roleCache = {};
+    window.allPlayers.forEach(p => {
+      window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
+    });
+
+    renderPlayers(window.allPlayers);
+
+    if (window.showRating) {
+      const ratingList = document.getElementById('rating-list');
+      if (ratingList) ratingList.style.display = 'block';
+    }
+  } catch (error) {
+    console.error("Ошибка загрузки профилей через Vercel API:", error);
+  } finally {
     isRatingLoading = false;
-    return;
   }
-
-  window.allPlayers = players || [];
-  window.roleCache = {};
-  window.allPlayers.forEach(p => {
-    window.roleCache[p.nickname] = (p.role || 'Player').toLowerCase().trim();
-  });
-
-  renderPlayers(window.allPlayers);
-
-  if (window.showRating) {
-    const ratingList = document.getElementById('rating-list');
-    if (ratingList) ratingList.style.display = 'block';
-  }
-  isRatingLoading = false;
 }
 
 function renderPlayers(list) {
