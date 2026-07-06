@@ -62,7 +62,7 @@ window.loginOrCreateProfile = async function() {
 
 function renderMyProfile() {
     const container = document.getElementById('profile-container');
-    const isAdmin = currentUser.username === 'Admin_Semen';
+    const isAdmin = currentUser.username === 'Кемон';
 
     let adminPanelHtml = '';
     if (isAdmin) {
@@ -132,12 +132,11 @@ window.createNewPlayerByAdmin = async function() {
         return alert('Такой игрок уже есть в базе данных!');
     }
 
-    // Заносим игрока со стандартными статами
     await setDoc(userDocRef, {
         username: username,
         avatar_url: 'https://placehold.co',
-        bio: 'Игрок лиги Tactile Wars',
-        elo: 1000,
+        bio: '...',
+        elo: 1500,
         rounds_won: 0,
         rounds_lost: 0,
         maxRank: 'C',
@@ -146,7 +145,7 @@ window.createNewPlayerByAdmin = async function() {
 
     alert(`Игрок ${username} успешно добавлен в базу!`);
     document.getElementById('new-player-username').value = '';
-    loadRating(); // Обновляем таблицу рейтинга на сайте
+    loadRating();
 }
 
 window.addMatchResult = async function() {
