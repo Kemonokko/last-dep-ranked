@@ -1,6 +1,6 @@
-import { initializeApp } from "https://unpkg.com";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, addDoc, query, orderBy } from "https://unpkg.com";
 import { getRankByPercentile } from './logic.js';
+
+const firebase = window.firebase;
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-3WJn73F3kdc8nLFjHPiBTQqKTXXXi_4",
@@ -12,8 +12,8 @@ const firebaseConfig = {
   measurementId: "G-CV4B3WCJVP"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 let currentUser = null;
 let allPlayers = [];
@@ -37,10 +37,10 @@ window.loginOrCreateProfile = async function() {
     const username = document.getElementById('my-username-input').value.trim();
     if (!username) return alert('Введите никнейм!');
 
-    const userDocRef = doc(db, "profiles", username);
-    const userDoc = await getDoc(userDocRef);
+    const userDocRef = db.collection("profiles").doc(username);
+    const userDoc = await userDocRef.get();
 
-    if (userDoc.exists()) {
+    if (userDoc.exists) {
         currentUser = userDoc.data();
     } else {
         currentUser = {
@@ -53,7 +53,7 @@ window.loginOrCreateProfile = async function() {
             maxRank: 'C',
             last_bonus_win: false
         };
-        await setDoc(userDocRef, currentUser);
+        await userDocRef.set(currentUser);
     }
     
     localStorage.setItem('tw_username', username);
