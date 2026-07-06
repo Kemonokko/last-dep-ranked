@@ -59,8 +59,21 @@
             </div>
         </div>
     </div>
-    
-    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.comfirebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://gstatic.comfirebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyA-3WJn73F3kdc8nLFjHPiBTQqKTXXXi_4",
+          authDomain: "://firebaseapp.com",
+          projectId: "tactile-wars",
+          storageBucket: "tactile-wars.firebasestorage.app",
+          messagingSenderId: "352492746252",
+          appId: "1:352492746252:web:a075c2d85ff5d2e97da029",
+          measurementId: "G-CV4B3WCJVP"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.db = firebase.firestore();
+    </script>
     
     <script type="module" src="script.js"></script>
     <script type="module" src="admin.js"></script>
