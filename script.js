@@ -1,5 +1,5 @@
-import { initializeApp } from "https://gstatic.com";
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, addDoc, query, orderBy, limit, where } from "https://gstatic.com";
+import { initializeApp } from "https://unpkg.com";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, addDoc, query, orderBy } from "https://unpkg.com";
 import { getRankByPercentile } from './logic.js';
 
 const firebaseConfig = {
