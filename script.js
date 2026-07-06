@@ -89,17 +89,19 @@ function renderMyProfile() {
     }
 
     container.innerHTML = `
-        <div class="profile-info-block">
-            <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
-            <h2 class="${nameClass}">${currentUser.username}</h2>
-            ${roleBadge}
-            <p style="margin-top:10px;">Текущее Эло: <strong>${currentUser.elo}</strong></p>
-            <p>Текущий ранг: <strong class="rank-${currentUser.currentRank || 'C'}">${currentUser.currentRank || 'C'}</strong></p>
-            <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank || 'C'}">${currentUser.maxRank || 'C'}</strong></p>
-            <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
-            <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
-            <button onclick="saveProfileChanges()">Сохранить профиль</button>
-            ${adminPanelHtml}
+        <div class="profile-card">
+            <div class="profile-info-block">
+                <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
+                <h2 class="${nameClass}">${currentUser.username}</h2>
+                ${roleBadge}
+                <p style="margin-top:10px;">Текущее Эло: <strong>${currentUser.elo}</strong></p>
+                <p>Текущий ранг: <strong class="rank-${currentUser.currentRank || 'C'}">${currentUser.currentRank || 'C'}</strong></p>
+                <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank || 'C'}">${currentUser.maxRank || 'C'}</strong></p>
+                <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
+                <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
+                <button onclick="saveProfileChanges()">Сохранить профиль</button>
+                ${adminPanelHtml}
+            </div>
         </div>
     `;
 }
