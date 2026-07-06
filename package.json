@@ -1,9 +1,0 @@
-{
-  "name": "last-dep-ranked",
-  "version": "1.0.0",
-  "description": "Last Dep Ranked game proxy",
-  "main": "app.js",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.43.4"
-  }
-}
