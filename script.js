@@ -247,3 +247,82 @@ window.openPlayerModal = async function(username) {
         </div>
         <hr style="border-color:#29292e; margin:10px 0;">
         <p>Текущее Эло: <strong>${player.elo}</strong></p>
+        <p>Максимальный ранг: <span class="rank-${player.maxRank || 'C'}"><strong>${player.maxRank || 'C'}</strong></span></p>
+        <p>Победные раунды: <span style="color:#04d361">${player.rounds_won || 0}</span> / Проигранные: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
+        <p>Винрейт раундов: <strong>${winRate}%</strong></p>
+        <hr style="border-color:#29292e; margin:10px 0;">
+        ${matchesHtml}
+    `;
+}
+
+window.addMatchResult = async function() {
+    const winner = document.getElementById('match-winner').value.trim();
+    const loser = document.getElementById('match-loser').value.trim();
+    const score = document.getElementById('match-score').value;
+
+    if (!winner || !loser) return alert('Заполните ники!');
+    if (winner === loser) return alert('Игрок не может играть сам с собой!');
+
+    const winnerRef = doc(db, "profiles", winner);
+    const loserRef = doc(db, "profiles", loser);
+    const winnerSnap = await getDoc(winnerRef);
+    const loserSnap = await getDoc(loserRef);
+
+    if (!winnerSnap.exists() || !loserSnap.exists()) {
+        return alert('Игрок не найден в базе данных!');
+    }
+
+    const winnerData = winnerSnap.data();
+    const loserData = loserSnap.data();
+
+    let eloChange = 10; let wRounds = 4; let lRounds = 0;
+
+    if (score === "4/0") { eloChange = 40; wRounds = 4; lRounds = 0; }
+    else if (score === "4/1") { eloChange = 30; wRounds = 4; lRounds = 1; }
+    else if (score === "4/2") { eloChange = 20; wRounds = 4; lRounds = 2; }
+    else if (score === "4/3") { eloChange = 10; wRounds = 4; lRounds = 3; }
+
+    await updateDoc(winnerRef, {
+        elo: (winnerData.elo || 1000) + eloChange,
+        rounds_won: (winnerData.rounds_won || 0) + wRounds,
+        rounds_lost: (winnerData.rounds_lost || 0) + lRounds,
+        last_bonus_win: true
+    });
+
+    let newLoserElo = (loserData.elo || 1000) - eloChange;
+    if (newLoserElo < 0) newLoserElo = 0;
+
+    await updateDoc(loserRef, {
+        elo: newLoserElo,
+        rounds_won: (loserData.rounds_won || 0) + lRounds,
+        rounds_lost: (loserData.rounds_lost || 0) + wRounds
+    });
+
+    await addDoc(collection(db, "matches"), {
+        winner_username: winner,
+        loser_username: loser,
+        score: score,
+        elo_change: eloChange,
+        created_at: new Date()
+    });
+
+    alert('Матч внесен!');
+    document.getElementById('match-winner').value = '';
+    document.getElementById('match-loser').value = '';
+    loadRating();
+}
+
+window.closeModal = function(e) {
+    if (e.target.id === 'player-modal') {
+        document.getElementById('player-modal').style.display = 'none';
+    }
+}
+
+window.onload = function() {
+    const savedUser = localStorage.getItem('tw_username');
+    if (savedUser) {
+        document.getElementById('my-username-input').value = savedUser;
+        loginOrCreateProfile();
+    }
+    loadRating();
+};
