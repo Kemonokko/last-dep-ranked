@@ -107,20 +107,6 @@ function renderMyProfile() {
     `;
 }
 
-    container.innerHTML = `
-        <div class="profile-info-block">
-            <img src="${currentUser.avatar_url}" id="my-avatar" style="width:100px; border-radius:50%;">
-            <h2 class="rank-${currentUser.currentRank || 'C'}">${currentUser.username} ${isAdmin ? '👑' : ''}</h2>
-            <p>Текущее Эло: <strong>${currentUser.elo}</strong></p>
-            <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank}">${currentUser.maxRank}</strong></p>
-            <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url}" placeholder="Ссылка на аватарку">
-            <textarea id="edit-bio" placeholder="О себе">${currentUser.bio}</textarea>
-            <button onclick="saveProfileChanges()">Сохранить профиль</button>
-            ${adminPanelHtml}
-        </div>
-    `;
-}
-
 window.createNewPlayerByAdmin = async function() {
     const username = document.getElementById('new-player-username').value.trim();
     if (!username) return alert('Введите никнейм игрока!');
