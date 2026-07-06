@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tactile Wars All Stars - Рейтинг</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">TW: All Stars</div>
+        <nav>
+            <button class="nav-btn active" onclick="switchTab('rating')">Рейтинг</button>
+            <button class="nav-btn" onclick="switchTab('history')">История боёв</button>
+            <button class="nav-btn" onclick="switchTab('profile')">Мой профиль</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="tab-rating" class="tab-content active">
+            <div class="search-box">
+                <input type="text" id="search-rating" placeholder="Поиск игрока в рейтинге..." oninput="filterRating()">
+            </div>
+            <table class="rating-table">
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Игрок</th>
+                        <th>Эло</th>
+                    </tr>
+                </thead>
+                <tbody id="rating-list">
+                </tbody>
+            </table>
+        </section>
+
+        <section id="tab-history" class="tab-content">
+            <div class="search-box">
+                <input type="text" id="search-history" placeholder="Поиск матчей игрока..." oninput="filterHistory()">
+            </div>
+            <div id="history-list" class="history-container">
+            </div>
+        </section>
+
+        <section id="tab-profile" class="tab-content">
+            <div id="profile-container" class="profile-card">
+                <h3>Вход в профиль</h3>
+                <input type="text" id="my-username-input" placeholder="Введите ваш Никнейм">
+                <button onclick="loginOrCreateProfile()">Войти / Создать</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="player-modal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="document.getElementById('player-modal').style.display='none'">&times;</span>
+            <div id="modal-user-data">
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
