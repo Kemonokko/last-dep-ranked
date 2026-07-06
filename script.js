@@ -162,9 +162,15 @@ function displayRating(playersList) {
     
     playersList.forEach((player, index) => {
         const tr = document.createElement('tr');
+        
+        let nameClass = `rank-${player.currentRank || 'C'}`;
+        if (player.role === 'founder') nameClass = 'role-founder';
+        else if (player.role === 'admin') nameClass = 'role-admin';
+        else if (player.role === 'bloodline') nameClass = 'role-bloodline';
+
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td class="clickable-name rank-${player.currentRank}" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
+            <td class="clickable-name ${nameClass}" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
             <td>${player.elo}</td>
         `;
         tbody.appendChild(tr);
