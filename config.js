@@ -1,7 +1,0 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/+esm'
-
-const supabaseUrl = 'https://lscxyfxnbuwxbocwsvfo.supabase.co'
-
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzY3h5ZnhuYnV3eGJvY3dzdmZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5ODQ3NjMsImV4cCI6MjA5MDU2MDc2M30.5TOcncAoviTRRCvIhmu0607AIZFOzkMxPVvAeH26YDQ'
-
-export const supabase = createClient(supabaseUrl, supabaseKey)
