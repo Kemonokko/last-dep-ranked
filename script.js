@@ -236,11 +236,17 @@ window.filterRating = function() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    const savedUser = localStorage.getItem('tw_username');
-    const input = document.getElementById('my-username-input');
-    if (savedUser && input) {
-        input.value = savedUser;
-        window.loginOrCreateProfile();
-    }
-    loadRating();
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user && user.displayName) {
+            const username = user.displayName;
+            const userDoc = await db.collection("profiles").doc(username).get();
+            if (userDoc.exists) {
+                currentUser = userDoc.data();
+                const authBlock = document.getElementById('auth-forms');
+                if (authBlock) authBlock.style.display = 'none';
+                renderMyProfile();
+            }
+        }
+        loadRating();
+    });
 });
