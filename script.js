@@ -19,31 +19,79 @@ window.switchTab = function(tabName) {
     if (tabName === 'history' && window.loadHistory) window.loadHistory();
 }
 
-window.loginOrCreateProfile = async function() {
-    const username = document.getElementById('my-username-input').value.trim();
-    if (!username) return alert('Введите никнейм!');
+window.registerWithEmail = async function() {
+    const username = document.getElementById('reg-username').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value.trim();
 
-    const userDocRef = db.collection("profiles").doc(username);
-    const userDoc = await userDocRef.get();
+    if (!username || !email || !password) return alert('Заполните все поля для регистрации!');
+    if (password.length < 6) return alert('Пароль должен быть не менее 6 символов!');
 
-    if (userDoc.exists) {
-        currentUser = userDoc.data();
-    } else {
+    try {
+        const userDocRef = db.collection("profiles").doc(username);
+        const userDoc = await userDocRef.get();
+        if (userDoc.exists) return alert('Этот никнейм уже занят другим игроком!');
+
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        
         currentUser = {
             username: username,
             avatar_url: 'https://placehold.co',
-            bio: 'Игрок лиги Tactile Wars',
+            bio: '...',
             elo: 1500,
             rounds_won: 0,
             rounds_lost: 0,
             maxRank: 'C',
-            last_bonus_win: false
+            currentRank: 'C',
+            role: 'player'
         };
+        
         await userDocRef.set(currentUser);
+        
+        await userCredential.user.updateProfile({ displayName: username });
+
+        localStorage.setItem('tw_username', username);
+        alert(`Игрок ${username} успешно зарегистрирован!`);
+        
+        document.getElementById('auth-forms').style.display = 'none';
+        renderMyProfile();
+    } catch (error) {
+        console.error("Ошибка регистрации:", error);
+        alert("Ошибка при регистрации: " + error.message);
     }
-    
-    localStorage.setItem('tw_username', username);
-    renderMyProfile();
+}
+
+window.loginWithEmail = async function() {
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value.trim();
+
+    if (!email || !password) return alert('Заполните Email и Пароль для входа!');
+
+    try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const username = userCredential.user.displayName;
+
+        if (!username) {
+            return alert('К этой почте не привязан игровой никнейм!');
+        }
+
+        const userDoc = await db.collection("profiles").doc(username).get();
+        
+        if (userDoc.exists) {
+            currentUser = userDoc.data();
+            localStorage.setItem('tw_username', username);
+            
+            const authBlock = document.getElementById('auth-forms');
+            if (authBlock) authBlock.style.display = 'none';
+            
+            renderMyProfile();
+        } else {
+            alert('Профиль игрока не найден в базе данных!');
+        }
+    } catch (error) {
+        console.error("Ошибка входа:", error);
+        alert("Неверный Email или Пароль!");
+    }
 }
 
 function renderMyProfile() {
