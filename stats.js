@@ -1,17 +1,21 @@
 import { getRankByPercentile } from './logic.js';
-const db = window.firebase.firestore();
-const firebase = window.firebase;
 
-async function loadHistory() {
-    const q = query(collection(db, "matches"), orderBy("created_at", "desc"));
-    const querySnapshot = await getDocs(q);
-    allMatches = [];
-    querySnapshot.forEach(doc => allMatches.push(doc.data()));
-    displayHistory(allMatches);
+const db = window.db;
+
+window.loadHistory = async function() {
+    try {
+        const querySnapshot = await db.collection("matches").orderBy("created_at", "desc").get();
+        window.allMatches = [];
+        querySnapshot.forEach(doc => window.allMatches.push(doc.data()));
+        window.displayHistory(window.allMatches);
+    } catch (error) {
+        console.error("Ошибка загрузки истории:", error);
+    }
 }
 
-function displayHistory(matchesList) {
+window.displayHistory = function(matchesList) {
     const container = document.getElementById('history-list');
+    if (!container) return;
     container.innerHTML = '';
 
     matchesList.forEach(m => {
@@ -30,64 +34,78 @@ function displayHistory(matchesList) {
 
 window.filterHistory = function() {
     const val = document.getElementById('search-history').value.toLowerCase();
-    const filtered = allMatches.filter(m => 
+    if (!window.allMatches) return;
+    const filtered = window.allMatches.filter(m => 
         m.winner_username.toLowerCase().includes(val) || 
         m.loser_username.toLowerCase().includes(val)
     );
-    displayHistory(filtered);
+    window.displayHistory(filtered);
 }
 
 window.openPlayerModal = async function(username) {
     const modal = document.getElementById('player-modal');
     const modalData = document.getElementById('modal-user-data');
+    if (!modal || !modalData) return;
+    
     modal.style.display = 'flex';
     modalData.innerHTML = '<p>Загрузка статистики...</p>';
 
-    const playerDoc = await getDoc(doc(db, "profiles", username));
-    if (!playerDoc.exists()) return;
-    const player = playerDoc.data();
-
-    const totalRounds = (player.rounds_won || 0) + (player.rounds_lost || 0);
-    const winRate = totalRounds > 0 ? ((player.rounds_won / totalRounds) * 100).toFixed(1) : 0;
-
-    const q = query(collection(db, "matches"), orderBy("created_at", "desc"));
-    const snapshot = await getDocs(q);
-    let playerMatches = [];
-    snapshot.forEach(d => {
-        const m = d.data();
-        if(m.winner_username === username || m.loser_username === username) {
-            playerMatches.push(m);
+    try {
+        const playerDoc = await db.collection("profiles").doc(username).get();
+        if (!playerDoc.exists) {
+            modalData.innerHTML = '<p>Игрок не найден в базе.</p>';
+            return;
         }
-    });
-    let lastThree = playerMatches.slice(0, 3);
+        const player = playerDoc.data();
 
-    const foundInGlobal = allPlayers.find(p => p.username === username);
-    const currentRank = foundInGlobal ? foundInGlobal.currentRank : 'C';
+        const totalRounds = (player.rounds_won || 0) + (player.rounds_lost || 0);
+        const winRate = totalRounds > 0 ? ((player.rounds_won / totalRounds) * 100).toFixed(1) : 0;
 
-    let matchesHtml = '<h4>Последние 3 боя:</h4>';
-    if(lastThree.length === 0) matchesHtml += '<p>Матчей ещё не было</p>';
-    lastThree.forEach(m => {
-        matchesHtml += `
-            <div style="font-size:0.9rem; margin-top:5px;">
-                <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')">${m.winner_username}</span> 
-                ${m.score} 
-                <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')">${m.loser_username}</span>
+        let playerMatches = [];
+        if (window.allMatches && window.allMatches.length > 0) {
+            playerMatches = window.allMatches.filter(m => m.winner_username === username || m.loser_username === username);
+        } else {
+            const snapshot = await db.collection("matches").orderBy("created_at", "desc").get();
+            snapshot.forEach(d => {
+                const m = d.data();
+                if(m.winner_username === username || m.loser_username === username) {
+                    playerMatches.push(m);
+                }
+            });
+        }
+        let lastThree = playerMatches.slice(0, 3);
+
+        const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
+        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.maxRank || 'C');
+
+        let matchesHtml = '<h4>Последние 3 боя:</h4>';
+        if(lastThree.length === 0) matchesHtml += '<p>Матчей ещё не было</p>';
+        lastThree.forEach(m => {
+            matchesHtml += `
+                <div style="font-size:0.9rem; margin-top:5px;">
+                    <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')">${m.winner_username}</span> 
+                    ${m.score} 
+                    <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')">${m.loser_username}</span>
+                </div>
+            `;
+        });
+
+        modalData.innerHTML = `
+            <div style="text-align:center; margin-bottom:15px;">
+                <img src="${player.avatar_url || 'https://placehold.co'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
+                <h3 class="rank-${currentRank}" style="margin-top:10px;">${player.username}</h3>
+                <p style="font-size:0.9rem; color:#a8a8b3; font-style:italic;">"${player.bio || 'Всем привет!'}"</p>
             </div>
+            <hr style="border-color:#29292e; margin:10px 0;">
+            <p>Текущее Эло: <strong>${player.elo || 1500}</strong></p>
+            <p>Максимальный ранг: <span class="rank-${player.maxRank || 'C'}"><strong>${player.maxRank || 'C'}</strong></span></p>
+            <p>Победные раунды: <span style="color:#04d361">${player.rounds_won || 0}</span> / Проигранные: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
+            <p>Винрейт раундов: <strong>${winRate}%</strong></p>
+            <hr style="border-color:#29292e; margin:10px 0;">
+            ${matchesHtml}
         `;
-    });
-
-    modalData.innerHTML = `
-        <div style="text-align:center; margin-bottom:15px;">
-            <img src="${player.avatar_url}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
-            <h3 class="rank-${currentRank}" style="margin-top:10px;">${player.username}</h3>
-            <p style="font-size:0.9rem; color:#a8a8b3; font-style:italic;">"${player.bio}"</p>
-        </div>
-        <hr style="border-color:#29292e; margin:10px 0;">
-        <p>Текущее Эло: <strong>${player.elo}</strong></p>
-        <p>Максимальный ранг: <span class="rank-${player.maxRank || 'C'}"><strong>${player.maxRank || 'C'}</strong></span></p>
-        <p>Победные раунды: <span style="color:#04d361">${player.rounds_won || 0}</span> / Проигранные: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
-        <p>Винрейт раундов: <strong>${winRate}%</strong></p>
-        <hr style="border-color:#29292e; margin:10px 0;">
-        ${matchesHtml}
-    `;
+    } catch (error) {
+        console.error("Ошибка загрузки профиля в модалке:", error);
+        modalData.innerHTML = '<p>Ошибка загрузки данных.</p>';
+    }
 }
