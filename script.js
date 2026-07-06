@@ -1,4 +1,5 @@
 import { getRankByPercentile } from './logic.js';
+import { loadHistory, openPlayerModal, filterHistory } from './stats.js';
 
 const firebase = window.firebase;
 
