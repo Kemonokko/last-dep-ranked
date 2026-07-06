@@ -141,3 +141,16 @@ main {
 .profile-card button {
     padding: 10px 20px; background: #04d361; border: none; color: #000; font-weight: bold; border-radius: 4px; cursor: pointer;
 }
+.role-founder {
+    color: #a855f7 !important;
+    text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+    font-weight: bold;
+}
+.role-admin {
+    color: #06b6d4 !important;
+    font-weight: bold;
+}
+.role-bloodline {
+    color: #ef4444 !important;
+    font-weight: bold;
+}
