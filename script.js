@@ -50,22 +50,31 @@ function renderMyProfile() {
     const container = document.getElementById('profile-container');
     if (!container) return;
 
-    const isAdmin = currentUser.username === 'Кемон';
+    const userRole = currentUser.role || 'player'; 
+    const hasAdminAccess = userRole === 'founder' || userRole === 'admin';
+
+    let roleBadge = '';
+    let nameClass = `rank-${currentUser.currentRank || 'C'}`;
+
+    if (userRole === 'founder') {
+        roleBadge = '<span style="color:#a855f7; font-size:0.9rem; block; margin-top:5px;">Founder</span>';
+        nameClass = 'role-founder';
+    } else if (userRole === 'admin') {
+        roleBadge = '<span style="color:#06b6d4; font-size:0.9rem; block; margin-top:5px;">Admin</span>';
+        nameClass = 'role-admin';
+    } else if (userRole === 'bloodline') {
+        roleBadge = '<span style="color:#ef4444; font-size:0.9rem; block; margin-top:5px;">Bloodline</span>';
+        nameClass = 'role-bloodline';
+    }
 
     let adminPanelHtml = '';
-    if (isAdmin) {
+    if (hasAdminAccess) {
         adminPanelHtml = `
             <hr style="border-color:#29292e; margin:20px 0;">
             <h3>Панель администратора</h3>
-            
-            <div style="margin-top:10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
-                <h4>1. Добавить нового игрока</h4>
-                <input type="text" id="new-player-username" placeholder="Никнейм нового игрока">
-                <button onclick="createNewPlayerByAdmin()" style="background:#3498db; color:#fff; width:100%; margin-top:5px;">Создать игрока</button>
-            </div>
 
-            <div style="margin-top:20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
-                <h4>2. Внести результат матча</h4>
+            <div style="margin-top:10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
+                <h4>Внести результат матча</h4>
                 <input type="text" id="match-winner" placeholder="Ник победителя">
                 <input type="text" id="match-loser" placeholder="Ник проигравшего">
                 <select id="match-score" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
@@ -82,8 +91,10 @@ function renderMyProfile() {
     container.innerHTML = `
         <div class="profile-info-block">
             <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
-            <h2 class="rank-${currentUser.currentRank || 'C'}">${currentUser.username} ${isAdmin ? '👑' : ''}</h2>
-            <p>Текущее Эло: <strong>${currentUser.elo}</strong></p>
+            <h2 class="${nameClass}">${currentUser.username}</h2>
+            ${roleBadge}
+            <p style="margin-top:10px;">Текущее Эло: <strong>${currentUser.elo}</strong></p>
+            <p>Текущий ранг: <strong class="rank-${currentUser.currentRank || 'C'}">${currentUser.currentRank || 'C'}</strong></p>
             <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank || 'C'}">${currentUser.maxRank || 'C'}</strong></p>
             <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
             <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
