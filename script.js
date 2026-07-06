@@ -174,6 +174,7 @@ function displayRating(playersList) {
             <td>${index + 1}</td>
             <td class="clickable-name ${nameClass}" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
             <td>${player.elo}</td>
+            <td class="${nameClass}" style="font-weight: bold;">${player.currentRank || 'C'}</td>
         `;
         tbody.appendChild(tr);
     });
