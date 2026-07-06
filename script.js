@@ -69,7 +69,17 @@ function renderMyProfile() {
         adminPanelHtml = `
             <hr style="border-color:#29292e; margin:20px 0;">
             <h3>Панель администратора</h3>
-            <div style="margin-top:10px;">
+            
+            <!-- НОВЫЙ БЛОК: ДОБАВЛЕНИЕ ИГРОКА В БАЗУ -->
+            <div style="margin-top:10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
+                <h4>1. Добавить нового игрока</h4>
+                <input type="text" id="new-player-username" placeholder="Никнейм нового игрока">
+                <button onclick="createNewPlayerByAdmin()" style="background:#3498db; color:#fff; width:100%; margin-top:5px;">Создать игрока</button>
+            </div>
+
+            <!-- БЛОК: ВНЕСЕНИЕ МАТЧЕЙ -->
+            <div style="margin-top:20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
+                <h4>2. Внести результат матча</h4>
                 <input type="text" id="match-winner" placeholder="Ник победителя">
                 <input type="text" id="match-loser" placeholder="Ник проигравшего">
                 <select id="match-score" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
@@ -95,6 +105,105 @@ function renderMyProfile() {
             ${adminPanelHtml}
         </div>
     `;
+}
+
+    container.innerHTML = `
+        <div class="profile-info-block">
+            <img src="${currentUser.avatar_url}" id="my-avatar" style="width:100px; border-radius:50%;">
+            <h2 class="rank-${currentUser.currentRank || 'C'}">${currentUser.username} ${isAdmin ? '👑' : ''}</h2>
+            <p>Текущее Эло: <strong>${currentUser.elo}</strong></p>
+            <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank}">${currentUser.maxRank}</strong></p>
+            <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url}" placeholder="Ссылка на аватарку">
+            <textarea id="edit-bio" placeholder="О себе">${currentUser.bio}</textarea>
+            <button onclick="saveProfileChanges()">Сохранить профиль</button>
+            ${adminPanelHtml}
+        </div>
+    `;
+}
+
+window.createNewPlayerByAdmin = async function() {
+    const username = document.getElementById('new-player-username').value.trim();
+    if (!username) return alert('Введите никнейм игрока!');
+
+    const userDocRef = doc(db, "profiles", username);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+        return alert('Такой игрок уже есть в базе данных!');
+    }
+
+    // Заносим игрока со стандартными статами
+    await setDoc(userDocRef, {
+        username: username,
+        avatar_url: 'https://placehold.co',
+        bio: 'Игрок лиги Tactile Wars',
+        elo: 1000,
+        rounds_won: 0,
+        rounds_lost: 0,
+        maxRank: 'C',
+        last_bonus_win: false
+    });
+
+    alert(`Игрок ${username} успешно добавлен в базу!`);
+    document.getElementById('new-player-username').value = '';
+    loadRating(); // Обновляем таблицу рейтинга на сайте
+}
+
+window.addMatchResult = async function() {
+    const winner = document.getElementById('match-winner').value.trim();
+    const loser = document.getElementById('match-loser').value.trim();
+    const score = document.getElementById('match-score').value;
+
+    if (!winner || !loser) return alert('Заполните ники!');
+    if (winner === loser) return alert('Игрок не может играть сам с собой!');
+
+    const winnerRef = doc(db, "profiles", winner);
+    const loserRef = doc(db, "profiles", loser);
+    const winnerSnap = await getDoc(winnerRef);
+    const loserSnap = await getDoc(loserRef);
+
+    if (!winnerSnap.exists() || !loserSnap.exists()) {
+        return alert('Один из игроков не найден в базе данных! Сначала добавьте его через верхнее поле.');
+    }
+
+    const winnerData = winnerSnap.data();
+    const loserData = loserSnap.data();
+
+    let eloChange = 10; let wRounds = 4; let lRounds = 0;
+
+    if (score === "4/0") { eloChange = 40; wRounds = 4; lRounds = 0; }
+    else if (score === "4/1") { eloChange = 30; wRounds = 4; lRounds = 1; }
+    else if (score === "4/2") { eloChange = 20; wRounds = 4; lRounds = 2; }
+    else if (score === "4/3") { eloChange = 10; wRounds = 4; lRounds = 3; }
+
+    await updateDoc(winnerRef, {
+        elo: (winnerData.elo || 1000) + eloChange,
+        rounds_won: (winnerData.rounds_won || 0) + wRounds,
+        rounds_lost: (winnerData.rounds_lost || 0) + lRounds,
+        last_bonus_win: true
+    });
+
+    let newLoserElo = (loserData.elo || 1000) - eloChange;
+    if (newLoserElo < 0) newLoserElo = 0;
+
+    await updateDoc(loserRef, {
+        elo: newLoserElo,
+        rounds_won: (loserData.rounds_won || 0) + lRounds,
+        rounds_lost: (loserData.rounds_lost || 0) + wRounds
+    });
+
+    await addDoc(collection(db, "matches"), {
+        winner_username: winner,
+        loser_username: loser,
+        score: score,
+        elo_change: eloChange,
+        created_at: new Date()
+    });
+
+    alert('Матч внесен!');
+    document.getElementById('match-winner').value = '';
+    document.getElementById('match-loser').value = '';
+    loadRating();
 }
 
 window.saveProfileChanges = async function() {
