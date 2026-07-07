@@ -130,7 +130,6 @@ function renderMyProfile() {
     const currentRank = foundInGlobal ? foundInGlobal.currentRank : (currentUser.currentRank || 'C');
 
     const currentRankClass = currentRank.replace('+', '-plus');
-    const maxRankClass = maxRank.replace('+', '-plus');
 
     const userRole = currentUser.role || 'player'; 
     const hasAdminAccess = userRole === 'founder' || userRole === 'admin';
