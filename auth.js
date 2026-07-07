@@ -22,7 +22,7 @@ window.loginWithGoogle = async function() {
             if (window.renderMyProfile) window.renderMyProfile();
         } else {
             await firebase.auth().signOut();
-            alert(`Доступ запрещен! Почты ${userEmail} нет в списке участников лиги.`);
+            alert(`Доступ запрещен.`);
         }
     } catch (error) {
         console.error("Ошибка авторизации Google:", error);
