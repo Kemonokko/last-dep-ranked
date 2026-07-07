@@ -76,7 +76,6 @@ window.openPlayerModal = async function(username) {
         let lastThree = playerMatches.slice(0, 3);
 
         const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
-        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.maxRank || 'C');
 
         let matchesHtml = '<h4>Последние 3 боя:</h4>';
         if(lastThree.length === 0) matchesHtml += '<p>Матчей ещё не было</p>';
