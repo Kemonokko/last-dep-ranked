@@ -202,3 +202,30 @@ main {
 .profile-info-block button:hover {
     background: #03b855 !important;
 }
+.rating-table tbody tr td:nth-child(3) {
+    color: #ffd700 !important; 
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+}
+
+.rank-C {
+    color: #00e676 !important; 
+    text-shadow: 0 0 8px rgba(0, 230, 118, 0.2);
+}
+.rank-B, .rank-B-plus {
+    color: #29b6f6 !important; 
+    text-shadow: 0 0 8px rgba(41, 182, 246, 0.2);
+}
+.rank-A, .rank-A-plus {
+    color: #9575cd !important; 
+    text-shadow: 0 0 8px rgba(149, 117, 205, 0.2);
+}
+.rank-S, .rank-S-plus {
+    color: #ffb74d !important; 
+    text-shadow: 0 0 8px rgba(255, 183, 77, 0.2);
+}
+.rank-Дракон {
+    color: #ff5252 !important; 
+    text-shadow: 0 0 12px rgba(255, 82, 82, 0.5);
+    font-weight: 900;
+}
