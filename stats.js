@@ -100,7 +100,9 @@ window.openPlayerModal = async function(username) {
         } else if (playerRole === 'bloodline') {
             roleBadge = ' <span style="color:#ef4444; font-size:0.8rem;">[Bloodline]</span>';
         }
-
+       
+        const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
+        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.currentRank || 'C');
         const currentRankClass = currentRank.replace('+', '-plus');
 
         modalData.innerHTML = `
