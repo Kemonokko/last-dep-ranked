@@ -92,30 +92,30 @@ window.openPlayerModal = async function(username) {
 
         const playerRole = player.role || 'player';
         let roleBadge = '';
-        let nameClass = `rank-${currentRank}`;
+        let nameClass = 'role-player';
 
         if (playerRole === 'founder') {
             roleBadge = ' <span style="color:#a855f7; font-size:0.8rem;">[Founder]</span>';
-            nameClass = 'role-founder';
         } else if (playerRole === 'admin') {
             roleBadge = ' <span style="color:#06b6d4; font-size:0.8rem;">[Admin]</span>';
-            nameClass = 'role-admin';
         } else if (playerRole === 'bloodline') {
             roleBadge = ' <span style="color:#ef4444; font-size:0.8rem;">[Bloodline]</span>';
-            nameClass = 'role-bloodline';
         }
+
+        const currentRankClass = currentRank.replace('+', '-plus');
+        const maxRankClass = (player.maxRank || 'C').replace('+', '-plus');
 
         modalData.innerHTML = `
             <div style="text-align:center; margin-bottom:15px;">
                 <img src="${player.avatar_url || 'https://placehold.co'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
-                <h3 class="${nameClass}" style="margin-top:10px;">${player.username}${roleBadge}</h3>
+                <h3 class="${nameClass}" style="margin-top:10px; color: #ffffff !important;">${player.username}${roleBadge}</h3>
                 <p style="font-size:0.9rem; color:#a8a8b3; font-style:italic;">"${player.bio || 'Всем привет!'}"</p>
             </div>
             <hr style="border-color:#29292e; margin:10px 0;">
-            <p>Текущее Эло: <strong>${player.elo || 1500}</strong></p>
-            <p>Текущий ранг: <span class="rank-${currentRank}"><strong>${currentRank}</strong></span></p>
-            <p>Максимальный ранг: <span class="rank-${player.maxRank || 'C'}"><strong>${player.maxRank || 'C'}</strong></span></p>
-            <p>Победные раунды: <span style="color:#04d361">${player.rounds_won || 0}</span> / Проигранные: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
+            <p>Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${player.elo || 1500}</strong></p>
+            <p>Текущий ранг: <span class="rank-${currentRankClass}"><strong>${currentRank}</strong></span></p>
+            <p>Максимальный ранг: <span class="rank-${maxRankClass}"><strong>${player.maxRank || 'C'}</strong></span></p>
+            <p>Победа: <span style="color:#04d361">${player.rounds_won || 0}</span> / Проигрышь: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
             <p>Винрейт раундов: <strong>${winRate}%</strong></p>
             <hr style="border-color:#29292e; margin:10px 0;">
             ${matchesHtml}
