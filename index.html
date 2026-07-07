@@ -46,9 +46,14 @@
 
         <section id="tab-profile" class="tab-content">
             <div id="profile-container" class="profile-card">
-                <h3>Вход в профиль</h3>
-                <input type="text" id="my-username-input" placeholder="Введите ваш Никнейм">
-                <button onclick="loginOrCreateProfile()">Войти</button>
+                <div id="auth-forms" style="text-align: center;">
+                    <h3>Авторизация в лиге</h3>
+                    <p style="margin-bottom: 20px; color: #a8a8b3;">Для доступа к профилю войдите через ваш Google-аккаунт</p>
+                    <button onclick="window.loginWithGoogle()" style="background: #ffffff !important; color: #000000 !important; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold;">
+                        <img src="https://yandex.ru" style="width: 20px; height: 20px;">
+                        Войти через Google
+                    </button>
+                </div>
             </div>
         </section>
     </main>
