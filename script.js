@@ -179,7 +179,6 @@ function renderMyProfile() {
                 <p style="margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
                 
                 <p>Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
-                <p>Максимальный ранг: <strong class="rank-${maxRankClass}">${maxRank}</strong></p>
                 
                 <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
                 <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
