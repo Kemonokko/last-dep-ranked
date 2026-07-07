@@ -267,3 +267,12 @@ main {
     height: 100%;
     box-sizing: border-box;
 }
+.clickable-name, .clickable-name span {
+    text-decoration: none !important;
+}
+
+.clickable-name:hover {
+    text-decoration: none !important;
+    filter: brightness(1.2);
+    cursor: pointer;
+}
