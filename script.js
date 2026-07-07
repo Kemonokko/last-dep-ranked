@@ -153,18 +153,32 @@ function renderMyProfile() {
         adminPanelHtml = `
             <hr style="border-color:#29292e; margin:20px 0;">
             <h3>Панель администратора</h3>
-
+            
             <div style="margin-top:10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
-                <h4>Внести результат матча</h4>
+                <h4>1. Добавить нового игрока</h4>
+                <input type="text" id="new-player-username" placeholder="Никнейм (Обязательно)">
+                <input type="number" id="new-player-elo" placeholder="Стартовое Эло (Например, 1500)" value="1500">
+                <input type="text" id="new-player-email" placeholder="Email (Необязательно)">
+                <select id="new-player-role" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+                    <option value="player">Роль: Player</option>
+                    <option value="bloodline">Роль: Bloodline</option>
+                    <option value="admin">Роль: Admin</option>
+                    <option value="founder">Роль: Founder</option>
+                </select>
+                <button onclick="window.createNewPlayerByAdmin()" style="background:#3498db !important; color:#fff !important; width:100%; margin-top:5px;">Создать игрока</button>
+            </div>
+
+            <div style="margin-top:20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
+                <h4>2. Внести результат матча</h4>
                 <input type="text" id="match-winner" placeholder="Ник победителя">
                 <input type="text" id="match-loser" placeholder="Ник проигравшего">
                 <select id="match-score" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-                    <option value="4/0">Победа 4/0 (±40)</option>
-                    <option value="4/1">Победа 4/1 (±30)</option>
-                    <option value="4/2">Победа 4/2 (±20)</option>
-                    <option value="4/3">Победа 4/3 (±10)</option>
+                    <option value="4/0">Победа 4/0 (±40 Эло)</option>
+                    <option value="4/1">Победа 4/1 (±30 Эло)</option>
+                    <option value="4/2">Победа 4/2 (±20 Эло)</option>
+                    <option value="4/3">Победа 4/3 (±10 Эло)</option>
                 </select>
-                <button onclick="window.addMatchResult()" style="background:#04d361; color:#000; width:100%;">Внести матч</button>
+                <button onclick="window.addMatchResult()" style="background:#04d361 !important; color:#000 !important; width:100%;">Внести матч</button>
             </div>
         `;
     }
