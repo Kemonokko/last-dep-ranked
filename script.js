@@ -284,3 +284,8 @@ window.addEventListener('DOMContentLoaded', () => {
         loadRating();
     });
 });
+window.closeModal = function(e) {
+    if (e.target.id === 'player-modal') {
+        document.getElementById('player-modal').style.display = 'none';
+    }
+}
