@@ -126,11 +126,18 @@ function renderMyProfile() {
     const container = document.getElementById('profile-container');
     if (!container) return;
 
+    const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === currentUser.username) : null;
+    const currentRank = foundInGlobal ? foundInGlobal.currentRank : (currentUser.currentRank || 'C');
+    const maxRank = foundInGlobal ? foundInGlobal.maxRank : (currentUser.maxRank || 'C');
+
+    const currentRankClass = currentRank.replace('+', '-plus');
+    const maxRankClass = maxRank.replace('+', '-plus');
+
     const userRole = currentUser.role || 'player'; 
     const hasAdminAccess = userRole === 'founder' || userRole === 'admin';
 
     let roleBadge = '';
-    let nameClass = `rank-${currentUser.currentRank || 'C'}`;
+    let nameClass = `rank-${currentRankClass}`;
 
     if (userRole === 'founder') {
         roleBadge = '<span style="color:#a855f7; font-size:0.9rem; block; margin-top:5px;">Founder</span>';
@@ -154,10 +161,10 @@ function renderMyProfile() {
                 <input type="text" id="match-winner" placeholder="Ник победителя">
                 <input type="text" id="match-loser" placeholder="Ник проигравшего">
                 <select id="match-score" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-                    <option value="4/0">Победа 4/0 (±40 Эло)</option>
-                    <option value="4/1">Победа 4/1 (±30 Эло)</option>
-                    <option value="4/2">Победа 4/2 (±20 Эло)</option>
-                    <option value="4/3">Победа 4/3 (±10 Эло)</option>
+                    <option value="4/0">Победа 4/0 (±40)</option>
+                    <option value="4/1">Победа 4/1 (±30)</option>
+                    <option value="4/2">Победа 4/2 (±20)</option>
+                    <option value="4/3">Победа 4/3 (±10)</option>
                 </select>
                 <button onclick="window.addMatchResult()" style="background:#04d361; color:#000; width:100%;">Внести матч</button>
             </div>
@@ -170,9 +177,12 @@ function renderMyProfile() {
                 <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
                 <h2 class="${nameClass}">${currentUser.username}</h2>
                 ${roleBadge}
-                <p style="margin-top:10px;">Текущее Эло: <strong>${currentUser.elo}</strong></p>
-                <p>Текущий ранг: <strong class="rank-${currentUser.currentRank || 'C'}">${currentUser.currentRank || 'C'}</strong></p>
-                <p>Максимальный ранг: <strong class="rank-${currentUser.maxRank || 'C'}">${currentUser.maxRank || 'C'}</strong></p>
+                
+                <p style="margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
+                
+                <p>Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
+                <p>Максимальный ранг: <strong class="rank-${maxRankClass}">${maxRank}</strong></p>
+                
                 <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
                 <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
                 <button onclick="saveProfileChanges()">Сохранить профиль</button>
