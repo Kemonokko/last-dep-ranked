@@ -266,9 +266,15 @@ function displayRating(playersList) {
         
         const rankClass = rankText.replace('+', '-plus');
 
+        const defaultAvatar = "https://t4.ftcdn.net/jpg/01/06/40/11/360_F_106401195_E59JLT8KmxWYvHsTtQxHGTuKsp9LRwrW.jpg";
+        const playerAvatar = player.avatar_url || defaultAvatar;
+
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
+            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')" style="display: flex; align-items: center; gap: 10px; justify-content: flex-start; padding-left: 15px;">
+                <img src="${playerAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #29292e;">
+                <span>${player.username}</span>
+            </td>
             <td>${player.elo}</td>
             <td class="rank-${rankClass}" style="font-weight: bold;">${rankText}</td>
         `;
