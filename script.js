@@ -195,7 +195,7 @@ function renderMyProfile() {
                 <p>Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
                 
                 <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
-                <textarea id="edit-bio" placeholder="О себе">${currentUser.bio || ''}</textarea>
+                <textarea id="edit-bio" placeholder="О себе" maxlength="25">${currentUser.bio || ''}</textarea>
                 <button onclick="saveProfileChanges()">Сохранить профиль</button>
                 ${adminPanelHtml}
             </div>
