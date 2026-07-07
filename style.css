@@ -252,3 +252,18 @@ main {
     resize: none !important;
     height: 60px !important; 
 }
+.rating-table th, 
+.rating-table td {
+    border-right: 1px solid #29292e;
+    padding: 12px;
+}
+
+.rating-table th:last-child, 
+.rating-table td:last-child {
+    border-right: none;
+}
+
+.rating-table td.clickable-name {
+    height: 100%;
+    box-sizing: border-box;
+}
