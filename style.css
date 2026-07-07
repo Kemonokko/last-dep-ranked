@@ -229,3 +229,13 @@ main {
     text-shadow: 0 0 12px rgba(255, 82, 82, 0.5);
     font-weight: 900;
 }
+.profile-card input, .profile-info-block input, .profile-info-block select {
+    width: 100% !important;
+    padding: 10px !important;
+    margin: 8px 0 !important;
+    background: #202024 !important;
+    border: 1px solid #29292e !important;
+    color: #fff !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+}
