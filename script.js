@@ -128,7 +128,6 @@ function renderMyProfile() {
 
     const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === currentUser.username) : null;
     const currentRank = foundInGlobal ? foundInGlobal.currentRank : (currentUser.currentRank || 'C');
-    const maxRank = foundInGlobal ? foundInGlobal.maxRank : (currentUser.maxRank || 'C');
 
     const currentRankClass = currentRank.replace('+', '-plus');
     const maxRankClass = maxRank.replace('+', '-plus');
