@@ -107,7 +107,7 @@ window.openPlayerModal = async function(username) {
             <div style="text-align:center; margin-bottom:15px;">
                 <img src="${player.avatar_url || 'https://placehold.co'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
                 <h3 class="${nameClass}" style="margin-top:10px; color: #ffffff !important;">${player.username}${roleBadge}</h3>
-                <p style="font-size:0.9rem; color:#a8a8b3; font-style:italic;">"${player.bio || 'Всем привет!'}"</p>
+                <p style="font-size:0.9rem; color:#a8a8b3; font-style:italic;">"${player.bio || '.....'}"</p>
             </div>
             <hr style="border-color:#29292e; margin:10px 0;">
             <p>Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${player.elo || 1500}</strong></p>
