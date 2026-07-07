@@ -76,6 +76,8 @@ window.openPlayerModal = async function(username) {
         let lastThree = playerMatches.slice(0, 3);
 
         const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
+        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.currentRank || 'C');
+        const currentRankClass = currentRank.replace('+', '-plus');
 
         let matchesHtml = '<h4>Последние 3 боя:</h4>';
         if(lastThree.length === 0) matchesHtml += '<p>Матчей ещё не было</p>';
@@ -100,10 +102,6 @@ window.openPlayerModal = async function(username) {
         } else if (playerRole === 'bloodline') {
             roleBadge = ' <span style="color:#ef4444; font-size:0.8rem;">[Bloodline]</span>';
         }
-       
-        const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
-        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.currentRank || 'C');
-        const currentRankClass = currentRank.replace('+', '-plus');
 
         modalData.innerHTML = `
             <div style="text-align:center; margin-bottom:15px;">
