@@ -7,6 +7,34 @@ window.allPlayers = [];
 
 const RANK_HIERARCHY = ['C', 'B', 'B-plus', 'A', 'A-plus', 'S', 'S-plus', 'Дракон'];
 
+window.loginWithGoogle = async function() {
+    const provider = new window.firebase.auth.GoogleAuthProvider();
+    try {
+        const result = await window.firebase.auth().signInWithPopup(provider);
+        const userEmail = result.user.email;
+
+        const querySnapshot = await window.db.collection("profiles").where("email", "==", userEmail).get();
+
+        if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0];
+            currentUser = userDoc.data();
+            
+            localStorage.setItem('tw_username', currentUser.username);
+            
+            const authBlock = document.getElementById('auth-forms');
+            if (authBlock) authBlock.style.display = 'none';
+            
+            renderMyProfile();
+        } else {
+            await window.firebase.auth().signOut();
+            alert(`Доступ запрещен.`);
+        }
+    } catch (error) {
+        console.error("Ошибка Google Auth:", error);
+        alert("Не удалось войти через Google: " + error.message);
+    }
+}
+
 window.switchTab = function(tabName) {
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
