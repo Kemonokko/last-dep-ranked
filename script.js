@@ -184,19 +184,20 @@ function renderMyProfile() {
     }
 
     container.innerHTML = `
-        <div class="profile-card">
+        <div class="profile-card" style="text-align:center;">
             <div class="profile-info-block">
-                <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
                 <h2 class="${nameClass}">${currentUser.username}</h2>
-                ${roleBadge}
+                <div style="margin: 5px 0 20px 0;">${roleBadge}</div>
                 
-                <p style="margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
+                <p style="font-size:1.1rem; margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
+                <p style="font-size:1.1rem; margin-bottom: 25px;">Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
                 
-                <p>Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
-                
-                <input type="text" id="edit-avatar-url" value="${currentUser.avatar_url || ''}" placeholder="Ссылка на аватарку">
                 <textarea id="edit-bio" placeholder="О себе" maxlength="25">${currentUser.bio || ''}</textarea>
-                <button onclick="saveProfileChanges()">Сохранить профиль</button>
+                <button onclick="saveProfileChanges()" style="background: #a855f7 !important; margin-bottom: 10px;">Сохранить профиль</button>
+                
+                <!-- КНОПКА ВЫХОДА ИЗ АККАУНТА -->
+                <button onclick="window.logoutFromLeague()" style="background: #29292e !important; color: #ff5252 !important; border: 1px solid #ff5252; margin-top: 5px; width: 100%;">Выйти из аккаунта</button>
+                
                 ${adminPanelHtml}
             </div>
         </div>
