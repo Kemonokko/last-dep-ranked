@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #0d0d0f url('bg.jpg') no-repeat center center fixed;
+    background: #0d0d0f url('bg.png') no-repeat center center fixed;
     background-size: cover;
     color: #ffffff;
 }
@@ -257,3 +257,10 @@ main {
 .role-founder { color: #a855f7 !important; font-weight: bold; }
 .role-admin { color: #06b6d4 !important; font-weight: bold; }
 .role-bloodline { color: #ef4444 !important; font-weight: bold; }
+
+@media (max-width: 768px) {
+    body {
+        background: #0d0d0f url('bgm.png') no-repeat center center fixed !important;
+        background-size: cover !important;
+    }
+}
