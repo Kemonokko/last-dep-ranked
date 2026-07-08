@@ -310,3 +310,19 @@ window.closeModal = function(e) {
         document.getElementById('player-modal').style.display = 'none';
     }
 }
+window.logoutFromLeague = async function() {
+    try {
+        await window.firebase.auth().signOut();
+        currentUser = null;
+        
+        const authBlock = document.getElementById('auth-forms');
+        if (authBlock) authBlock.style.display = 'flex';
+        
+        const container = document.getElementById('profile-container');
+        if (container) container.innerHTML = '<p style="text-align:center; color:#a8a8b3; margin-top:30px;">Войдите через Google для доступа к профилю.</p>';
+        
+        alert('Вы успешно вышли из профиля.');
+    } catch (error) {
+        console.error("Ошибка при выходе:", error);
+    }
+}
