@@ -188,7 +188,6 @@ function renderMyProfile() {
             <div class="profile-info-block">
                 <img src="${currentUser.avatar_url || 'https://placehold.co'}" id="my-avatar" style="width:100px; border-radius:50%;">
                 <h2 class="${nameClass}">${currentUser.username}</h2>
-                <p style="color: #ffb74d; font-size: 0.8rem;">[Debug] Auth Name: ${window.firebase.auth().currentUser ? window.firebase.auth().currentUser.displayName : 'null'} | Auth Email: ${window.firebase.auth().currentUser ? window.firebase.auth().currentUser.email : 'null'}</p
                 ${roleBadge}
                 
                 <p style="margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
