@@ -264,3 +264,12 @@ main {
         background-size: cover !important;
     }
 }
+.modal-content {
+    max-width: 600px !important;
+    width: 90% !important;
+}
+
+body {
+    background: #0d0d0f url('bg.png') no-repeat center center fixed !important;
+    background-size: cover !important;
+}
