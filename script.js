@@ -186,6 +186,8 @@ function renderMyProfile() {
     container.innerHTML = `
         <div class="profile-card" style="text-align:center;">
             <div class="profile-info-block">
+                <img src="${currentUser.avatar || currentUser.avatar_url || 'https://ftcdn.net'}" id="my-avatar" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border: 2px solid #29292e;">
+                
                 <h2 class="${nameClass}">${currentUser.username}</h2>
                 <div style="margin: 5px 0 20px 0;">${roleBadge}</div>
                 
