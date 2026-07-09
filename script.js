@@ -1,7 +1,6 @@
 import { getRankByPercentile } from './logic.js';
 
 const db = window.db;
-
 let currentUser = null;
 window.allPlayers = [];
 
@@ -13,114 +12,55 @@ window.loginWithGoogle = async function() {
         const result = await window.firebase.auth().signInWithPopup(provider);
         const userEmail = result.user.email;
 
-        const querySnapshot = await window.db.collection("profiles").where("email", "==", userEmail).get();
+        const querySnapshot = await db.collection("profiles").where("email", "==", userEmail).get();
 
         if (!querySnapshot.empty) {
             const userDoc = querySnapshot.docs[0];
             currentUser = userDoc.data();
-            
+
             localStorage.setItem('tw_username', currentUser.username);
-            
+
             const authBlock = document.getElementById('auth-forms');
             if (authBlock) authBlock.style.display = 'none';
-            
+
             renderMyProfile();
         } else {
             await window.firebase.auth().signOut();
-            alert(`Доступ запрещен.`);
+            alert("Доступ запрещен! Вашей почты нет в списке участников.");
         }
     } catch (error) {
         console.error("Ошибка Google Auth:", error);
         alert("Не удалось войти через Google: " + error.message);
     }
-}
+};
+
+window.logoutFromLeague = async function() {
+    try {
+        await window.firebase.auth().signOut();
+        currentUser = null;
+        localStorage.removeItem('tw_username');
+        
+        const authBlock = document.getElementById('auth-forms');
+        if (authBlock) authBlock.style.display = 'flex';
+        
+        const container = document.getElementById('profile-container');
+        if (container) container.innerHTML = '<p style="text-align:center; color:#a8a8b3; margin-top:30px;">Войдите через Google для доступа к профилю.</p>';
+        
+        alert('Вы успешно вышли из профиля.');
+    } catch (error) {
+        console.error("Ошибка при выходе:", error);
+    }
+};
 
 window.switchTab = function(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    
+    document.getElementById(`tab-${tabName}`).classList.add('active');
     
     const btnIndex = tabName === 'rating' ? 0 : tabName === 'history' ? 1 : 2;
     document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-
-    if (tabName === 'rating') loadRating();
-    if (tabName === 'history' && window.loadHistory) window.loadHistory();
-}
-
-window.registerWithEmail = async function() {
-    const username = document.getElementById('reg-username').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const password = document.getElementById('reg-password').value.trim();
-
-    if (!username || !email || !password) return alert('Заполните все поля для регистрации!');
-    if (password.length < 6) return alert('Пароль должен быть не менее 6 символов!');
-
-    try {
-        const userDocRef = db.collection("profiles").doc(username);
-        const userDoc = await userDocRef.get();
-        if (userDoc.exists) return alert('Этот никнейм уже занят другим игроком!');
-
-        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        
-        currentUser = {
-            username: username,
-            avatar_url: 'https://placehold.co',
-            bio: '...',
-            elo: 1500,
-            rounds_won: 0,
-            rounds_lost: 0,
-            maxRank: 'C',
-            currentRank: 'C',
-            role: 'player'
-        };
-        
-        await userDocRef.set(currentUser);
-        
-        await userCredential.user.updateProfile({ displayName: username });
-
-        localStorage.setItem('tw_username', username);
-        alert(`Игрок ${username} успешно зарегистрирован!`);
-        
-        document.getElementById('auth-forms').style.display = 'none';
-        renderMyProfile();
-    } catch (error) {
-        console.error("Ошибка регистрации:", error);
-        alert("Ошибка при регистрации: " + error.message);
-    }
-}
-
-window.loginWithEmail = async function() {
-    const email = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-password').value.trim();
-
-    if (!email || !password) return alert('Заполните Email и Пароль для входа!');
-
-    try {
-        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-        const username = userCredential.user.displayName;
-
-        if (!username) {
-            return alert('К этой почте не привязан игровой никнейм!');
-        }
-
-        const userDoc = await db.collection("profiles").doc(username).get();
-        
-        if (userDoc.exists) {
-            currentUser = userDoc.data();
-            localStorage.setItem('tw_username', username);
-            
-            const authBlock = document.getElementById('auth-forms');
-            if (authBlock) authBlock.style.display = 'none';
-            
-            renderMyProfile();
-        } else {
-            alert('Профиль игрока не найден в базе данных!');
-        }
-    } catch (error) {
-        console.error("Ошибка входа:", error);
-        alert("Неверный Email или Пароль!");
-    }
-}
+};
 
 function renderMyProfile() {
     const container = document.getElementById('profile-container');
@@ -128,25 +68,17 @@ function renderMyProfile() {
 
     const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === currentUser.username) : null;
     const currentRank = foundInGlobal ? foundInGlobal.currentRank : (currentUser.currentRank || 'C');
-
     const currentRankClass = currentRank.replace('+', '-plus');
 
-    const userRole = currentUser.role || 'player'; 
+    const userRole = currentUser.role || 'player';
     const hasAdminAccess = userRole === 'founder' || userRole === 'admin';
 
     let roleBadge = '';
-    let nameClass = `rank-${currentRankClass}`;
+    let nameClass = 'role-player';
 
-    if (userRole === 'founder') {
-        roleBadge = '<span style="color:#a855f7; font-size:0.9rem; block; margin-top:5px;">Founder</span>';
-        nameClass = 'role-founder';
-    } else if (userRole === 'admin') {
-        roleBadge = '<span style="color:#06b6d4; font-size:0.9rem; block; margin-top:5px;">Admin</span>';
-        nameClass = 'role-admin';
-    } else if (userRole === 'bloodline') {
-        roleBadge = '<span style="color:#ef4444; font-size:0.9rem; block; margin-top:5px;">Bloodline</span>';
-        nameClass = 'role-bloodline';
-    }
+    if (userRole === 'founder') { roleBadge = '<span style="color:#a855f7; font-size:0.9rem; display:block; margin-top:5px;">[Founder]</span>'; nameClass = 'role-founder'; }
+    else if (userRole === 'admin') { roleBadge = '<span style="color:#06b6d4; font-size:0.9rem; display:block; margin-top:5px;">[Admin]</span>'; nameClass = 'role-admin'; }
+    else if (userRole === 'bloodline') { roleBadge = '<span style="color:#ef4444; font-size:0.9rem; display:block; margin-top:5px;">[Bloodline]</span>'; nameClass = 'role-bloodline'; }
 
     let adminPanelHtml = '';
     if (hasAdminAccess) {
@@ -157,8 +89,8 @@ function renderMyProfile() {
             <div style="margin-top:10px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
                 <h4>1. Добавить нового игрока</h4>
                 <input type="text" id="new-player-username" placeholder="Никнейм (Обязательно)">
-                <input type="number" id="new-player-elo" placeholder="Стартовое Эло (Например, 1500)" value="1500">
-                <input type="text" id="new-player-email" placeholder="Email (Необязательно)">
+                <input type="number" id="new-player-elo" placeholder="Стартовое Эло" value="1500">
+                <input type="text" id="new-player-email" placeholder="Email Google (Только для админов)">
                 <select id="new-player-role" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
                     <option value="player">Роль: Player</option>
                     <option value="bloodline">Роль: Bloodline</option>
@@ -186,38 +118,17 @@ function renderMyProfile() {
     container.innerHTML = `
         <div class="profile-card" style="text-align:center;">
             <div class="profile-info-block">
-                <img src="${currentUser.avatar || currentUser.avatar_url || 'https://ftcdn.net'}" id="my-avatar" style="width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px; border: 2px solid #29292e;">
-                
                 <h2 class="${nameClass}">${currentUser.username}</h2>
-                <div style="margin: 5px 0 20px 0;">${roleBadge}</div>
+                <div>${roleBadge}</div>
                 
-                <p style="font-size:1.1rem; margin-top:10px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
-                <p style="font-size:1.1rem; margin-bottom: 25px;">Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
+                <p style="margin-top:20px;">Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${currentUser.elo}</strong></p>
+                <p style="margin-bottom: 25px;">Текущий ранг: <strong class="rank-${currentRankClass}">${currentRank}</strong></p>
                 
-                <textarea id="edit-bio" placeholder="О себе" maxlength="25">${currentUser.bio || ''}</textarea>
-                <button onclick="saveProfileChanges()" style="background: #a855f7 !important; margin-bottom: 10px;">Сохранить профиль</button>
-                
-                <!-- КНОПКА ВЫХОДА ИЗ АККАУНТА -->
-                <button onclick="window.logoutFromLeague()" style="background: #29292e !important; color: #ff5252 !important; border: 1px solid #ff5252; margin-top: 5px; width: 100%;">Выйти из аккаунта</button>
-                
+                <button onclick="window.logoutFromLeague()" style="background: #29292e !important; color: #ff5252 !important; border: 1px solid #ff5252; margin-top: 15px; width: 100%;">Выйти из аккаунта</button>
                 ${adminPanelHtml}
             </div>
         </div>
     `;
-}
-
-window.saveProfileChanges = async function() {
-    if (!currentUser) return;
-    const newAva = document.getElementById('edit-avatar-url').value.trim();
-    const newBio = document.getElementById('edit-bio').value.trim();
-
-    const userDocRef = db.collection("profiles").doc(currentUser.username);
-    await userDocRef.update({ avatar_url: newAva, bio: newBio });
-    
-    currentUser.avatar_url = newAva;
-    currentUser.bio = newBio;
-    alert('Профиль сохранен!');
-    renderMyProfile();
 }
 
 function calculateDynamicRanks(players) {
@@ -247,13 +158,19 @@ async function loadRating() {
         const querySnapshot = await db.collection("profiles").get();
         let rawPlayers = [];
         querySnapshot.forEach(doc => rawPlayers.push(doc.data()));
-        
-        if(rawPlayers.length === 0) return;
-        
+
+        if (rawPlayers.length === 0) return;
+
         window.allPlayers = calculateDynamicRanks(rawPlayers);
         displayRating(window.allPlayers);
-    } catch (e) {
-        console.error("Ошибка загрузки рейтинга:", e);
+        
+        if (currentUser) {
+            const freshData = window.allPlayers.find(p => p.username === currentUser.username);
+            if (freshData) currentUser = freshData;
+            renderMyProfile();
+        }
+    } catch (error) {
+        console.error("Ошибка загрузки рейтинга:", error);
     }
 }
 
@@ -264,20 +181,12 @@ function displayRating(playersList) {
     
     playersList.forEach((player, index) => {
         const tr = document.createElement('tr');
-        
-        const rankText = player.currentRank || player.maxRank || 'C';
-        
+        const rankText = player.currentRank || 'C';
         const rankClass = rankText.replace('+', '-plus');
-
-        const defaultAvatar = "https://t4.ftcdn.net/jpg/01/06/40/11/360_F_106401195_E59JLT8KmxWYvHsTtQxHGTuKsp9LRwrW.jpg";
-        const playerAvatar = player.avatar_url || defaultAvatar;
 
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')" style="display: flex; align-items: center; gap: 10px; justify-content: flex-start; padding-left: 15px;">
-                <img src="${playerAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #29292e;">
-                <span>${player.username}</span>
-            </td>
+            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
             <td>${player.elo}</td>
             <td class="rank-${rankClass}" style="font-weight: bold;">${rankText}</td>
         `;
@@ -290,41 +199,33 @@ window.filterRating = function() {
     if (!window.allPlayers) return;
     const filtered = window.allPlayers.filter(p => p.username.toLowerCase().includes(val));
     displayRating(filtered);
-}
+};
 
-window.addEventListener('DOMContentLoaded', () => {
-    firebase.auth().onAuthStateChanged(async (user) => {
-        if (user && user.displayName) {
-            const username = user.displayName;
-            const userDoc = await db.collection("profiles").doc(username).get();
-            if (userDoc.exists) {
-                currentUser = userDoc.data();
-                const authBlock = document.getElementById('auth-forms');
-                if (authBlock) authBlock.style.display = 'none';
-                renderMyProfile();
-            }
-        }
-        loadRating();
-    });
-});
 window.closeModal = function(e) {
     if (e.target.id === 'player-modal') {
         document.getElementById('player-modal').style.display = 'none';
     }
-}
-window.logoutFromLeague = async function() {
-    try {
-        await window.firebase.auth().signOut();
-        currentUser = null;
-        
-        const authBlock = document.getElementById('auth-forms');
-        if (authBlock) authBlock.style.display = 'flex';
-        
-        const container = document.getElementById('profile-container');
-        if (container) container.innerHTML = '<p style="text-align:center; color:#a8a8b3; margin-top:30px;">Войдите через Google для доступа к профилю.</p>';
-        
-        alert('Вы успешно вышли из профиля.');
-    } catch (error) {
-        console.error("Ошибка при выходе:", error);
-    }
-}
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+    window.firebase.auth().onAuthStateChanged(async (user) => {
+        if (user && user.email) {
+            const querySnapshot = await db.collection("profiles").where("email", "==", user.email).get();
+            if (!querySnapshot.empty) {
+                currentUser = querySnapshot.docs[0].data();
+                                const authBlock = document.getElementById('auth-forms');
+                if (authBlock) authBlock.style.display = 'none';
+                
+                if (window.allPlayers.length === 0) {
+                    await loadRating();
+                } else {
+                    renderMyProfile();
+                }
+            } else {
+                loadRating();
+            }
+        } else {
+            loadRating();
+        }
+    });
+});
