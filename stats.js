@@ -75,8 +75,24 @@ window.openPlayerModal = async function(username) {
         }
         let lastThree = playerMatches.slice(0, 3);
 
-        const foundInGlobal = window.allPlayers ? window.allPlayers.find(p => p.username === username) : null;
-        const currentRank = foundInGlobal ? foundInGlobal.currentRank : (player.currentRank || 'C');
+        let totalPlayersCount = 1;
+        if (window.allPlayers && window.allPlayers.length > 0) {
+            totalPlayersCount = window.allPlayers.length;
+        } else {
+            const allPlayersSnapshot = await db.collection("profiles").get();
+            totalPlayersCount = allPlayersSnapshot.size || 1;
+        }
+
+        let playerPosition = 1;
+        if (window.allPlayers && window.allPlayers.length > 0) {
+            const index = window.allPlayers.findIndex(p => p.username === username);
+            if (index !== -1) playerPosition = index + 1;
+        } else {
+            const higherEloSnapshot = await db.collection("profiles").where("elo", ">", player.elo || 1500).get();
+            playerPosition = higherEloSnapshot.size + 1;
+        }
+
+        const currentRank = getRankByPercentile(playerPosition, totalPlayersCount);
         const currentRankClass = currentRank.replace('+', '-plus');
 
         let matchesHtml = '<h4>Последние 3 боя:</h4>';
