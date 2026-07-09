@@ -39,3 +39,19 @@ export function getRankByPercentile(position, total) {
 
     return 'C';
 }
+export function isMatchAllowed(ratingA, ratingB) {
+    return Math.abs(ratingA - ratingB) <= 200;
+}
+
+export function calculateElo(ratingA, ratingB, scoreB) {
+    const expectedA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+    
+    const kFactor = 88 - (16 * scoreB);
+    
+    const change = Math.round(kFactor * (1 - expectedA));
+    
+    return {
+        newRatingA: ratingA + change,
+        newRatingB: ratingB - change,
+        change: change
+    };
