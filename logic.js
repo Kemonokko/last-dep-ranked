@@ -43,10 +43,10 @@ export function isMatchAllowed(ratingA, ratingB) {
     return Math.abs(ratingA - ratingB) <= 200;
 }
 
-export function calculateElo(ratingA, ratingB, scoreB) {
+export function calculateElo(ratingA, ratingB) {
     const expectedA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
     
-    const kFactor = 88 - (16 * scoreB);
+    const kFactor = 40;
     
     const change = Math.round(kFactor * (1 - expectedA));
     
@@ -55,3 +55,4 @@ export function calculateElo(ratingA, ratingB, scoreB) {
         newRatingB: ratingB - change,
         change: change
     };
+}
