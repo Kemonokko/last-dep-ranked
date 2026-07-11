@@ -189,9 +189,9 @@ window.openPlayerModal = async function(username) {
                     display: flex; 
                     align-items: center; 
                     justify-content: space-between; 
-                    padding: 14px 14px; /* 2. Увеличили отступы, сделав карточки в профиле толще */
+                    padding: 14px 14px;
                     margin-top: 8px; 
-                    background: rgba(32, 32, 36, 0.6);
+                    background: rgba(20, 20, 22, 0.85);
                     backdrop-filter: blur(8px); 
                     -webkit-backdrop-filter: blur(8px);
                     border-radius: 6px;
