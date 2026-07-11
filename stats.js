@@ -44,15 +44,18 @@ window.displayHistory = function(matchesList) {
         
         const matchDate = formatMatchDate(m.created_at);
         
+        const currentUserData = window.currentUser || null;
+        const isAdmin = currentUserData && (currentUserData.role === 'admin' || currentUserData.role === 'founder');
+        
         div.innerHTML = `
             <div class="match-card" 
                 style="
                     display: flex; 
-                    align-items: center; 
-                    justify-content: space-between; 
-                    padding: 18px 16px; 
+                    flex-direction: column; 
+                    gap: 8px;               
+                    padding: 16px 16px; 
                     margin-top: 10px; 
-                    background: rgba(32, 32, 36, 0.6); 
+                    background: rgba(20, 20, 22, 0.85); 
                     backdrop-filter: blur(8px);       
                     -webkit-backdrop-filter: blur(8px);
                     border-radius: 6px;
@@ -62,8 +65,7 @@ window.displayHistory = function(matchesList) {
                 "
                 title="${isAdmin ? 'Двойной клик, чтобы удалить матч и откатить Эло' : ''}"
             >
-                <!-- Победитель слева -->
-                <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-start;">
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-start; width: 100%;">
                     <span style="
                         display: inline-block;
                         width: 0;
@@ -71,22 +73,23 @@ window.displayHistory = function(matchesList) {
                         border-left: 5px solid transparent;
                         border-right: 5px solid transparent;
                         border-bottom: 8px solid #04d361;
+                        flex-shrink: 0;
                     "></span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;">
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;">
                         ${m.winner_username}
                     </span>
-                    <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${m.elo_change || 20}</span>
+                    <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${m.elo_change || 20}</span>
                 </div>
 
-                <!-- Дата по центру -->
-                <div style="color: #444; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
+                <!-- 2 СТРОКА: Дата по центру -->
+                <div style="color: #444; font-size: 0.7rem; font-weight: bold; text-align: center; width: 100%; letter-spacing: 1px;">
                     ${matchDate || 'МАТЧ'}
                 </div>
 
-                <!-- Проигравший справа -->
-                <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-end;">
-                    <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold;">-${m.elo_change || 20}</span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #a2a2ae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; cursor: pointer;">
+                <!-- 3 СТРОКА: Проигравший с правого края -->
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 100%;">
+                    <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${m.elo_change || 20}</span>
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #a2a2ae; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
                         ${m.loser_username}
                     </span>
                     <span style="
@@ -96,15 +99,18 @@ window.displayHistory = function(matchesList) {
                         border-left: 5px solid transparent;
                         border-right: 5px solid transparent;
                         border-top: 8px solid #e74c3c;
+                        flex-shrink: 0;
                     "></span>
                 </div>
             </div>
         `;
 
-        const cardElement = div.querySelector('.match-card');
         if (isAdmin) {
+            const cardElement = div.querySelector('.match-card');
             cardElement.addEventListener('dblclick', () => {
-                window.deleteAndUndoMatch(m);
+                if (typeof window.deleteAndUndoMatch === 'function') {
+                    window.deleteAndUndoMatch(m); 
+                }
             });
         }
 
