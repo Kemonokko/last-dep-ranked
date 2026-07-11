@@ -22,6 +22,7 @@ window.createNewPlayerByAdmin = async function() {
             email: email || "",
             role: role,
             bio: ".....",
+            avatar_url: "https://ftcdn.net",
             rounds_won: 0,
             rounds_lost: 0,
             currentRank: "C"
@@ -37,9 +38,26 @@ window.createNewPlayerByAdmin = async function() {
         console.error("Ошибка при создании игрока:", error);
         alert("Не удалось создать игрока: " + error.message);
     }
-}
+};
 
-const winnerData = winnerDoc.data();
+window.addMatchResult = async function() {
+    const winner = document.getElementById('match-winner').value.trim();
+    const loser = document.getElementById('match-loser').value.trim();
+    const score = document.getElementById('match-score').value;
+
+    if (!winner || !loser) return alert('Заполните ники победителя и проигравшего!');
+    if (winner === loser) return alert('Игрок не может играть сам с собой!');
+
+    try {
+        const winnerRef = db.collection("profiles").doc(winner);
+        const loserRef = db.collection("profiles").doc(loser);
+
+        const [winnerDoc, loserDoc] = await Promise.all([winnerRef.get(), loserRef.get()]);
+
+        if (!winnerDoc.exists) return alert(`Игрок ${winner} не найден в базе!`);
+        if (!loserDoc.exists) return alert(`Игрок ${loser} не найден в базе!`);
+
+        const winnerData = winnerDoc.data();
         const loserData = loserDoc.data();
 
         const currentWinnerElo = winnerData.elo || 1500;
@@ -70,7 +88,19 @@ const winnerData = winnerDoc.data();
         await db.collection("matches").add({
             winner_username: winner,
             loser_username: loser,
-            score: "1/0", 
+            score: "1/0",
             elo_change: eloChange,
             created_at: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        alert(`Матч успешно зафиксирован! \n${winner}: +${eloChange} ELO \n${loser}: -${eloChange} ELO`);
+        
+        document.getElementById('match-winner').value = '';
+        document.getElementById('match-loser').value = '';
+
+        if (typeof loadRating === 'function') loadRating();
+    } catch (error) {
+        console.error("Ошибка при внесении матча:", error);
+        alert("Не удалось записать матч.");
+    }
+};
