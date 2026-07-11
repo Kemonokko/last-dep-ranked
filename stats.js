@@ -18,15 +18,61 @@ window.displayHistory = function(matchesList) {
     if (!container) return;
     container.innerHTML = '';
 
+    if (!matchesList || matchesList.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#666; padding:20px; font-style:italic;">Матчей ещё не было зафиксировано</p>';
+        return;
+    }
+
     matchesList.forEach(m => {
         const div = document.createElement('div');
-        div.style.padding = "10px";
-        div.style.borderBottom = "1px solid #29292e";
+        div.style.padding = "2px 0"; 
+        
         div.innerHTML = `
-            <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')">${m.winner_username}</span> 
-            <strong>${m.score}</strong> 
-            <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')">${m.loser_username}</span>
-            <span style="color:#04d361; float:right;">+${m.elo_change} Эло</span>
+            <div style="
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between; 
+                padding: 10px 14px; 
+                margin-top: 8px; 
+                background: #19191c; 
+                border-radius: 6px;
+                border: 1px solid #222226;
+            ">
+                <!-- Победитель слева -->
+                <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-start;">
+                    <span style="
+                        display: inline-block;
+                        width: 0;
+                        height: 0;
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-bottom: 8px solid #04d361;
+                    "></span>
+                    <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;">
+                        ${m.winner_username}
+                    </span>
+                    <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${m.elo_change || 20}</span>
+                </div>
+
+                <!-- Разделитель vs -->
+                <div style="color: #444; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; width: 16%; text-align: center;">vs</div>
+
+                <!-- Проигравший справа -->
+                <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-end;">
+                    <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold;">-${m.elo_change || 20}</span>
+                    <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #a2a2ae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; cursor: pointer;">
+                        ${m.loser_username}
+                    </span>
+                    <span style="
+                        display: inline-block;
+                        width: 0;
+                        height: 0;
+                        border-left: 5px solid transparent;
+                        border-right: 5px solid transparent;
+                        border-top: 8px solid #e74c3c;
+                    "></span>
+                </div>
+            </div>
         `;
         container.appendChild(div);
     });
