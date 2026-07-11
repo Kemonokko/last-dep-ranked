@@ -253,7 +253,7 @@ window.openPlayerModal = async function(username) {
             <hr style="border-color:#29292e; margin:10px 0;">
             <p>Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${player.elo || 1500}</strong></p>
             <p>Текущий ранг: <span class="rank-${currentRankClass}"><strong>${currentRank}</strong></span></p>
-            <p>Победа: <span style="color:#04d361">${player.rounds_won || 0}</span> / Поражения: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
+            <p>Победы: <span style="color:#04d361">${player.rounds_won || 0}</span> / Поражения: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
             <p>Винрейт: <strong>${winRate}%</strong></p>
             <hr style="border-color:#29292e; margin:10px 0;">
             ${matchesHtml}
