@@ -60,7 +60,14 @@ window.switchTab = function(tabName) {
     
     const btnIndex = tabName === 'rating' ? 0 : tabName === 'history' ? 1 : 2;
     document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
+
+    if (tabName === 'history') {
+        if (typeof window.loadHistory === 'function') {
+            window.loadHistory();
+        }
+    }
 };
+
 
 function renderMyProfile() {
     const container = document.getElementById('profile-container');
