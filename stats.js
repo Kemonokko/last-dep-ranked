@@ -155,9 +155,11 @@ window.openPlayerModal = async function(username) {
                     justify-content: space-between; 
                     padding: 8px 12px; 
                     margin-top: 6px; 
-                    background: #19191c; 
+                    background: rgba(32, 32, 36, 0.6);
+                    backdrop-filter: blur(8px); 
+                    -webkit-backdrop-filter: blur(8px);
                     border-radius: 6px;
-                    border: 1px solid #222226;
+                    border: 1px solid rgba(255, 255, 255, 0.05);
                 ">
                     <div style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-start;">
                         <span style="
