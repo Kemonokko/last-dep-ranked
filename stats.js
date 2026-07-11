@@ -239,21 +239,24 @@ window.openPlayerModal = async function(username) {
         let nameClass = 'role-player';
 
         if (playerRole === 'founder') {
-            roleBadge = ' <span style="color:#a855f7; font-size:0.8rem;">[Founder]</span>';
+            roleBadge = '<div style="color:#a855f7; font-size:0.85rem; font-weight:600; margin-top:4px; letter-spacing:0.5px;">Founder</div>';
         } else if (playerRole === 'admin') {
-            roleBadge = ' <span style="color:#06b6d4; font-size:0.8rem;">[Admin]</span>';
+            roleBadge = '<div style="color:#06b6d4; font-size:0.85rem; font-weight:600; margin-top:4px; letter-spacing:0.5px;">Admin</div>';
         } else if (playerRole === 'bloodline') {
-            roleBadge = ' <span style="color:#ef4444; font-size:0.8rem;">[Bloodline]</span>';
+            roleBadge = '<div style="color:#ef4444; font-size:0.85rem; font-weight:600; margin-top:4px; letter-spacing:0.5px;">Bloodline</div>';
         }
 
         modalData.innerHTML = `
             <div style="text-align:center; margin-bottom:15px;">
-                <h3 class="${nameClass}" style="margin-top:10px; color: #ffffff !important;">${player.username}${roleBadge}</h3>
+                <h3 class="${nameClass}" style="margin-top:10px; margin-bottom:0; color: #ffffff !important; font-size: 1.5rem; letter-spacing: 0.5px;">
+                    ${player.username}
+                </h3>
+                ${roleBadge}
             </div>
             <hr style="border-color:#29292e; margin:10px 0;">
             <p>Текущее Эло: <strong style="color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.3);">${player.elo || 1500}</strong></p>
             <p>Текущий ранг: <span class="rank-${currentRankClass}"><strong>${currentRank}</strong></span></p>
-            <p>Победы: <span style="color:#04d361">${player.rounds_won || 0}</span> / Поражения: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
+            <p>Победа: <span style="color:#04d361">${player.rounds_won || 0}</span> / Поражения: <span style="color:#e74c3c">${player.rounds_lost || 0}</span></p>
             <p>Винрейт: <strong>${winRate}%</strong></p>
             <hr style="border-color:#29292e; margin:10px 0;">
             ${matchesHtml}
