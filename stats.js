@@ -206,19 +206,35 @@ window.openPlayerModal = async function(username) {
             const matchDate = formatMatchDate(m.created_at); 
 
             matchesHtml += `
-                <div style="
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: space-between; 
-                    padding: 14px 14px;
-                    margin-top: 8px; 
-                    background: rgba(20, 20, 22, 0.85);
-                    backdrop-filter: blur(8px); 
-                    -webkit-backdrop-filter: blur(8px);
-                    border-radius: 6px;
-                    border: 1px solid rgba(255, 255, 255, 0.05);
-                ">
-                    <div style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-start;">
+                <div class="modal-match-card-${index}" 
+                    style="
+                        display: flex; 
+                        align-items: center; 
+                        justify-content: space-between; 
+                        padding: 14px 14px; 
+                        margin-top: 8px; 
+                        background: rgba(20, 20, 22, 0.85); 
+                        backdrop-filter: blur(8px);       
+                        -webkit-backdrop-filter: blur(8px);
+                        border-radius: 6px;
+                        border: 1px solid rgba(255, 255, 255, 0.05); 
+                    "
+                >
+                    <style>
+                        @media (max-width: 600px) {
+                            .modal-match-card-${index} {
+                                flex-direction: column !important;
+                                gap: 8px !important;
+                                align-items: center !important;
+                            }
+                            .m-winner-row-${index} { width: 100% !important; justify-content: flex-start !important; }
+                            .m-date-row-${index} { width: 100% !important; text-align: center !important; }
+                            .m-loser-row-${index} { width: 100% !important; justify-content: flex-end !important; }
+                        }
+                    </style>
+
+                    <!-- Победитель в модалке -->
+                    <div class="m-winner-row-${index}" style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-start;">
                         <span style="
                             display: inline-block;
                             width: 0;
@@ -226,20 +242,23 @@ window.openPlayerModal = async function(username) {
                             border-left: 5px solid transparent;
                             border-right: 5px solid transparent;
                             border-bottom: 8px solid #04d361;
+                            flex-shrink: 0;
                         "></span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             ${m.winner_username}
                         </span>
-                        <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${changeAmount}</span>
+                        <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${changeAmount}</span>
                     </div>
 
-                    <div style="color: #ffffff; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
+                    <!-- Дата в модалке по центру -->
+                    <div class="m-date-row-${index}" style="color: #ffffff; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
                         ${matchDate || 'МАТЧ'}
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-end;">
-                        <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold;">-${changeAmount}</span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right;">
+                    <!-- Проигравший в модалке -->
+                    <div class="m-loser-row-${index}" style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-end;">
+                        <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${changeAmount}</span>
+                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
                             ${m.loser_username}
                         </span>
                         <span style="
@@ -249,11 +268,13 @@ window.openPlayerModal = async function(username) {
                             border-left: 5px solid transparent;
                             border-right: 5px solid transparent;
                             border-top: 8px solid #e74c3c;
+                            flex-shrink: 0;
                         "></span>
                     </div>
                 </div>
             `;
         });
+
         
         const playerRole = player.role || 'player';
         let roleBadge = '';
