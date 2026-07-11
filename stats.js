@@ -233,7 +233,7 @@ window.openPlayerModal = async function(username) {
                         <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${changeAmount}</span>
                     </div>
 
-                    <div style="color: #444; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
+                    <div style="color: #ffffff; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
                         ${matchDate || 'МАТЧ'}
                     </div>
 
