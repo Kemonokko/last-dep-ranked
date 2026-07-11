@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /index.html
+Allow: /stats.js
+Allow: /logic.js
+Allow: /script.js
+Allow: /style.css
