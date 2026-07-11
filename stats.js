@@ -166,14 +166,15 @@ window.openPlayerModal = async function(username) {
         
         lastThree.forEach(m => {
             const changeAmount = m.elo_change || 20; 
+            const matchDate = formatMatchDate(m.created_at); 
 
             matchesHtml += `
                 <div style="
                     display: flex; 
                     align-items: center; 
                     justify-content: space-between; 
-                    padding: 8px 12px; 
-                    margin-top: 6px; 
+                    padding: 14px 14px; /* 2. Увеличили отступы, сделав карточки в профиле толще */
+                    margin-top: 8px; 
                     background: rgba(32, 32, 36, 0.6);
                     backdrop-filter: blur(8px); 
                     -webkit-backdrop-filter: blur(8px);
@@ -195,7 +196,9 @@ window.openPlayerModal = async function(username) {
                         <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${changeAmount}</span>
                     </div>
 
-                    <div style="color: #444; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; width: 16%; text-align: center;">vs</div>
+                    <div style="color: #444; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
+                        ${matchDate || 'МАТЧ'}
+                    </div>
 
                     <div style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-end;">
                         <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold;">-${changeAmount}</span>
