@@ -104,3 +104,9 @@ window.addMatchResult = async function() {
         alert("Не удалось записать матч.");
     }
 };
+document.addEventListener('click', function(event) {
+    if (event.target && event.target.id === 'btn-submit-match') {
+        event.preventDefault();
+        window.addMatchResult();
+    }
+});
