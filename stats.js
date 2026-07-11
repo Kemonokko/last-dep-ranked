@@ -97,7 +97,7 @@ window.displayHistory = function(matchesList) {
                 </div>
 
                 <!-- 2 СТРОКА: Дата -->
-                <div class="match-date-row" style="color: #444; font-size: 0.75rem; font-weight: bold; text-align: center; width: 16%; letter-spacing: 0.5px;">
+                <div class="match-date-row" style="color: #ffffff; font-size: 0.75rem; font-weight: bold; text-align: center; width: 16%; letter-spacing: 0.5px;">
                     ${matchDate || 'МАТЧ'}
                 </div>
 
