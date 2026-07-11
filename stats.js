@@ -201,9 +201,9 @@ window.openPlayerModal = async function(username) {
             matchesHtml += '<p style="color: #666; font-style: italic;">Матчей ещё не было</p>';
         }
         
-        lastThree.forEach(m => {
+        lastThree.forEach((m, index) => {
             const changeAmount = m.elo_change || 20; 
-            const matchDate = formatMatchDate(m.created_at); 
+            const matchDate = formatMatchDate(m.created_at);
 
             matchesHtml += `
                 <div class="modal-match-card-${index}" 
@@ -275,7 +275,6 @@ window.openPlayerModal = async function(username) {
             `;
         });
 
-        
         const playerRole = player.role || 'player';
         let roleBadge = '';
         let nameClass = 'role-player';
