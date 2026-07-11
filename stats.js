@@ -51,9 +51,9 @@ window.displayHistory = function(matchesList) {
             <div class="match-card" 
                 style="
                     display: flex; 
-                    flex-direction: column; 
-                    gap: 8px;               
-                    padding: 16px 16px; 
+                    align-items: center; 
+                    justify-content: space-between; 
+                    padding: 18px 16px; 
                     margin-top: 10px; 
                     background: rgba(20, 20, 22, 0.85); 
                     backdrop-filter: blur(8px);       
@@ -65,7 +65,22 @@ window.displayHistory = function(matchesList) {
                 "
                 title="${isAdmin ? 'Двойной клик, чтобы удалить матч и откатить Эло' : ''}"
             >
-                <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-start; width: 100%;">
+                <!-- Стиль-хак: на телефонах перестраиваем карточку в вертикальный режим -->
+                <style>
+                    @media (max-width: 600px) {
+                        .match-card {
+                            flex-direction: column !important;
+                            gap: 8px !important;
+                            align-items: center !important;
+                        }
+                        .match-winner-row { width: 100% !important; justify-content: flex-start !important; }
+                        .match-date-row { width: 100% !important; text-align: center !important; }
+                        .match-loser-row { width: 100% !important; justify-content: flex-end !important; }
+                    }
+                </style>
+
+                <!-- 1 СТРОКА: Победитель -->
+                <div class="match-winner-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-start; width: 42%;">
                     <span style="
                         display: inline-block;
                         width: 0;
@@ -81,13 +96,13 @@ window.displayHistory = function(matchesList) {
                     <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${m.elo_change || 20}</span>
                 </div>
 
-                <!-- 2 СТРОКА: Дата по центру -->
-                <div style="color: #444; font-size: 0.7rem; font-weight: bold; text-align: center; width: 100%; letter-spacing: 1px;">
+                <!-- 2 СТРОКА: Дата -->
+                <div class="match-date-row" style="color: #444; font-size: 0.75rem; font-weight: bold; text-align: center; width: 16%; letter-spacing: 0.5px;">
                     ${matchDate || 'МАТЧ'}
                 </div>
 
-                <!-- 3 СТРОКА: Проигравший с правого края -->
-                <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 100%;">
+                <!-- 3 СТРОКА: Проигравший -->
+                <div class="match-loser-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 42%;">
                     <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${m.elo_change || 20}</span>
                     <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #a2a2ae; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
                         ${m.loser_username}
