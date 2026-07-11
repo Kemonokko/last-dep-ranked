@@ -103,20 +103,20 @@ function renderMyProfile() {
             <div style="margin-top:20px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 4px;">
                 <h4>2. Внести результат матча</h4>
 
-<select id="match-winner" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-    <option value="">-- Выберите победителя --</option>
-    ${(window.allPlayers || []).map(p => `<option value="${p.username}">${p.username} (${p.elo} ELO)</option>`).join('')}
-</select>
+                <select id="match-winner" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+                <option value="">-- Выберите победителя --</option>
+                ${(window.allPlayers || []).map(p => `<option value="${p.username}">${p.username} (${p.elo} ELO)</option>`).join('')}
+                </select>
 
-<select id="match-loser" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-    <option value="">-- Выберите проигравшего --</option>
-    ${(window.allPlayers || []).map(p => `<option value="${p.username}">${p.username} (${p.elo} ELO)</option>`).join('')}
-</select>
+                <select id="match-loser" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+                <option value="">-- Выберите проигравшего --</option>
+                ${(window.allPlayers || []).map(p => `<option value="${p.username}">${p.username} (${p.elo} ELO)</option>`).join('')}
+                </select>
 
-<input type="hidden" id="match-score" value="1/0">
-<p style="font-size: 0.85rem; color: #888; margin: 10px 0; text-align: center;">Формат матча: До 1 победы (K-фактор: 40)</p>
+                <input type="hidden" id="match-score" value="1/0">
+                <p style="font-size: 0.85rem; color: #888; margin: 10px 0; text-align: center;">Формат матча: До 1 победы (K-фактор: 40)</p>
 
-<button onclick="window.addMatchResult()" style="background:#04d361 !important; color:#000 !important; width:100%;">Внести матч</button>
+                <button id="btn-submit-match" style="background:#04d361 !important; color:#000 !important; width:100%;">Внести матч</button>
             </div>
         `;
     }
