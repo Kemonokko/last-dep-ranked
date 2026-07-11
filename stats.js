@@ -39,19 +39,22 @@ window.displayHistory = function(matchesList) {
         const div = document.createElement('div');
         div.style.padding = "2px 0"; 
         
+        const matchDate = formatMatchDate(m.created_at);
+        
         div.innerHTML = `
             <div style="
                 display: flex; 
                 align-items: center; 
                 justify-content: space-between; 
-                padding: 10px 14px; 
-                margin-top: 8px; 
+                padding: 18px 16px; 
+                margin-top: 10px; 
                 background: rgba(32, 32, 36, 0.6); 
                 backdrop-filter: blur(8px);       
                 -webkit-backdrop-filter: blur(8px);
                 border-radius: 6px;
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.05); 
             ">
+                <!-- Победитель слева -->
                 <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-start;">
                     <span style="
                         display: inline-block;
@@ -67,8 +70,12 @@ window.displayHistory = function(matchesList) {
                     <span style="color: #04d361; font-size: 0.8rem; font-weight: bold;">+${m.elo_change || 20}</span>
                 </div>
 
-                <div style="color: #444; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; width: 16%; text-align: center;">vs</div>
+                <!-- Дата по центру -->
+                <div style="color: #444; font-size: 0.75rem; font-weight: bold; width: 16%; text-align: center; letter-spacing: 0.5px;">
+                    ${matchDate || 'МАТЧ'}
+                </div>
 
+                <!-- Проигравший справа -->
                 <div style="display: flex; align-items: center; gap: 8px; width: 42%; justify-content: flex-end;">
                     <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold;">-${m.elo_change || 20}</span>
                     <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #a2a2ae; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; cursor: pointer;">
