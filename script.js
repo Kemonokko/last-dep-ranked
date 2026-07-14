@@ -103,6 +103,14 @@ function renderMyProfile() {
                     <option value="bloodline">Роль: Bloodline</option>
                     <option value="admin">Роль: Admin</option>
                     <option value="founder">Роль: Founder</option>
+                    <label style="display:block; margin-top:10px; color:#8f9bb3; font-size:0.9rem;">Цвет фракции (Tactile Wars):</label>
+<select id="new-player-color" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+    <option value="cyan" style="color:#06b6d4;">Бирюзовый (Cyan)</option>
+    <option value="purple" style="color:#a855f7;">Фиолетовый (Purple)</option>
+    <option value="pink" style="color:#ec4899;">Розовый (Pink)</option>
+    <option value="green" style="color:#22c55e;">Зеленый (Green)</option>
+    <option value="red" style="color:#ef4444;">Красный (Red)</option>
+    <option value="yellow" style="color:#eab308;">Желтый (Yellow)</option>
                 </select>
                 <button onclick="window.createNewPlayerByAdmin()" style="background:#3498db !important; color:#fff !important; width:100%; margin-top:5px;">Создать игрока</button>
             </div>
