@@ -1,4 +1,4 @@
-import { getRankByPercentile, getArmyHexColor } from './logic.js';
+import { getRankByPercentile } from './logic.js';
 
 const db = window.db;
 let currentUser = null;
@@ -39,13 +39,13 @@ window.logoutFromLeague = async function() {
         await window.firebase.auth().signOut();
         currentUser = null;
         localStorage.removeItem('tw_username');
-        
+
         const authBlock = document.getElementById('auth-forms');
         if (authBlock) authBlock.style.display = 'flex';
-        
+
         const container = document.getElementById('profile-container');
         if (container) container.innerHTML = '<p style="text-align:center; color:#a8a8b3; margin-top:30px;">Войдите через Google для доступа к профилю.</p>';
-        
+
         alert('Вы успешно вышли из профиля.');
     } catch (error) {
         console.error("Ошибка при выходе:", error);
@@ -55,9 +55,9 @@ window.logoutFromLeague = async function() {
 window.switchTab = function(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    
+
     document.getElementById(`tab-${tabName}`).classList.add('active');
-    
+
     const btnIndex = tabName === 'rating' ? 0 : tabName === 'history' ? 1 : 2;
     document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
 
@@ -99,15 +99,6 @@ function renderMyProfile() {
                 <input type="number" id="new-player-elo" placeholder="Стартовое Эло" value="1500">
                 <input type="text" id="new-player-email" placeholder="Email Google (Только для админов)">
                 <select id="new-player-role" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-                 <label style="display:block; margin-top:10px; color:#8f9bb3; font-size:0.9rem;">Цвет фракции (Tactile Wars):</label>
-<select id="new-player-color" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
-    <option value="cyan" style="color:#06b6d4;">Бирюзовый (Cyan)</option>
-    <option value="purple" style="color:#a855f7;">Фиолетовый (Purple)</option>
-    <option value="pink" style="color:#ec4899;">Розовый (Pink)</option>
-    <option value="green" style="color:#22c55e;">Зеленый (Green)</option>
-    <option value="red" style="color:#ef4444;">Красный (Red)</option>
-    <option value="yellow" style="color:#eab308;">Желтый (Yellow)</option>
-</select>
                     <option value="player">Роль: Player</option>
                     <option value="bloodline">Роль: Bloodline</option>
                     <option value="admin">Роль: Admin</option>
@@ -160,12 +151,12 @@ function calculateDynamicRanks(players) {
     return players.map((player, index) => {
         const position = index + 1;
         const rank = getRankByPercentile(position, total);
-        
+
         player.currentRank = rank;
 
         const currentRankIndex = RANK_HIERARCHY.indexOf(rank);
         const maxRankIndex = RANK_HIERARCHY.indexOf(player.maxRank || 'C');
-        
+
         if (currentRankIndex > maxRankIndex) {
             player.maxRank = rank;
             db.collection("profiles").doc(player.username).update({ maxRank: rank });
@@ -185,7 +176,7 @@ async function loadRating() {
 
         window.allPlayers = calculateDynamicRanks(rawPlayers);
         displayRating(window.allPlayers);
-        
+
         if (currentUser) {
             const freshData = window.allPlayers.find(p => p.username === currentUser.username);
             if (freshData) currentUser = freshData;
@@ -200,7 +191,7 @@ function displayRating(playersList) {
     const tbody = document.getElementById('rating-list');
     if (!tbody) return;
     tbody.innerHTML = '';
-    
+
     playersList.forEach((player, index) => {
         const tr = document.createElement('tr');
         const rankText = player.currentRank || 'C';
@@ -208,13 +199,9 @@ function displayRating(playersList) {
 
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td>
-                <span class="clickable-name" onclick="window.openPlayerModal('${player.username}')" style="color: ${getArmyHexColor(player.army_color)} !important; font-weight: 600;">
-                    ${player.username}
-                </span>
-            </td>
-            <td>${player.elo || 1500}</td>
-            <td><span class="rank-${rankClass}"><strong>${rankText}</strong></span></td>
+            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
+            <td>${player.elo}</td>
+            <td class="rank-${rankClass}" style="font-weight: bold;">${rankText}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -241,7 +228,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 currentUser = querySnapshot.docs[0].data();
                                 const authBlock = document.getElementById('auth-forms');
                 if (authBlock) authBlock.style.display = 'none';
-                
+
                 if (window.allPlayers.length === 0) {
                     await loadRating();
                 } else {
