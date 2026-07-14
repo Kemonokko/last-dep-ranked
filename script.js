@@ -208,9 +208,13 @@ function displayRating(playersList) {
 
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
-            <td>${player.elo}</td>
-            <td class="rank-${rankClass}" style="font-weight: bold;">${rankText}</td>
+            <td>
+                <span class="clickable-name" onclick="window.openPlayerModal('${player.username}')" style="color: ${getArmyHexColor(player.army_color)} !important; font-weight: 600;">
+                    ${player.username}
+                </span>
+            </td>
+            <td>${player.elo || 1500}</td>
+            <td><span class="rank-${rankClass}"><strong>${rankText}</strong></span></td>
         `;
         tbody.appendChild(tr);
     });
