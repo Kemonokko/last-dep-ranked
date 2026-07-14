@@ -250,7 +250,7 @@ window.openPlayerModal = async function(username) {
                             border-bottom: 8px solid #04d361;
                             flex-shrink: 0;
                         "></span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: ${mWinnerColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             ${m.winner_username}
                         </span>
                         <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${changeAmount}</span>
@@ -264,7 +264,7 @@ window.openPlayerModal = async function(username) {
                     <!-- Проигравший в модалке -->
                     <div class="m-loser-row-${index}" style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-end;">
                         <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${changeAmount}</span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
+                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 600; color: ${mLoserColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
                             ${m.loser_username}
                         </span>
                         <span style="
