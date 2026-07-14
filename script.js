@@ -207,9 +207,11 @@ function displayRating(playersList) {
         const rankText = player.currentRank || 'C';
         const rankClass = rankText.replace('+', '-plus');
 
+        const colorClass = player.color ? `faction-${player.color}` : 'faction-default';
+
         tr.innerHTML = `
             <td>${index + 1}</td>
-            <td class="clickable-name" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
+            <td class="clickable-name ${colorClass}" onclick="window.openPlayerModal('${player.username}')">${player.username}</td>
             <td>${player.elo}</td>
             <td class="rank-${rankClass}" style="font-weight: bold;">${rankText}</td>
         `;
