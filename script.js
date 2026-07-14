@@ -53,21 +53,17 @@ window.logoutFromLeague = async function() {
 };
 
 window.switchTab = function(tabName) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+  
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  const btnIndex = tabName === 'rating' ? 0 : tabName === 'history' ? 1 : 2;
+  document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
 
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-
-    const btnIndex = tabName === 'rating' ? 0 : tabName === 'history' ? 1 : 2;
-    document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
-
-
-
-
-
-
+  if (tabName === 'history' && typeof window.loadHistory === 'function') {
+    window.loadHistory();
+  }
 };
-
 
 function renderMyProfile() {
     const container = document.getElementById('profile-container');
