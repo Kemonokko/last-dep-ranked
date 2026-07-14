@@ -1,4 +1,4 @@
-import { getRankByPercentile } from './logic.js';
+import { getRankByPercentile, getArmyHexColor } from './logic.js';
 
 const db = window.db;
 
