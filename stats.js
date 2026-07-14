@@ -106,8 +106,8 @@ window.displayHistory = function(matchesList) {
 
 const winPl = window.allPlayers ? window.allPlayers.find(p => p.username === m.winner_username) : null;
 const losPl = window.allPlayers ? window.allPlayers.find(p => p.username === m.loser_username) : null;
-const winColClass = winPl && winPl.color ? `faction-${winPl.color}` : 'faction-default';
-const losColClass = losPl && losPl.color ? `faction-${losPl.color}` : 'faction-default';
+const winColClass = (winPl && winPl.color) ? 'faction-' + winPl.color : 'faction-default';
+const losColClass = (losPl && losPl.color) ? 'faction-' + losPl.color : 'faction-default';
 
                 <!-- 1 СТРОКА: Победитель -->
                 <div class="match-winner-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-start; width: 42%;">
