@@ -290,3 +290,17 @@ body {
 .profile-card .rank-S, .profile-card .rank-S-plus { color: #9575cd !important; text-shadow: 0 0 8px rgba(149, 117, 205, 0.3); }
 .profile-card .rank-A, .profile-card .rank-A-plus { color: #ff5252 !important; text-shadow: 0 0 10px rgba(255, 82, 82, 0.4); font-weight: bold; }
 .profile-card .rank-Дракон { color: #000000 !important; text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #fff; font-weight: 900; }
+
+.faction-cyan { color: #00e5ff !important; text-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
+.faction-purple { color: #bd00ff !important; text-shadow: 0 0 8px rgba(189, 0, 255, 0.4); }
+.faction-pink { color: #ff007f !important; text-shadow: 0 0 8px rgba(255, 0, 127, 0.4); }
+.faction-green { color: #00ff66 !important; text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
+.faction-red { color: #ff3333 !important; text-shadow: 0 0 8px rgba(255, 51, 51, 0.4); }
+.faction-yellow { color: #ffee00 !important; text-shadow: 0 0 8px rgba(255, 238, 0, 0.4); }
+
+.faction-default { color: #ffffff !important; }
+
+.clickable-name:hover {
+    color: inherit !important;
+    cursor: pointer;
+}
