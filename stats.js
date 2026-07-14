@@ -11,6 +11,12 @@ function formatMatchDate(timestamp) {
   return `${day}.${month}.${year}`;
 }
 
+window.getPlayerColor = function(username) {
+  if (!window.allPlayers) return 'faction-default';
+  const found = window.allPlayers.find(p => p.username === username);
+  return found && found.color ? 'faction-' + found.color : 'faction-default';
+};
+
 window.loadHistory = async function() {
   console.log("=== 📜 [ОТЛАДКА] loadHistory запущен ===");
   try {
