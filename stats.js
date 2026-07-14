@@ -95,7 +95,7 @@ window.displayHistory = function(matchesList) {
                         border-bottom: 8px solid #04d361;
                         flex-shrink: 0;
                     "></span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;">
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: ${mWinnerColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;">
                         ${m.winner_username}
                     </span>
                     <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${m.elo_change || 20}</span>
@@ -109,7 +109,7 @@ window.displayHistory = function(matchesList) {
                 <!-- 3 СТРОКА: Проигравший -->
                 <div class="match-loser-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 42%;">
                     <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${m.elo_change || 20}</span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: color: ${mLoserColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
                         ${m.loser_username}
                     </span>
                     <span style="
