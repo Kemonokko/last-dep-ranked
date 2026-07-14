@@ -42,6 +42,14 @@ window.loadHistory = async function() {
   }
 }
 
+function getFactionColor(username) {
+  if (window.allPlayers && window.allPlayers.length > 0) {
+    const found = window.allPlayers.find(p => p.username === username);
+    if (found && found.color) return `faction-${found.color}`;
+  }
+  return 'faction-default';
+}
+
 window.displayHistory = function(matchesList) {
     const container = document.getElementById('history-list');
     if (!container) return;
