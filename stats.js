@@ -295,7 +295,7 @@ window.openPlayerModal = async function(username) {
 
         modalData.innerHTML = `
             <div style="text-align:center; margin-bottom:15px;">
-                <h3 class="${nameClass}" style="margin-top:10px; margin-bottom:0; color: #ffffff !important; font-size: 1.5rem; letter-spacing: 0.5px;">
+                <h3 class="${nameClass}" style="margin-top:10px; margin-bottom:0; color: ${mainPlayerColor}; font-size: 1.5rem; letter-spacing: 0.5px;">
                     ${player.username}
                 </h3>
                 ${roleBadge}
