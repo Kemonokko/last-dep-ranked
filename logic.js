@@ -56,3 +56,14 @@ export function calculateElo(ratingA, ratingB) {
         change: change
     };
 }
+export function getArmyHexColor(colorName) {
+    const colors = {
+        'cyan': '#06b6d4',
+        'purple': '#a855f7',
+        'pink': '#ec4899',
+        'green': '#22c55e',
+        'red': '#ef4444',
+        'yellow': '#eab308'
+    };
+    return colors[colorName] || '#ffffff';
+}
