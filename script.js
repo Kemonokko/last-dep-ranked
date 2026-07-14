@@ -99,6 +99,15 @@ function renderMyProfile() {
                 <input type="number" id="new-player-elo" placeholder="Стартовое Эло" value="1500">
                 <input type="text" id="new-player-email" placeholder="Email Google (Только для админов)">
                 <select id="new-player-role" style="width:100%; padding:10px; margin:10px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+                 <label style="display:block; margin-top:10px; color:#8f9bb3; font-size:0.9rem;">Цвет фракции (Tactile Wars):</label>
+<select id="new-player-color" style="width:100%; padding:10px; margin:5px 0; background:#202024; border:1px solid #29292e; color:#fff; border-radius:4px;">
+    <option value="cyan" style="color:#06b6d4;">Бирюзовый (Cyan)</option>
+    <option value="purple" style="color:#a855f7;">Фиолетовый (Purple)</option>
+    <option value="pink" style="color:#ec4899;">Розовый (Pink)</option>
+    <option value="green" style="color:#22c55e;">Зеленый (Green)</option>
+    <option value="red" style="color:#ef4444;">Красный (Red)</option>
+    <option value="yellow" style="color:#eab308;">Желтый (Yellow)</option>
+</select>
                     <option value="player">Роль: Player</option>
                     <option value="bloodline">Роль: Bloodline</option>
                     <option value="admin">Роль: Admin</option>
