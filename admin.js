@@ -7,8 +7,6 @@ window.createNewPlayerByAdmin = async function() {
     const eloInput = document.getElementById('new-player-elo').value.trim();
     const email = document.getElementById('new-player-email').value.trim();
     const role = document.getElementById('new-player-role').value;
-    
-    const armyColor = document.getElementById('new-player-color').value;
 
     if (!username) return alert('Введите никнейм игрока!');
     const elo = eloInput ? parseInt(eloInput) : 1500;
@@ -23,17 +21,18 @@ window.createNewPlayerByAdmin = async function() {
             elo: elo,
             email: email || "",
             role: role,
-            army_color: armyColor,
+            bio: ".....",
+            avatar_url: "https://ftcdn.net",
             rounds_won: 0,
             rounds_lost: 0,
             currentRank: "C"
         });
 
         alert(`Игрок ${username} успешно добавлен в лигу!`);
-        
+
         document.getElementById('new-player-username').value = '';
         document.getElementById('new-player-email').value = '';
-        
+
         if (typeof loadRating === 'function') loadRating();
     } catch (error) {
         console.error("Ошибка при создании игрока:", error);
@@ -95,7 +94,7 @@ window.addMatchResult = async function() {
         });
 
         alert(`Матч успешно зафиксирован! \n${winner}: +${eloChange} ELO \n${loser}: -${eloChange} ELO`);
-        
+
         document.getElementById('match-winner').value = '';
         document.getElementById('match-loser').value = '';
 
@@ -111,60 +110,3 @@ document.addEventListener('click', function(event) {
         window.addMatchResult();
     }
 });
-window.deleteAndUndoMatch = async function(match) {
-    const confirmDelete = confirm(`Вы уверены, что хотите УДАЛИТЬ этот матч и ОТКАТИТЬ рейтинг?\n\nПобедитель: ${match.winner_username} (-${match.elo_change})\nПроигравший: ${match.loser_username} (+${match.elo_change})`);
-    
-    if (!confirmDelete) return;
-
-    try {
-        const winnerRef = db.collection("profiles").doc(match.winner_username);
-        const loserRef = db.collection("profiles").doc(match.loser_username);
-
-        const [winnerDoc, loserDoc] = await Promise.all([winnerRef.get(), loserRef.get()]);
-
-        if (!winnerDoc.exists || !loserDoc.exists) {
-            return alert("Ошибка: Один из игроков этого матча удален из базы данных. Не удалось вернуть Эло.");
-        }
-
-        const winnerData = winnerDoc.data();
-        const loserData = loserDoc.data();
-        const eloChange = match.elo_change || 20;
-
-        const revertedWinnerElo = (winnerData.elo || 1500) - eloChange;
-        const revertedLoserElo = (loserData.elo || 1500) + eloChange;
-
-        const newWinnerWonRounds = Math.max(0, (winnerData.rounds_won || 0) - 1);
-        const newLoserLostRounds = Math.max(0, (loserData.rounds_lost || 0) - 1);
-
-        await winnerRef.update({
-            elo: Math.max(100, revertedWinnerElo),
-            rounds_won: newWinnerWonRounds
-        });
-
-        await loserRef.update({
-            elo: revertedLoserElo,
-            rounds_lost: newLoserLostRounds
-        });
-
-        const matchQuery = await db.collection("matches")
-            .where("winner_username", "==", match.winner_username)
-            .where("loser_username", "==", match.loser_username)
-            .where("created_at", "==", match.created_at) 
-            .get();
-
-        const deletePromises = [];
-        matchQuery.forEach(doc => {
-            deletePromises.push(doc.ref.delete());
-        });
-        await Promise.all(deletePromises);
-
-        alert("Матч успешно удален, а рейтинги игроков пересчитаны!");
-
-        if (typeof window.loadHistory === 'function') window.loadHistory();
-        if (typeof loadRating === 'function') loadRating();
-
-    } catch (error) {
-        console.error("Ошибка при удалении и откате матча:", error);
-        alert("Произошла ошибка базы данных. Не удалось корректно удалить матч.");
-    }
-};
