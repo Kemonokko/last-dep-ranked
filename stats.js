@@ -43,6 +43,11 @@ window.displayHistory = function(matchesList) {
         div.style.padding = "2px 0"; 
         
         const matchDate = formatMatchDate(m.created_at);
+
+        const winnerData = (window.allPlayers || []).find(p => p.username === m.winner_username);
+        const loserData = (window.allPlayers || []).find(p => p.username === m.loser_username);
+        const winnerColor = getArmyHexColor(winnerData ? winnerData.army_color : 'white');
+        const loserColor = getArmyHexColor(loserData ? loserData.army_color : 'white');
         
         const currentUserData = window.currentUser || null;
         const isAdmin = currentUserData && (currentUserData.role === 'admin' || currentUserData.role === 'founder');
