@@ -1,16 +1,16 @@
-import { getRankByPercentile, getArmyHexColor } from './logic.js';
+import { getRankByPercentile } from './logic.js';
 
 const db = window.db;
 
 function formatMatchDate(timestamp) {
     if (!timestamp) return "";
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    
+
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    
+
     const year = String(date.getFullYear()).slice(-2); 
-    
+
     return `${day}.${month}.${year}`;
 }
 
@@ -41,17 +41,12 @@ window.displayHistory = function(matchesList) {
     matchesList.forEach((m, index) => {
         const div = document.createElement('div');
         div.style.padding = "2px 0"; 
-        
+
         const matchDate = formatMatchDate(m.created_at);
 
-        const winnerData = (window.allPlayers || []).find(p => p.username === m.winner_username);
-        const loserData = (window.allPlayers || []).find(p => p.username === m.loser_username);
-        const winnerColor = getArmyHexColor(winnerData ? winnerData.army_color : 'white');
-        const loserColor = getArmyHexColor(loserData ? loserData.army_color : 'white');
-        
         const currentUserData = window.currentUser || null;
         const isAdmin = currentUserData && (currentUserData.role === 'admin' || currentUserData.role === 'founder');
-        
+
         div.innerHTML = `
             <div class="match-card" 
                 style="
@@ -95,7 +90,7 @@ window.displayHistory = function(matchesList) {
                         border-bottom: 8px solid #04d361;
                         flex-shrink: 0;
                     "></span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: ${mWinnerColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;">
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;">
                         ${m.winner_username}
                     </span>
                     <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${m.elo_change || 20}</span>
@@ -109,7 +104,7 @@ window.displayHistory = function(matchesList) {
                 <!-- 3 СТРОКА: Проигравший -->
                 <div class="match-loser-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 42%;">
                     <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${m.elo_change || 20}</span>
-                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: color: ${mLoserColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
+                    <span class="clickable-name" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
                         ${m.loser_username}
                     </span>
                     <span style="
@@ -205,10 +200,10 @@ window.openPlayerModal = async function(username) {
         if (lastThree.length === 0) {
             matchesHtml += '<p style="color: #666; font-style: italic;">Матчей ещё не было</p>';
         }
-        
-        lastThree.forEach((m, index) => {
+
+        lastThree.forEach(m => {
             const changeAmount = m.elo_change || 20; 
-            const matchDate = formatMatchDate(m.created_at);
+            const matchDate = formatMatchDate(m.created_at); 
 
             matchesHtml += `
                 <div class="modal-match-card-${index}" 
@@ -249,7 +244,7 @@ window.openPlayerModal = async function(username) {
                             border-bottom: 8px solid #04d361;
                             flex-shrink: 0;
                         "></span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: ${mWinnerColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <span class="clickable-name" onclick="openPlayerModal('${m.winner_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             ${m.winner_username}
                         </span>
                         <span style="color: #04d361; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">+${changeAmount}</span>
@@ -263,7 +258,7 @@ window.openPlayerModal = async function(username) {
                     <!-- Проигравший в модалке -->
                     <div class="m-loser-row-${index}" style="display: flex; align-items: center; gap: 6px; width: 42%; justify-content: flex-end;">
                         <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${changeAmount}</span>
-                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 600; color: ${mLoserColor} !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
+                        <span class="clickable-name" onclick="openPlayerModal('${m.loser_username}')" style="font-weight: 600; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right;">
                             ${m.loser_username}
                         </span>
                         <span style="
@@ -280,6 +275,7 @@ window.openPlayerModal = async function(username) {
             `;
         });
 
+        
         const playerRole = player.role || 'player';
         let roleBadge = '';
         let nameClass = 'role-player';
@@ -294,7 +290,7 @@ window.openPlayerModal = async function(username) {
 
         modalData.innerHTML = `
             <div style="text-align:center; margin-bottom:15px;">
-                <h3 class="${nameClass}" style="margin-top:10px; margin-bottom:0; color: ${mainPlayerColor}; font-size: 1.5rem; letter-spacing: 0.5px;">
+                <h3 class="${nameClass}" style="margin-top:10px; margin-bottom:0; color: #ffffff !important; font-size: 1.5rem; letter-spacing: 0.5px;">
                     ${player.username}
                 </h3>
                 ${roleBadge}
