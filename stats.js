@@ -153,7 +153,6 @@ window.openPlayerModal = async function(username) {
     const modalData = document.getElementById('modal-user-data');
     if (!modal || !modalData) return;
 
-    const mainPlayerColor = getArmyHexColor(player.army_color);
     modal.style.display = 'flex';
     modalData.innerHTML = '<p>Загрузка статистики...</p>';
 
