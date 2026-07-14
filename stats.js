@@ -3,43 +3,44 @@ import { getRankByPercentile } from './logic.js';
 const db = window.db || (window.firebase && window.firebase.firestore());
 
 function formatMatchDate(timestamp) {
-    if (!timestamp) return "";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-
-    const year = String(date.getFullYear()).slice(-2); 
-
-    return `${day}.${month}.${year}`;
+  if (!timestamp) return "";
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}.${month}.${year}`;
 }
 
 window.loadHistory = async function() {
-    console.log("=== [1] loadHistory запущен ===");
-    try {
-        if (!db) {
-            console.log("⛔ [ОШИБКА]: Глобальный объект базы данных db не найден!");
-            return;
-        }
-        console.log("📡 [2] Отправляем запрос в Firestore к коллекции 'matches'...");
-        const querySnapshot = await db.collection("matches").orderBy("created_at", "desc").get();
-        
-        console.log(`✅ [3] Ответ от Firestore получен. Найдено документов: ${querySnapshot.size}`);
-        
-        window.allMatches = [];
-        querySnapshot.forEach(doc => {
-            window.allMatches.push(doc.data());
-        });
-        
-        console.log("📦 [4] Массив window.allMatches успешно заполнен:", window.allMatches);
-        console.log("👉 [5] Передаем данные в функцию window.displayHistory...");
-        
-        window.displayHistory(window.allMatches);
-    } catch (error) {
-        console.error("❌ [КРИТИЧЕСКАЯ ОШИБКА в loadHistory]:", error);
+  console.log("=== 📜 [ОТЛАДКА] loadHistory запущен ===");
+  try {
+    if (!db) {
+      console.error("⛔ [ОТЛАДКА ОШИБКА]: Переменная db ПУСТАЯ! Firebase не передал базу в этот файл.");
+      return;
     }
-}
+    
+    console.log("📡 [ОТЛАДКА]: Делаем запрос к коллекции 'matches'...");
+    const querySnapshot = await db.collection("matches").orderBy("created_at", "desc").get();
+    
+    console.log(`✅ [ОТЛАДКА]: Firestore ответил! Найдено матчей в базе: ${querySnapshot.size}`);
+    
+    if (querySnapshot.size === 0) {
+      console.warn("⚠️ [ОТЛАДКА ВНИМАНИЕ]: Запрос вернул 0 документов. Коллекция 'matches' пуста или нет прав доступа.");
+    }
 
+    window.allMatches = [];
+    querySnapshot.forEach(doc => {
+      console.log(`📦 [ОТЛАДКА]: Прочитан матч ID [${doc.id}]:`, doc.data());
+      window.allMatches.push(doc.data());
+    });
+
+    console.log("👉 [ОТЛАДКА]: Передаем массив в window.displayHistory. Длина массива:", window.allMatches.length);
+    window.displayHistory(window.allMatches);
+
+  } catch (error) {
+    console.error("❌ [КРИТИЧЕСКАЯ ОШИБКА в loadHistory]:", error);
+  }
+}
 
 window.displayHistory = function(matchesList) {
     const container = document.getElementById('history-list');
