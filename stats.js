@@ -132,10 +132,10 @@ window.displayHistory = function(matchesList) {
                     ${matchDate || 'МАТЧ'}
                 </div>
 
-                <!-- 3 СТРОКА: Проигравший -->
+<!-- 3 СТРОКА: Проигравший -->
                 <div class="match-loser-row" style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; width: 42%;">
                     <span style="color: #e74c3c; font-size: 0.8rem; font-weight: bold; flex-shrink: 0;">-${m.elo_change || 20}</span>
-                    <span class="clickable-name ${getPlayerColor(m.loser_username)}" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;"
+                    <span class="clickable-name ${window.getPlayerColor(m.loser_username)}" onclick="event.stopPropagation(); openPlayerModal('${m.loser_username}')" style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; cursor: pointer;">
                         ${m.loser_username}
                     </span>
                     <span style="
