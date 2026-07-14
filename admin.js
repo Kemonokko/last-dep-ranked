@@ -7,6 +7,8 @@ window.createNewPlayerByAdmin = async function() {
     const eloInput = document.getElementById('new-player-elo').value.trim();
     const email = document.getElementById('new-player-email').value.trim();
     const role = document.getElementById('new-player-role').value;
+    
+    const armyColor = document.getElementById('new-player-color').value;
 
     if (!username) return alert('Введите никнейм игрока!');
     const elo = eloInput ? parseInt(eloInput) : 1500;
@@ -21,6 +23,7 @@ window.createNewPlayerByAdmin = async function() {
             elo: elo,
             email: email || "",
             role: role,
+            army_color: armyColor,
             rounds_won: 0,
             rounds_lost: 0,
             currentRank: "C"
