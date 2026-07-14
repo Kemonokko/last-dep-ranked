@@ -15,15 +15,31 @@ function formatMatchDate(timestamp) {
 }
 
 window.loadHistory = async function() {
+    console.log("=== [1] loadHistory запущен ===");
     try {
+        if (!db) {
+            console.log("⛔ [ОШИБКА]: Глобальный объект базы данных db не найден!");
+            return;
+        }
+        console.log("📡 [2] Отправляем запрос в Firestore к коллекции 'matches'...");
         const querySnapshot = await db.collection("matches").orderBy("created_at", "desc").get();
+        
+        console.log(`✅ [3] Ответ от Firestore получен. Найдено документов: ${querySnapshot.size}`);
+        
         window.allMatches = [];
-        querySnapshot.forEach(doc => window.allMatches.push(doc.data()));
+        querySnapshot.forEach(doc => {
+            window.allMatches.push(doc.data());
+        });
+        
+        console.log("📦 [4] Массив window.allMatches успешно заполнен:", window.allMatches);
+        console.log("👉 [5] Передаем данные в функцию window.displayHistory...");
+        
         window.displayHistory(window.allMatches);
     } catch (error) {
-        console.error("Ошибка загрузки истории:", error);
+        console.error("❌ [КРИТИЧЕСКАЯ ОШИБКА в loadHistory]:", error);
     }
 }
+
 
 window.displayHistory = function(matchesList) {
     const container = document.getElementById('history-list');
